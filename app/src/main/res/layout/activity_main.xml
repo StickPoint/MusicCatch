@@ -2,10 +2,10 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/naimPage"
+    android:id="@+id/mainPage"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#FAFAFA"
+    android:background="@color/background"
     android:orientation="vertical"
     tools:context=".MainActivity">
 
@@ -13,33 +13,126 @@
         android:id="@+id/mainTop"
         android:layout_width="match_parent"
         android:layout_height="60dp"
-        android:background="#FFFFFF">
+        android:layout_weight="0"
+        android:background="@color/foreground">
 
         <EditText
-            android:id="@+id/editText"
+            android:id="@+id/search"
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
+            android:layout_height="36dp"
             android:layout_marginStart="16dp"
             android:layout_marginLeft="16dp"
             android:layout_marginEnd="16dp"
             android:layout_marginRight="16dp"
+            android:background="@drawable/search_radius"
             android:ems="10"
-            android:inputType="textPersonName"
-            android:text="Name"
+            android:hint="@string/search_hint"
+            android:inputType="text"
+            android:paddingLeft="40dp"
+            android:paddingRight="18dp"
+            android:textColor="@color/textBlack"
+            android:textColorHint="@color/textHint"
+            android:textSize="18sp"
+            android:visibility="visible"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/button"
+            app:layout_constraintEnd_toStartOf="@+id/search_button"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <Button
-            android:id="@+id/button"
+        <ImageView
+            android:layout_width="20sp"
+            android:layout_height="20sp"
+            android:layout_marginStart="9dp"
+            android:layout_marginLeft="9dp"
+            app:layout_constraintBottom_toBottomOf="@+id/search"
+            app:layout_constraintStart_toStartOf="@+id/search"
+            app:layout_constraintTop_toTopOf="@+id/search"
+            app:srcCompat="@mipmap/search" />
+
+        <TextView
+            android:id="@+id/search_button"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="36dp"
             android:layout_marginEnd="16dp"
             android:layout_marginRight="16dp"
+            android:background="@drawable/search_button_radius"
+            android:gravity="center"
+            android:paddingLeft="18dp"
+            android:paddingRight="18dp"
             android:text="@string/search"
+            android:textColor="@color/textWhite"
+            android:textSize="18sp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
     </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <androidx.viewpager.widget.ViewPager
+        android:id="@+id/mainWrapper"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+
+    </androidx.viewpager.widget.ViewPager>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/mainPlayer"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_weight="0"
+        android:background="@color/foreground"
+        android:orientation="vertical"></androidx.constraintlayout.widget.ConstraintLayout>
+
+    <RadioGroup
+        android:id="@+id/navBar"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:layout_weight="0"
+        android:background="@color/foreground"
+        android:checkedButton="@id/nav_index"
+        android:orientation="horizontal">
+
+        <RadioButton
+            android:id="@+id/nav_index"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:button="@null"
+            android:drawableTop="@drawable/nav_bar_btn_index_check"
+            android:gravity="center"
+            android:paddingTop="5dp"
+            android:paddingBottom="5dp"
+            android:text="@string/index"
+            android:textColor="@color/nav_bar_btn_text_check"
+            android:textSize="12sp" />
+
+        <RadioButton
+            android:id="@+id/nav_like"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:button="@null"
+            android:drawableTop="@drawable/nav_bar_btn_like_check"
+            android:gravity="center"
+            android:paddingTop="5dp"
+            android:paddingBottom="5dp"
+            android:text="@string/like"
+            android:textColor="@color/nav_bar_btn_text_check"
+            android:textSize="12sp" />
+
+        <RadioButton
+            android:id="@+id/nav_download"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:button="@null"
+            android:drawableTop="@drawable/nav_bar_btn_download_check"
+            android:gravity="center"
+            android:paddingTop="5dp"
+            android:paddingBottom="5dp"
+            android:text="@string/download"
+            android:textColor="@color/nav_bar_btn_text_check"
+            android:textSize="12sp" />
+    </RadioGroup>
+
 </LinearLayout>

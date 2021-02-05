@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">MusicCatch</string>
+    <string name="download">下载</string>
+    <string name="index">首页</string>
+    <string name="like">喜欢</string>
+    <string name="search">搜索</string>
+    <string name="search_hint">Search</string>
+    <string name="default_music_name">当前无播放歌曲</string>
+    <string name="default_music_time">--:--/--:--</string>
+    <string name="picture">Pic</string>
+    <string name="play">Play</string>
+    <string name="next">Next</string>
+    <string name="previous">Prev</string>
+    <string name="no_music_to_play">当前没有正在播放的音乐</string>
+</resources>

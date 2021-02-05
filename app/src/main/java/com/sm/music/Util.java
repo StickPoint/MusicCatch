@@ -13,25 +13,34 @@ import android.view.KeyEvent;
 import android.view.ViewConfiguration;
 import android.view.Window;
 import android.view.WindowManager;
+
+import androidx.annotation.ColorInt;
+import androidx.core.graphics.ColorUtils;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
 import com.sm.music.R;
+
+import static android.view.View.*;
+
 public class Util {
 
     static public void setActivityFullScreen(Activity activity) {
         activity.requestWindowFeature(Window.FEATURE_NO_TITLE);
         activity.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
     }
-    static public void setActivityBarAlpha(Activity activity) {
+    static public void setActivityBarAlpha(Activity activity, Boolean isLightColor) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             activity.getWindow().addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
-            activity.getWindow().setStatusBarColor(activity.getResources().getColor(R.color.transparent));
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                activity.getWindow().setStatusBarContrastEnforced(true);
+            if (isLightColor) {
+                activity.getWindow().getDecorView().setSystemUiVisibility(SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN | SYSTEM_UI_FLAG_LAYOUT_STABLE);
+            } else {
+                activity.getWindow().getDecorView().setSystemUiVisibility( SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN | SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
             }
+            activity.getWindow().setStatusBarColor(activity.getResources().getColor(R.color.transparent));
             activity.getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION);
         } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
             activity.getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
@@ -62,21 +71,24 @@ public class Util {
         return metrics.widthPixels;
     }
 
-    public static int DipToPx(Activity activity, float dpValue) {
+    static public int DipToPx(Activity activity, float dpValue) {
         float scale = activity.getResources().getDisplayMetrics().density;
         return (int) (dpValue * scale + 0.5f);
     }
-    public static int PxToDip(Activity activity, float pxValue) {
+    static public int PxToDip(Activity activity, float pxValue) {
         float scale = activity.getResources().getDisplayMetrics().density;
         return (int) (pxValue / scale + 0.5f);
     }
 
-    public static boolean checkDeviceHasNavigationBar(Context activity) {
+    static public boolean checkDeviceHasNavigationBar(Context activity) {
         boolean hasMenuKey = ViewConfiguration.get(activity).hasPermanentMenuKey();
         boolean hasBackKey = KeyCharacterMap.deviceHasKey(KeyEvent.KEYCODE_BACK);
         if (!hasMenuKey && !hasBackKey) {
             return true;
         }
         return false;
+    }
+    static public boolean isLightColor(@ColorInt int color) {
+        return ColorUtils.calculateLuminance(color) >= 0.5;
     }
 }

@@ -32,7 +32,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Util.setActivityBarAlpha(this);
+        Util.setActivityBarAlpha(this, false);
         setContentView(R.layout.activity_main);
         final int statusBarHeight = Util.getStatusBarHeight(MainActivity.this);
         final int NavigationBarHeight = Util.getNavigationBarHeight(MainActivity.this);

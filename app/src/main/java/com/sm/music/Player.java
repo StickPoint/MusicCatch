@@ -9,6 +9,7 @@ public class Player extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Util.setActivityBarAlpha(this, true);
         setContentView(R.layout.activity_player);
     }
 }

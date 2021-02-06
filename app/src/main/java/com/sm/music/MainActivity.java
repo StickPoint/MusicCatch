@@ -28,7 +28,7 @@ public class MainActivity extends AppCompatActivity {
     private ConstraintLayout mainTop = null;
     //bottom nav
     private ViewPager nav = null;
-    //music player min above nav
+    //music player min at nav
     private ImageView min_music_control = null;
     //This is a tag which music play or stop
     public Boolean isPlaying = false;

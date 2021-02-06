@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RadioGroup xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/nav"
+    android:layout_width="match_parent"
+    android:layout_height="80dp"
+    android:checkedButton="@id/nav_index"
+    android:orientation="horizontal">
+
+    <RadioButton
+        android:id="@+id/nav_index"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:button="@null"
+        android:drawableTop="@drawable/nav_bar_btn_index_check"
+        android:gravity="center"
+        android:paddingTop="20dp"
+        android:paddingBottom="15dp"
+        android:text="@string/index"
+        android:textColor="@color/nav_bar_btn_text_check"
+        android:textSize="12sp" />
+
+    <RadioButton
+        android:id="@+id/nav_like"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:button="@null"
+        android:drawableTop="@drawable/nav_bar_btn_like_check"
+        android:gravity="center"
+        android:paddingTop="20dp"
+        android:paddingBottom="15dp"
+        android:text="@string/like"
+        android:textColor="@color/nav_bar_btn_text_check"
+        android:textSize="12sp" />
+
+    <RadioButton
+        android:id="@+id/nav_download"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:button="@null"
+        android:drawableTop="@drawable/nav_bar_btn_download_check"
+        android:gravity="center"
+        android:paddingTop="20dp"
+        android:paddingBottom="15dp"
+        android:text="@string/download"
+        android:textColor="@color/nav_bar_btn_text_check"
+        android:textSize="12sp" />
+</RadioGroup>

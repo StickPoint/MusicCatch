@@ -13,4 +13,9 @@
     <string name="next">Next</string>
     <string name="previous">Prev</string>
     <string name="no_music_to_play">当前没有正在播放的音乐</string>
+    <string name="musicName">歌曲名称</string>
+    <string name="singer">歌手</string>
+    <string name="album">专辑</string>
+    <string name="down">Down</string>
+    <string name="no_picture">暂时没有图片</string>
 </resources>

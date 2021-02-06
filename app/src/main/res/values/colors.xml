@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#d81e06</color>
+    <color name="colorPrimary">#D81E06</color>
     <color name="colorPrimaryDark">#0055A0</color>
     <color name="colorAccent">#21B300</color>
     <color name="foreground">#FFFFFF</color>
@@ -9,5 +9,5 @@
     <color name="textWhite">#FFFFFF</color>
     <color name="textHint">#888888</color>
     <color name="transparent">#00000000</color>
-    <color name="player_bg">#AAAAAA</color>
+    <color name="player_bg">#FFFFFF</color>
 </resources>

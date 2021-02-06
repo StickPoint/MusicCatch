@@ -12,4 +12,9 @@
     <string name="previous">Prev</string>
     <string name="next">Next</string>
     <string name="no_music_to_play">No music is currently playing</string>
+    <string name="musicName">Music Name</string>
+    <string name="singer">Singer</string>
+    <string name="album">Album</string>
+    <string name="down">Down</string>
+    <string name="no_picture">No picture at present</string>
 </resources>

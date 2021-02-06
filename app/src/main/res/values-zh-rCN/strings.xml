@@ -22,4 +22,5 @@
     <string name="netease">网易云音乐</string>
     <string name="tencent">QQ 音乐</string>
     <string name="kugou">酷狗音乐</string>
+    <string name="favoriate">我的喜欢</string>
 </resources>

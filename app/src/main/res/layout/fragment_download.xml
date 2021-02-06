@@ -14,16 +14,34 @@
         android:layout_height="60dp"
         android:background="@color/foreground">
 
-        <TextView
-            android:id="@+id/downloadBar_title"
+        <LinearLayout
+            android:id="@+id/downloadBar_container"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/download"
-            android:textColor="@color/textBlack"
-            android:textSize="@dimen/large"
+            android:gravity="center"
+            android:orientation="horizontal"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent">
+
+            <ImageView
+                android:id="@+id/downloadBar_icon"
+                android:layout_width="@dimen/large"
+                android:layout_height="@dimen/large"
+                android:layout_marginTop="1dp"
+                android:layout_marginRight="16dp"
+                android:layout_weight="1"
+                app:srcCompat="@drawable/ic_download_checked" />
+
+            <TextView
+                android:id="@+id/downloadBar_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/download"
+                android:textColor="@color/textBlack"
+                android:textSize="@dimen/large" />
+        </LinearLayout>
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 </LinearLayout>

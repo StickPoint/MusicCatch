@@ -39,7 +39,7 @@
                 android:id="@+id/likeBar_title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/like"
+                android:text="@string/favoriate"
                 android:textColor="@color/textBlack"
                 android:textSize="@dimen/large" />
 

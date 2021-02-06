@@ -14,6 +14,7 @@ import android.content.PeriodicSync;
 import android.os.Bundle;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
@@ -31,8 +32,6 @@ public class MainActivity extends AppCompatActivity {
 
     //main page
     private LinearLayout mainPage = null;
-    //main top or search bar
-    private ConstraintLayout mainTop = null;
     //bottom nav
     private ViewPager nav = null;
     //music player min at nav
@@ -66,15 +65,16 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         Util.setActivityBarAlpha(this, false);
         setContentView(R.layout.activity_main);
-        final int statusBarHeight = Util.getStatusBarHeight(MainActivity.this);
         final int NavigationBarHeight = Util.getNavigationBarHeight(MainActivity.this);
         final Boolean HasNavigationBar = !Util.checkDeviceHasNavigationBar(this);
         mainPage = findViewById(R.id.mainPage);
-        mainTop = findViewById(R.id.mainTop);
         nav = findViewById(R.id.nav);
+
         navBar_layout = View.inflate(this, R.layout.nav_bar,null);
         musicPlayer_layout = View.inflate(this, R.layout.music_player,null);
+
         min_music_control = musicPlayer_layout.findViewById(R.id.min_music_control);
+
         nav.post(new Runnable() {
             @Override
             public void run() {
@@ -86,25 +86,17 @@ public class MainActivity extends AppCompatActivity {
             }
             }
         });
-        mainTop.post(new Runnable() {
-            public void run() {
-                LinearLayout.LayoutParams layoutParams = (LinearLayout.LayoutParams) mainTop.getLayoutParams();
-                layoutParams.height = statusBarHeight + mainTop.getHeight();
-                mainTop.setLayoutParams(layoutParams);
-                mainTop.setPadding(0,statusBarHeight,0,0);
-            }
-        });
         musicPlayer_layout.findViewById(R.id.mainPlayer).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                if (!currentMusicId.equals("0")){
+                if (!currentMusicId.equals("0")){
                     startActivity(new Intent(MainActivity.this, Player.class));
                     //TODO: To shart music player and post some arguments
 
-//                }else {
-//                    //No music to play
-//                    Toast.makeText(MainActivity.this, R.string.no_music_to_play, Toast.LENGTH_SHORT).show();
-//                }
+                }else {
+                    //No music to play
+                    Toast.makeText(MainActivity.this, R.string.no_music_to_play, Toast.LENGTH_SHORT).show();
+                }
             }
         });
         min_music_control.setOnClickListener(new View.OnClickListener() {
@@ -173,18 +165,23 @@ public class MainActivity extends AppCompatActivity {
             public void onPageSelected(int position) {
                 switch (position){
                     case 0:
+                        Util.setActivityBarAlpha(MainActivity.this, false);
                         ((RadioButton) navBar_layout.findViewById(R.id.nav_index) ).setChecked(true);
                         break;
                     case 1:
+                        Util.setActivityBarAlpha(MainActivity.this, false);
                         ((RadioButton) navBar_layout.findViewById(R.id.nav_like) ).setChecked(true);
                         break;
                     case 2:
+                        Util.setActivityBarAlpha(MainActivity.this, true);
                         ((RadioButton) navBar_layout.findViewById(R.id.nav_download) ).setChecked(true);
                         break;
                     case 3:
+                        Util.setActivityBarAlpha(MainActivity.this, true);
                         ((RadioButton) navBar_layout.findViewById(R.id.nav_more) ).setChecked(true);
                         break;
                     default:
+                        Util.setActivityBarAlpha(MainActivity.this, false);
                         ((RadioButton) navBar_layout.findViewById(R.id.nav_index) ).setChecked(true);
                         break;
                 }

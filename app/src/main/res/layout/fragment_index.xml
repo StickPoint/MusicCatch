@@ -1,7 +1,67 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ListView xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/musicList"
+    android:id="@+id/indexPage"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".fragment.indexFragment" />
+    android:orientation="vertical"
+    tools:context=".fragment.indexFragment" >
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/searchBar"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:background="@color/foreground">
+
+        <EditText
+            android:id="@+id/search"
+            android:layout_width="0dp"
+            android:layout_height="36dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginLeft="16dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginRight="16dp"
+            android:background="@drawable/search_radius"
+            android:ems="10"
+            android:hint="@string/search_hint"
+            android:inputType="text"
+            android:paddingLeft="40dp"
+            android:paddingRight="18dp"
+            android:textColor="@color/textBlack"
+            android:textColorHint="@color/textHint"
+            android:textSize="18sp"
+            android:visibility="visible"
+            app:layout_constraintBaseline_toBaselineOf="@+id/search_button"
+            app:layout_constraintEnd_toStartOf="@+id/search_button"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <ImageView
+            android:id="@+id/searchIcon"
+            android:layout_width="20sp"
+            android:layout_height="20sp"
+            android:layout_marginStart="9dp"
+            android:layout_marginLeft="9dp"
+            app:layout_constraintBottom_toBottomOf="@+id/search"
+            app:layout_constraintStart_toStartOf="@+id/search"
+            app:layout_constraintTop_toTopOf="@+id/search"
+            app:srcCompat="@mipmap/search" />
+
+        <TextView
+            android:id="@+id/search_button"
+            android:layout_width="wrap_content"
+            android:layout_height="36dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginRight="16dp"
+            android:background="@drawable/search_button_radius"
+            android:gravity="center"
+            android:paddingLeft="18dp"
+            android:paddingRight="18dp"
+            android:text="@string/search"
+            android:textColor="@color/textWhite"
+            android:textSize="18sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</LinearLayout>

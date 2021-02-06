@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/index_list_item"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="90dp">
+
+        <TextView
+            android:id="@+id/index_list_item_music_adlbm"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginLeft="16dp"
+            android:text="@string/album"
+            android:textColor="@color/textHint"
+            android:textSize="@dimen/small"
+            app:layout_constraintBaseline_toBaselineOf="@+id/index_list_item_music_singer"
+            app:layout_constraintStart_toEndOf="@+id/index_list_item_music_singer" />
+
+        <TextView
+            android:id="@+id/index_list_item_music_singer"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="@string/singer"
+            android:textColor="@color/textHint"
+            android:textSize="@dimen/small"
+            app:layout_constraintStart_toStartOf="@+id/index_list_item_music_name"
+            app:layout_constraintTop_toBottomOf="@+id/index_list_item_music_name" />
+
+        <TextView
+            android:id="@+id/index_list_item_music_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="32dp"
+            android:layout_marginLeft="32dp"
+            android:layout_marginTop="16dp"
+            android:text="@string/musicName"
+            android:textColor="@color/textBlack"
+            android:textSize="@dimen/normal"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</RelativeLayout>

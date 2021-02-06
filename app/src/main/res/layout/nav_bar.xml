@@ -47,4 +47,18 @@
         android:text="@string/download"
         android:textColor="@color/nav_bar_btn_text_check"
         android:textSize="12sp" />
+
+    <RadioButton
+        android:id="@+id/nav_more"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:button="@null"
+        android:drawableTop="@drawable/nav_bar_btn_more_check"
+        android:gravity="center"
+        android:paddingTop="20dp"
+        android:paddingBottom="15dp"
+        android:text="@string/more"
+        android:textColor="@color/nav_bar_btn_text_check"
+        android:textSize="12sp" />
 </RadioGroup>

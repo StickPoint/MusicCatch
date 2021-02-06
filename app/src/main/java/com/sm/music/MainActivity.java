@@ -3,6 +3,8 @@ package com.sm.music;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentPagerAdapter;
 import androidx.viewpager.widget.PagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 
@@ -17,6 +19,11 @@ import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Toast;
+
+import com.sm.music.fragment.downloadFragment;
+import com.sm.music.fragment.indexFragment;
+import com.sm.music.fragment.likeFragment;
+import com.sm.music.fragment.moreFragment;
 
 import java.util.ArrayList;
 
@@ -40,6 +47,18 @@ public class MainActivity extends AppCompatActivity {
     private View navBar_layout = null;
     //music player bar layout view
     private View musicPlayer_layout = null;
+    //main content
+    private ViewPager mainWrapper = null;
+    //child page view
+    private static ArrayList<Fragment> FragmentList = new ArrayList<Fragment>();
+
+    //add child page view to FragmentList
+    static {
+        FragmentList.add(new indexFragment());
+        FragmentList.add(new likeFragment());
+        FragmentList.add(new downloadFragment());
+        FragmentList.add(new moreFragment());
+    }
 
     @SuppressLint("WrongViewCast")
     @Override
@@ -78,14 +97,14 @@ public class MainActivity extends AppCompatActivity {
         musicPlayer_layout.findViewById(R.id.mainPlayer).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (!currentMusicId.equals("0")){
+//                if (!currentMusicId.equals("0")){
                     startActivity(new Intent(MainActivity.this, Player.class));
                     //TODO: To shart music player and post some arguments
 
-                }else {
-                    //No music to play
-                    Toast.makeText(MainActivity.this, R.string.no_music_to_play, Toast.LENGTH_SHORT).show();
-                }
+//                }else {
+//                    //No music to play
+//                    Toast.makeText(MainActivity.this, R.string.no_music_to_play, Toast.LENGTH_SHORT).show();
+//                }
             }
         });
         min_music_control.setOnClickListener(new View.OnClickListener() {
@@ -132,6 +151,70 @@ public class MainActivity extends AppCompatActivity {
             public Object instantiateItem(@NonNull ViewGroup container, int position) {
                 container.addView(nav_list.get(position));
                 return nav_list.get(position);
+            }
+        });
+        mainWrapper = findViewById(R.id.mainWrapper);
+        mainWrapper.setAdapter(new FragmentPagerAdapter(getSupportFragmentManager()) {
+            @Override
+            public int getCount() {
+                return FragmentList.size();
+            }
+
+            @Override
+            public Fragment getItem(int position) {
+                return FragmentList.get(position);
+            }
+        });
+        mainWrapper.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+            }
+            @Override
+            public void onPageSelected(int position) {
+                switch (position){
+                    case 0:
+                        ((RadioButton) navBar_layout.findViewById(R.id.nav_index) ).setChecked(true);
+                        break;
+                    case 1:
+                        ((RadioButton) navBar_layout.findViewById(R.id.nav_like) ).setChecked(true);
+                        break;
+                    case 2:
+                        ((RadioButton) navBar_layout.findViewById(R.id.nav_download) ).setChecked(true);
+                        break;
+                    case 3:
+                        ((RadioButton) navBar_layout.findViewById(R.id.nav_more) ).setChecked(true);
+                        break;
+                    default:
+                        ((RadioButton) navBar_layout.findViewById(R.id.nav_index) ).setChecked(true);
+                        break;
+                }
+            }
+            @Override
+            public void onPageScrollStateChanged(int state) {
+            }
+        });
+        navBar_layout.findViewById(R.id.nav_index).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mainWrapper.setCurrentItem(0, true);
+            }
+        });
+        navBar_layout.findViewById(R.id.nav_like).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mainWrapper.setCurrentItem(1, true);
+            }
+        });
+        navBar_layout.findViewById(R.id.nav_download).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mainWrapper.setCurrentItem(2, true);
+            }
+        });
+        navBar_layout.findViewById(R.id.nav_more).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mainWrapper.setCurrentItem(3, true);
             }
         });
         //TODO: Other code

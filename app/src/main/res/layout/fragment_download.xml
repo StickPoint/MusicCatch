@@ -12,14 +12,14 @@
         android:id="@+id/downloadBar"
         android:layout_width="match_parent"
         android:layout_height="60dp"
-        android:background="@color/colorPrimary">
+        android:background="@color/foreground">
 
         <TextView
             android:id="@+id/downloadBar_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/download"
-            android:textColor="@color/textWhite"
+            android:textColor="@color/textBlack"
             android:textSize="@dimen/large"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"

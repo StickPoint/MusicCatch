@@ -173,7 +173,7 @@ public class MainActivity extends AppCompatActivity {
                         ((RadioButton) navBar_layout.findViewById(R.id.nav_like) ).setChecked(true);
                         break;
                     case 2:
-                        Util.setActivityBarAlpha(MainActivity.this, true);
+                        Util.setActivityBarAlpha(MainActivity.this, false);
                         ((RadioButton) navBar_layout.findViewById(R.id.nav_download) ).setChecked(true);
                         break;
                     case 3:

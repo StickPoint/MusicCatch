@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context=".fragment.indexFragment" >
+    tools:context=".fragment.indexFragment">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/searchBar"
@@ -63,5 +63,68 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
+
     </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <HorizontalScrollView
+        android:layout_width="match_parent"
+        android:layout_height="55dp"
+        android:layout_gravity="center"
+        android:background="@color/foreground">
+
+        <RadioGroup
+            android:id="@+id/source_group"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_gravity="center"
+            android:checkedButton="@id/kugou"
+            android:gravity="center"
+            android:orientation="horizontal"
+            android:paddingTop="5dp"
+            android:paddingBottom="10dp">
+
+            <RadioButton
+                android:id="@+id/kugou"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_marginLeft="5dp"
+                android:layout_marginRight="5dp"
+                android:background="@drawable/search_bar_btn_nav_check"
+                android:button="@null"
+                android:gravity="center"
+                android:padding="10dp"
+                android:text="@string/kugou"
+                android:textColor="@color/search_bar_nav_btn_text_check"
+                android:textSize="@dimen/small" />
+
+            <RadioButton
+                android:id="@+id/netease"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_marginLeft="5dp"
+                android:layout_marginRight="5dp"
+                android:background="@drawable/search_bar_btn_nav_check"
+                android:button="@null"
+                android:gravity="center"
+                android:padding="10dp"
+                android:text="@string/netease"
+                android:textColor="@color/search_bar_nav_btn_text_check"
+                android:textSize="@dimen/small" />
+
+            <RadioButton
+                android:id="@+id/tencent"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_marginLeft="5dp"
+                android:layout_marginRight="5dp"
+                android:background="@drawable/search_bar_btn_nav_check"
+                android:button="@null"
+                android:gravity="center"
+                android:padding="10dp"
+                android:text="@string/tencent"
+                android:textColor="@color/search_bar_nav_btn_text_check"
+                android:textSize="@dimen/small" />
+        </RadioGroup>
+    </HorizontalScrollView>
+
 </LinearLayout>

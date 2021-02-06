@@ -19,4 +19,7 @@
     <string name="down">Down</string>
     <string name="no_picture">暂时没有图片</string>
     <string name="more">更多</string>
+    <string name="netease">网易云音乐</string>
+    <string name="tencent">QQ 音乐</string>
+    <string name="kugou">酷狗音乐</string>
 </resources>

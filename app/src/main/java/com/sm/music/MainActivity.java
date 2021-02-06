@@ -59,12 +59,12 @@ public class MainActivity extends AppCompatActivity {
         nav.post(new Runnable() {
             @Override
             public void run() {
-                if (HasNavigationBar){
-                    LinearLayout.LayoutParams layoutParams = (LinearLayout.LayoutParams) nav.getLayoutParams();
-                    layoutParams.height = NavigationBarHeight + nav.getHeight();
-                    nav.setLayoutParams(layoutParams);
-                    nav.setPadding(0,0,0,NavigationBarHeight);
-                }
+            if (HasNavigationBar){
+                LinearLayout.LayoutParams layoutParams = (LinearLayout.LayoutParams) nav.getLayoutParams();
+                layoutParams.height = NavigationBarHeight + nav.getHeight();
+                nav.setLayoutParams(layoutParams);
+                nav.setPadding(0,0,0,NavigationBarHeight);
+            }
             }
         });
         mainTop.post(new Runnable() {
@@ -80,6 +80,8 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 if (!currentMusicId.equals("0")){
                     startActivity(new Intent(MainActivity.this, Player.class));
+                    //TODO: To shart music player and post some arguments
+
                 }else {
                     //No music to play
                     Toast.makeText(MainActivity.this, R.string.no_music_to_play, Toast.LENGTH_SHORT).show();
@@ -89,21 +91,21 @@ public class MainActivity extends AppCompatActivity {
         min_music_control.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (isPlaying){
-                    min_music_control.setImageResource(R.drawable.ic_play);
-                    //TODO: Music to stop
+                if (!currentMusicId.equals("0")){
+                    if (isPlaying){
+                        min_music_control.setImageResource(R.drawable.ic_play);
+                        //TODO: Music to stop
 
-                    isPlaying = false;
-                }else {
-                    if (!currentMusicId.equals("0")){
+                        isPlaying = false;
+                    }else {
                         min_music_control.setImageResource(R.drawable.ic_stop);
                         //TODO: Music to play
 
                         isPlaying = true;
-                    }else {
-                        //No music to play
-                        Toast.makeText(MainActivity.this, R.string.no_music_to_play, Toast.LENGTH_SHORT).show();
                     }
+                }else {
+                    //No music to play
+                    Toast.makeText(MainActivity.this, R.string.no_music_to_play, Toast.LENGTH_SHORT).show();
                 }
             }
         });

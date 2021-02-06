@@ -11,6 +11,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 
+import com.scwang.smart.refresh.footer.ClassicsFooter;
+import com.scwang.smart.refresh.header.MaterialHeader;
+import com.scwang.smart.refresh.layout.api.RefreshLayout;
+import com.scwang.smart.refresh.layout.listener.OnLoadMoreListener;
+import com.scwang.smart.refresh.layout.listener.OnRefreshListener;
 import com.sm.music.R;
 import com.sm.music.Util;
 
@@ -38,6 +43,27 @@ public class indexFragment extends Fragment {
                 top.setPadding(0,statusBarHeight,0,0);
             }
         });
+
+        RefreshLayout indexList_container = (RefreshLayout)view.findViewById(R.id.indexList_container);
+        indexList_container.setRefreshHeader(new MaterialHeader(getActivity()));
+        indexList_container.setRefreshFooter(new ClassicsFooter(getActivity()));
+        indexList_container.setOnRefreshListener(new OnRefreshListener() {
+            @Override
+            public void onRefresh(RefreshLayout refreshlayout) {
+                //TODO: Index page refresh to do
+
+                refreshlayout.finishRefresh(2000/*,false*/);//传入false表示刷新失败
+            }
+        });
+        indexList_container.setOnLoadMoreListener(new OnLoadMoreListener() {
+            @Override
+            public void onLoadMore(RefreshLayout refreshlayout) {
+                //TODO: Index page load more to do
+
+                refreshlayout.finishLoadMore(2000/*,false*/);//传入false表示加载失败
+            }
+        });
+
         return view;
     }
 

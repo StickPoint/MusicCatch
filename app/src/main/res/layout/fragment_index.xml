@@ -69,7 +69,6 @@
     <HorizontalScrollView
         android:layout_width="match_parent"
         android:layout_height="55dp"
-        android:layout_gravity="center"
         android:background="@color/foreground">
 
         <RadioGroup
@@ -126,5 +125,27 @@
                 android:textSize="@dimen/small" />
         </RadioGroup>
     </HorizontalScrollView>
+    <com.scwang.smart.refresh.layout.SmartRefreshLayout
+        android:id="@+id/indexList_container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
 
+        <com.scwang.smart.refresh.header.MaterialHeader
+            android:id="@+id/indexList_header"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <ListView
+            android:id="@+id/indexList_list"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="#fff"
+            android:overScrollMode="never" />
+
+        <com.scwang.smart.refresh.footer.ClassicsFooter
+            android:id="@+id/indexList_footer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+    </com.scwang.smart.refresh.layout.SmartRefreshLayout>
 </LinearLayout>

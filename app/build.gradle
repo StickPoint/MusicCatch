@@ -30,4 +30,9 @@ dependencies {
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.1.1'
     implementation 'androidx.recyclerview:recyclerview:1.0.0'
     implementation "androidx.swiperefreshlayout:swiperefreshlayout:1.1.0"
+
+    implementation  'com.scwang.smart:refresh-layout-kernel:2.0.3'
+    implementation  'com.scwang.smart:refresh-header-classics:2.0.3'
+    implementation  'com.scwang.smart:refresh-header-material:2.0.3'
+    implementation  'com.scwang.smart:refresh-footer-classics:2.0.3'
 }

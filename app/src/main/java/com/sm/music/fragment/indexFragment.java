@@ -16,6 +16,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RadioButton;
@@ -28,6 +29,7 @@ import com.scwang.smart.refresh.layout.api.RefreshLayout;
 import com.scwang.smart.refresh.layout.listener.OnLoadMoreListener;
 import com.scwang.smart.refresh.layout.listener.OnRefreshListener;
 import com.sm.music.GetMusic;
+import com.sm.music.MainActivity;
 import com.sm.music.Music;
 import com.sm.music.R;
 import com.sm.music.Util;
@@ -48,10 +50,12 @@ public class indexFragment extends Fragment {
     private EditText search = null;
 
     private int currentType = GetMusic.MUSIC_SOURCE_KUGOU;
+    private String search_text = null;
 
     private List<Music> musicList = null;
 
     private ListView indexList_list = null;
+    private ConstraintLayout loading = null;
 
     private GetMusic conn = null;
 
@@ -61,6 +65,8 @@ public class indexFragment extends Fragment {
         @Override
         public void handleMessage(@NonNull Message msg) {
             super.handleMessage(msg);
+            indexList_list.setVisibility(View.VISIBLE);
+            loading.setVisibility(View.INVISIBLE);
             if (msg.what == GetMusic.RESPOND_SUCCESS){
                 musicList = (List<Music>) msg.obj;
                 indexList_list.setAdapter(new indexListAdapter());
@@ -121,6 +127,7 @@ public class indexFragment extends Fragment {
         netease = view.findViewById(R.id.netease);
         tencent = view.findViewById(R.id.tencent);
         indexList_list = view.findViewById(R.id.indexList_list);
+        loading = view.findViewById(R.id.loading);
 
         search_button = view.findViewById(R.id.search_button);
         search = view.findViewById(R.id.search);
@@ -128,10 +135,13 @@ public class indexFragment extends Fragment {
         search_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                indexList_list.setVisibility(View.INVISIBLE);
+                loading.setVisibility(View.VISIBLE);
+                search_text = String.valueOf(search.getText());
                 new Thread(new Runnable() {
                     @Override
                     public void run() {
-                        String url = conn.getSearchRequsetURL(String.valueOf(search.getText()), currentType);
+                        String url = conn.getSearchRequsetURL(search_text, currentType);
                         String json_string = null;
                         try {
                             json_string = conn.getJSON(url);
@@ -156,6 +166,30 @@ public class indexFragment extends Fragment {
             @Override
             public void onCheckedChanged(RadioGroup group, int checkedId) {
                 currentType = getCurrentType();
+                if (search_text != null){
+                    indexList_list.setVisibility(View.INVISIBLE);
+                    loading.setVisibility(View.VISIBLE);
+                    new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+                            String url = conn.getSearchRequsetURL(search_text, currentType);
+                            String json_string = null;
+                            try {
+                                json_string = conn.getJSON(url);
+                                List temp = conn.getMusicList(json_string);
+                                if (temp != null){
+                                    Message msg = Message.obtain();
+                                    msg.what = GetMusic.RESPOND_SUCCESS;
+                                    msg.obj = temp;
+                                    handler.sendMessage(msg);
+                                }
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+
+                        }
+                    }).start();
+                }
             }
         });
 
@@ -194,11 +228,17 @@ public class indexFragment extends Fragment {
         }
 
         @Override
-        public View getView(int position, View convertView, ViewGroup parent) {
+        public View getView(final int position, View convertView, ViewGroup parent) {
             View view = View.inflate(getActivity(), R.layout.index_list_ltem_layout, null);
             ((TextView) view.findViewById(R.id.index_list_item_music_name)).setText(musicList.get(position).getName());
             ((TextView) view.findViewById(R.id.index_list_item_music_singer)).setText(musicList.get(position).getArtist()[0]);
             ((TextView) view.findViewById(R.id.index_list_item_music_adlbm)).setText(musicList.get(position).getAlbum());
+            ((ImageView) view.findViewById(R.id.index_list_item_music_more)).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    ((MainActivity) getActivity()).showMore(musicList.get(position));
+                }
+            });
 
             return view;
         }

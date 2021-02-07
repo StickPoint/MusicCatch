@@ -47,13 +47,27 @@
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+    <com.scwang.smart.refresh.layout.SmartRefreshLayout
+        android:id="@+id/likeList_container"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="match_parent">
 
-        <androidx.recyclerview.widget.RecyclerView
+        <com.scwang.smart.refresh.header.MaterialHeader
+            android:id="@+id/likeList_header"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+        </com.scwang.smart.refresh.header.MaterialHeader>
+
+        <ListView
+            android:id="@+id/likeList_list"
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
-    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+
+        <com.scwang.smart.refresh.footer.ClassicsFooter
+            android:id="@+id/likeList_footer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"></com.scwang.smart.refresh.footer.ClassicsFooter>
+    </com.scwang.smart.refresh.layout.SmartRefreshLayout>
 
 </LinearLayout>

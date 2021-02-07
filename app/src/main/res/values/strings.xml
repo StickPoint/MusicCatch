@@ -22,6 +22,9 @@
     <string name="tencent">QQ Music</string>
     <string name="kugou">Kugou Music</string>
     <string name="favoriate">My Favoriate</string>
+    <string name="download_this_music">Download this music</string>
+    <string name="add_like">Add to like</string>
+    <string name="share">Share</string>
 
     <!-- TODO: Remove or change this placeholder text -->
 

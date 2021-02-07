@@ -23,4 +23,7 @@
     <string name="tencent">QQ 音乐</string>
     <string name="kugou">酷狗音乐</string>
     <string name="favoriate">我的喜欢</string>
+    <string name="download_this_music">下载此音乐</string>
+    <string name="add_like">添加到喜欢</string>
+    <string name="share">分享</string>
 </resources>

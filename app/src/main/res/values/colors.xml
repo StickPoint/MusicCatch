@@ -9,5 +9,6 @@
     <color name="textWhite">#FFFFFF</color>
     <color name="textHint">#888888</color>
     <color name="transparent">#00000000</color>
+    <color name="tipBg">#88444444</color>
     <color name="player_bg">#FFFFFF</color>
 </resources>

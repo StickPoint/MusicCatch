@@ -14,11 +14,14 @@ import android.content.PeriodicSync;
 import android.os.Bundle;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.sm.music.fragment.downloadFragment;
@@ -31,7 +34,7 @@ import java.util.ArrayList;
 public class MainActivity extends AppCompatActivity {
 
     //main page
-    private LinearLayout mainPage = null;
+    private FrameLayout mainPage = null;
     //bottom nav
     private ViewPager nav = null;
     //music player min at nav
@@ -50,6 +53,10 @@ public class MainActivity extends AppCompatActivity {
     private ViewPager mainWrapper = null;
     //child page view
     private static ArrayList<Fragment> FragmentList = new ArrayList<Fragment>();
+    //more windows view
+    private View more_view = null;
+    //more windows is open
+    private Boolean isMoreOpen = false;
 
     //add child page view to FragmentList
     static {
@@ -69,6 +76,8 @@ public class MainActivity extends AppCompatActivity {
         final Boolean HasNavigationBar = !Util.checkDeviceHasNavigationBar(this);
         mainPage = findViewById(R.id.mainPage);
         nav = findViewById(R.id.nav);
+
+        more_view = this.findViewById(R.id.more);
 
         navBar_layout = View.inflate(this, R.layout.nav_bar,null);
         musicPlayer_layout = View.inflate(this, R.layout.music_player,null);
@@ -215,5 +224,69 @@ public class MainActivity extends AppCompatActivity {
             }
         });
         //TODO: Other code
+    }
+
+    public void onBackPressed() {
+        if (isMoreOpen){
+            more_view.setVisibility(View.INVISIBLE);
+            isMoreOpen = false;
+        }else {
+            super.onBackPressed();
+        }
+
+    }
+
+    public void showMore(Music music){
+        LinearLayout more_container =  more_view.findViewById(R.id.more_container);
+        TextView indexMore_name = more_view.findViewById(R.id.indexMore_name);
+        ImageView copy_musicName = more_view.findViewById(R.id.copy_musicName);
+        CheckBox forLike = more_view.findViewById(R.id.forLike);
+        TextView ToDown = more_view.findViewById(R.id.ToDown);
+        TextView ToShare = more_view.findViewById(R.id.ToShare);
+
+        //TODO: to init like button
+
+        more_view.setVisibility(View.VISIBLE);
+        isMoreOpen = true;
+
+        indexMore_name.setText(music.getName());
+        more_view.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                more_view.setVisibility(View.INVISIBLE);
+                isMoreOpen = false;
+            }
+        });
+        more_container.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        });
+        copy_musicName.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //TODO: to copy music name
+            }
+        });
+        forLike.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                //TODO: to add & remove favoriate music
+            }
+        });
+        ToDown.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //TODO: to download music
+
+            }
+        });
+        ToShare.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //TODO: to share music
+            }
+        });
     }
 }

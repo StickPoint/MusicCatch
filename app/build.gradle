@@ -5,7 +5,7 @@ android {
     buildToolsVersion "29.0.3"
     defaultConfig {
         applicationId "com.sm.music"
-        minSdkVersion 16
+        minSdkVersion 17
         targetSdkVersion 29
         versionCode 1
         versionName "1.0"
@@ -33,7 +33,7 @@ dependencies {
 
     implementation 'com.alibaba:fastjson:1.2.62'
     implementation 'org.jsoup:jsoup:1.10.3'
-
+    implementation 'pl.droidsonroids.gif:android-gif-drawable:1.2.19'
 
     implementation  'com.scwang.smart:refresh-layout-kernel:2.0.3'
     implementation  'com.scwang.smart:refresh-header-classics:2.0.3'

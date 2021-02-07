@@ -125,6 +125,7 @@
                 android:textSize="@dimen/small" />
         </RadioGroup>
     </HorizontalScrollView>
+
     <com.scwang.smart.refresh.layout.SmartRefreshLayout
         android:id="@+id/indexList_container"
         android:layout_width="match_parent"
@@ -133,14 +134,42 @@
         <com.scwang.smart.refresh.header.MaterialHeader
             android:id="@+id/indexList_header"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content">
 
-        <ListView
-            android:id="@+id/indexList_list"
+        </com.scwang.smart.refresh.header.MaterialHeader>
+
+        <FrameLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="@color/foreground"
-            android:overScrollMode="never" />
+            android:layout_height="match_parent">
+
+            <ListView
+                android:id="@+id/indexList_list"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@color/foreground"
+                android:divider="@color/transparent"
+                android:dividerHeight="@dimen/none"
+                android:overScrollMode="never"></ListView>
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/loading"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@color/foreground"
+                android:visibility="invisible">
+
+                <pl.droidsonroids.gif.GifImageView
+                    android:id="@+id/loading_icon"
+                    android:layout_width="80dp"
+                    android:layout_height="80dp"
+                    android:src="@drawable/loading"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+        </FrameLayout>
 
         <com.scwang.smart.refresh.footer.ClassicsFooter
             android:id="@+id/indexList_footer"
@@ -148,4 +177,5 @@
             android:layout_height="wrap_content" />
 
     </com.scwang.smart.refresh.layout.SmartRefreshLayout>
+
 </LinearLayout>

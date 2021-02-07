@@ -2,9 +2,13 @@ package com.sm.music.MusicUtils;
 
 import com.alibaba.fastjson.JSONObject;
 import com.sm.music.Bean.Music;
+import com.sm.music.Bean.RecMusic;
+
 import org.jsoup.Connection;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Entities;
+import org.jsoup.parser.Parser;
 
 import java.util.*;
 import java.util.regex.Matcher;
@@ -42,6 +46,38 @@ public class GetMusic {
 
 	public static final String REQUEST_URL_LYRIC = "https://api.zhuolin.wang/api.php?types=lyric";
 
+	public static final String REQUEST_URL_PLAYLIST = "https://api.zhuolin.wang/api.php?types=playlist&id=";
+
+	public static final long MUSIC_PLAY_LIST_1 = 3778678L;
+
+	public static final long MUSIC_PLAY_LIST_2 = 3779629L;
+
+	public static final long MUSIC_PLAY_LIST_3 = 19723756L;
+
+	public static final long MUSIC_PLAY_LIST_4 = 5059642708L;
+
+	public static final long MUSIC_PLAY_LIST_5 = 5059633707L;
+
+	public static final long MUSIC_PLAY_LIST_6 = 5059661515L;
+
+	public static final long MUSIC_PLAY_LIST_7 = 991319590L;
+
+	public static final long MUSIC_PLAY_LIST_8 = 4395559L;
+
+	public static final long MUSIC_PLAY_LIST_9 = 64016L;
+
+	public static final long MUSIC_PLAY_LIST_10 = 112504L;
+
+	public static final long MUSIC_PLAY_LIST_11 = 2884035L;
+
+	public static final long MUSIC_PLAY_LIST_12 = 2809513713L;
+
+	public static final long MUSIC_PLAY_LIST_13 = 2809577409L;
+
+	public static final long MUSIC_PLAY_LIST_14 = 5059644681L;
+
+	public static final long MUSIC_PLAY_LIST_15 = 745956260L;
+
 	private Connection connection;
 
 	private Map<String,String> headerMap;
@@ -60,6 +96,8 @@ public class GetMusic {
 
 	private List<String> requestMusicURL_Lyric;
 
+	private List<RecMusic> recMusicList;
+
 	public GetMusic(){}
 
 	/**
@@ -73,6 +111,25 @@ public class GetMusic {
         return headerMap;
 	}
 
+	/**
+	 *
+	 * @return
+	 */
+	public Map<String,String> setHeaderMap_MusicPlayerURL(){
+		headerMap = new HashMap<String,String>();
+		headerMap.put("User-Agent","Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/88.0.4324.146 Safari/537.36");
+		headerMap.put("Accept","application/json;charset=UTF-8");
+		return  headerMap;
+	}
+
+	/**
+	 *
+	 * @param url
+	 * @return
+	 */
+	public Connection getConnection(String url){
+		return connection = Jsoup.connect(url).data(setHeaderMap_MusicPlayerURL());
+	}
 	/**
 	 *
 	 * @param Url
@@ -89,14 +146,29 @@ public class GetMusic {
 	 * @return
 	 */
 	public Connection GetConnection(String Url) {
-		return connection = Jsoup.connect(Url);
+		return connection = Jsoup.connect(Url).timeout(3000);
 	}
 
 	/**
 	 *
-	 * @param url
+	 * @param URL
 	 * @return
 	 */
+	public String fengeURL(String URL){
+		String url = "";
+		if(URL.contains("url")&&URL.contains("size")&&URL.contains("br")){
+			String regex = "\"url\":\"(.*?)\",\"s";
+			Pattern pattern1 = Pattern.compile(regex);
+			Matcher m = pattern1.matcher(URL);
+			while (m.find()) {
+				int i = 1;
+				url+=m.group(i);
+				i++;
+			}
+		}
+		return  url;
+	}
+
 	public static String getHost(String url) {
 		String cache = "";
 		if(url.contains("www.")) {
@@ -137,14 +209,15 @@ public class GetMusic {
 	}
 
 	/**
-	 *
+	 * 返回歌曲播放链接的json（header特殊）
 	 * @param url
-	 * @param host
+	 * @return
 	 * @throws Exception
 	 */
-	public GetMusic(String url, String host) throws Exception{
-		 Document document = GetConnection(url,host).get();
-		 System.out.println(document.html());
+	public String getMusicPlayJson(String url) throws Exception{
+		Document document = getConnection(url).ignoreContentType(true).get();
+		String result = Parser.unescapeEntities(document.body().html(), false);
+		return result ;
 	}
 
 	/**
@@ -157,6 +230,8 @@ public class GetMusic {
 		Document document = GetConnection(url).ignoreContentType(true).get();
 		return document.body().html();
 	}
+
+
 
 	/**
 	 * 返回搜索歌曲的请求连接，
@@ -300,29 +375,63 @@ public class GetMusic {
 		requestMusicURL_URL = new ArrayList<>();
 		if(requestMusicID.size()!=0){
 			for (int index = 0; index < requestMusicID.size(); index++) {
-				requestMusicURL_URL.add(requestMusicID.get(index)+"&"+requestMusicSource.get(index));
+				requestMusicURL_URL.add(REQUEST_URL_URL+"&id="+requestMusicID.get(index)+"&source="+requestMusicSource.get(index));
 			}
 		}else{
 			throw new RuntimeException("requestMusicList is null");
 		}
 		return requestMusicURL_URL;
 	}
-	
-	public static void main(String[] args) throws Exception {
-		GetMusic getMusic =new GetMusic();
-		String json = getMusic.getJSON("https://api.zhuolin.wang/api.php?types=search&count=20&source=tencent&pages=1&name=%E6%88%91%E4%B8%8D%E5%AF%B9");
-		List<Music> musicList = getMusic.getMusicList(json);
-		System.out.println(musicList);
-		//获得播放的requestMusicID的List
-		List<String> requestMusicIDList = getMusic.requestMusicID(musicList);
-		System.out.println(requestMusicIDList);
-		//获得播放的requestMusicSource的List
-		List<String> requestMusicSourceList = getMusic.requestMusicSource(musicList);
-		System.out.println(requestMusicSourceList);
-		//获得播放的requestMusicURL
-		List<String> requestMusicURLList = getMusic.requestMusicURL(requestMusicIDList, requestMusicSourceList);
-		System.out.println(requestMusicURLList);
-		System.out.println(getMusic.getSearchRequsetURL("我不对", 0));
+
+	/**
+	 * 获得单条音乐的播放地址 要哪个就去拿哪一个
+	 * @param requestMusicID
+	 * @param requestMusicSource
+	 * @return
+	 */
+	public String getMusicPlayURL(String requestMusicID,String requestMusicSource) throws Exception {
+		//第一步： 获得request（Get请求）请求的url,也就是拼装url
+		String url = REQUEST_URL_URL + "&id=" + requestMusicID + "&source=" + requestMusicSource;
+		//第二步： 发起请求，解析数据
+		System.out.println(url);
+		String  mp3PlayURL = fengeURL(getMusicPlayJson(url)).replace("\\","");
+		//第三步:
+		return  mp3PlayURL;
 	}
 
+	/**
+	 * 获得指定推荐歌单的所有音乐播放地址
+	 * 返回的是一个List<Music>对象
+	 * @param playListId
+	 * @return
+	 */
+	public List<RecMusic> getRecMusList(String playListId) throws Exception{
+		//第零步 初始化resMusicList
+		recMusicList = new ArrayList<>();
+		//第一步 拿到歌单的json
+		String musicPlayListJson = getMusicPlayJson(REQUEST_URL_PLAYLIST + playListId);
+		//第二步 将获得的JSON字符串转成封装好的RecMusic对象
+		 recMusicList = JSONObject.parseArray(musicPlayListJson, RecMusic.class);
+		//第三步 将List返回
+		return recMusicList;
+	}
+
+	public static void main(String[] args) throws Exception {
+		GetMusic getMusic =new GetMusic();
+		System.out.println(getMusic.getRecMusList("3778678"));
+//		String json = getMusic.getJSON("https://api.zhuolin.wang/api.php?types=search&count=20&source=tencent&pages=1&name=%E6%88%91%E4%B8%8D%E5%AF%B9");
+//		List<Music> musicList = getMusic.getMusicList(json);
+//		System.out.println(musicList);
+//		//获得播放的requestMusicID的List
+//		List<String> requestMusicIDList = getMusic.requestMusicID(musicList);
+//		System.out.println(requestMusicIDList);
+//		//获得播放的requestMusicSource的List
+//		List<String> requestMusicSourceList = getMusic.requestMusicSource(musicList);
+//		System.out.println(requestMusicSourceList);
+//		//获得播放的requestMusicURL
+//		List<String> requestMusicURLList = getMusic.requestMusicURL(requestMusicIDList, requestMusicSourceList);
+//		System.out.println(requestMusicURLList);
+//		System.out.println(getMusic.getMusicPlayURL("003x3xWw27Y2nf", "tencent"));
+//		System.out.println(MUSIC_PLAY_LIST_4);
+	}
 }

@@ -44,6 +44,10 @@ public class SearchActivity extends AppCompatActivity {
 
     final static private int NETWORK_ONLOAD_TAG = 201;
 
+    final static private int REQUEST_MUSIC_URL = 203;
+
+    final static private int REQUEST_MUSIC_LIST = 204;
+
     final static private int SHOW_SEARCH_LOADING = 304;
 
     final static private int SHOW_SEARCH_MUSIC_LIST = 302;
@@ -219,12 +223,16 @@ public class SearchActivity extends AppCompatActivity {
             super.handleMessage(msg);
             showContainer(SHOW_SEARCH_MUSIC_LIST);
             if (msg.what == GetMusic.RESPOND_SUCCESS){
-                if (msg.arg1 == NETWORK_REFRESH_TAG){
-                    searchList = (List<Music>) msg.obj;
-                    indexList_list.setAdapter(new indexListAdapter());
-                }else if (msg.arg1 == NETWORK_ONLOAD_TAG){
-                    searchList.addAll((List<Music>) msg.obj);
-                    ((indexListAdapter) indexList_list.getAdapter()).notifyDataSetChanged();
+                if (msg.arg2 == REQUEST_MUSIC_URL){
+
+                }else if (msg.arg2 == REQUEST_MUSIC_LIST){
+                    if (msg.arg1 == NETWORK_REFRESH_TAG){
+                        searchList = (List<Music>) msg.obj;
+                        indexList_list.setAdapter(new indexListAdapter());
+                    }else if (msg.arg1 == NETWORK_ONLOAD_TAG){
+                        searchList.addAll((List<Music>) msg.obj);
+                        ((indexListAdapter) indexList_list.getAdapter()).notifyDataSetChanged();
+                    }
                 }
             }else{
                 Toast.makeText(SearchActivity.this,R.string.network_wrong,Toast.LENGTH_SHORT).show();
@@ -245,10 +253,11 @@ public class SearchActivity extends AppCompatActivity {
                         Message msg = Message.obtain();
                         msg.what = GetMusic.RESPOND_SUCCESS;
                         msg.arg1 = NETWORK_REFRESH_TAG;
+                        msg.arg1 = REQUEST_MUSIC_LIST;
                         msg.obj = temp;
                         handler.sendMessage(msg);
                     }else {
-                        return;
+                        Toast.makeText(context, R.string.network_wrong, Toast.LENGTH_SHORT).show();
                     }
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -257,6 +266,31 @@ public class SearchActivity extends AppCompatActivity {
 
             }
         }).start();
+    }
+
+    private void setPlayerUrl(final String musicID, final String musicSource, final Context context){
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    String url = conn.getMusicPlayURL(musicID, musicSource);
+                    if (url != null){
+                        Message msg = Message.obtain();
+                        msg.what = GetMusic.RESPOND_SUCCESS;
+                        msg.arg1 = NETWORK_REFRESH_TAG;
+                        msg.arg1 = REQUEST_MUSIC_URL;
+                        msg.obj = url;
+                        handler.sendMessage(msg);
+                    }else {
+                        Toast.makeText(context, R.string.network_wrong, Toast.LENGTH_SHORT).show();
+                    }
+                } catch (Exception e) {
+                    Toast.makeText(context, R.string.network_wrong, Toast.LENGTH_SHORT).show();
+                };
+
+            }
+        }).start();
+
     }
 
     private int getCurrentType(){
@@ -333,7 +367,7 @@ public class SearchActivity extends AppCompatActivity {
                 @Override
                 public void onClick(View v) {
                     ((TextView) v.findViewById(R.id.index_list_item_music_name)).setTextColor(SearchActivity.this.getResources().getColor(R.color.textHint));
-                    globalApplication.setMusicUrl(music.getUrl_id());
+                    setPlayerUrl(music.getId(),music.getSource(), SearchActivity.this);
                 }
             });
             view.setOnLongClickListener(new View.OnLongClickListener() {

@@ -59,8 +59,8 @@ public class indexFragment extends Fragment {
     private int currentType = GetMusic.MUSIC_SOURCE_KUGOU;
     private String search_text = null;
 
-
-    private RefreshLayout indexList_container = null;
+    private LinearLayout index_container = null;
+    private RefreshLayout indexList_refresh = null;
     private ListView indexList_list = null;
     private ConstraintLayout loading = null;
 
@@ -100,16 +100,17 @@ public class indexFragment extends Fragment {
         kugou = view.findViewById(R.id.kugou);
         netease = view.findViewById(R.id.netease);
         tencent = view.findViewById(R.id.tencent);
-        indexList_container = view.findViewById(R.id.indexList_container);
+        index_container = view.findViewById(R.id.index_container);
+        indexList_refresh = view.findViewById(R.id.indexList_refresh);
         indexList_list = view.findViewById(R.id.indexList_list);
         loading = view.findViewById(R.id.loading);
 
         search_button = view.findViewById(R.id.search_button);
         search = view.findViewById(R.id.search);
 
-        indexList_container.setRefreshHeader(new MaterialHeader(getActivity()));
-        indexList_container.setRefreshFooter(new ClassicsFooter(getActivity()));
-        indexList_container.setOnRefreshListener(new OnRefreshListener() {
+        indexList_refresh.setRefreshHeader(new MaterialHeader(getActivity()));
+        indexList_refresh.setRefreshFooter(new ClassicsFooter(getActivity()));
+        indexList_refresh.setOnRefreshListener(new OnRefreshListener() {
             @Override
             public void onRefresh(RefreshLayout refreshlayout) {
                 //TODO: Index page refresh to do
@@ -117,7 +118,7 @@ public class indexFragment extends Fragment {
                 refreshlayout.finishRefresh(2000);
             }
         });
-        indexList_container.setOnLoadMoreListener(new OnLoadMoreListener() {
+        indexList_refresh.setOnLoadMoreListener(new OnLoadMoreListener() {
             @Override
             public void onLoadMore(RefreshLayout refreshlayout) {
                 //TODO: Index page load more to do
@@ -129,7 +130,7 @@ public class indexFragment extends Fragment {
         search_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ((View) indexList_container).setVisibility(View.INVISIBLE);
+                ((View) index_container).setVisibility(View.INVISIBLE);
                 loading.setVisibility(View.VISIBLE);
                 search_text = String.valueOf(search.getText());
                 refresh_data(search_text, currentType,getActivity());
@@ -142,7 +143,7 @@ public class indexFragment extends Fragment {
             public void onCheckedChanged(RadioGroup group, int checkedId) {
                 currentType = getCurrentType();
                 if (search_text != null){
-                    ((View) indexList_container).setVisibility(View.INVISIBLE);
+                    ((View) index_container).setVisibility(View.INVISIBLE);
                     loading.setVisibility(View.VISIBLE);
                     refresh_data(search_text, currentType,getActivity());
                 }
@@ -175,7 +176,7 @@ public class indexFragment extends Fragment {
         @Override
         public void handleMessage(@NonNull Message msg) {
             super.handleMessage(msg);
-            ((View) indexList_container).setVisibility(View.VISIBLE);
+            ((View) index_container).setVisibility(View.VISIBLE);
             loading.setVisibility(View.INVISIBLE);
             if (msg.what == GetMusic.RESPOND_SUCCESS){
                 if (msg.arg1 == NETWORK_REFRESH_TAG){

@@ -66,97 +66,105 @@
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <HorizontalScrollView
-        android:layout_width="match_parent"
-        android:layout_height="55dp"
-        android:background="@color/foreground">
-
-        <RadioGroup
-            android:id="@+id/source_group"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_gravity="center"
-            android:checkedButton="@id/kugou"
-            android:gravity="center"
-            android:orientation="horizontal"
-            android:paddingTop="5dp"
-            android:paddingBottom="10dp">
-
-            <RadioButton
-                android:id="@+id/kugou"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_marginLeft="5dp"
-                android:layout_marginRight="5dp"
-                android:background="@drawable/search_bar_btn_nav_check"
-                android:button="@null"
-                android:gravity="center"
-                android:padding="10dp"
-                android:text="@string/kugou"
-                android:textColor="@color/search_bar_nav_btn_text_check"
-                android:textSize="@dimen/small" />
-
-            <RadioButton
-                android:id="@+id/netease"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_marginLeft="5dp"
-                android:layout_marginRight="5dp"
-                android:background="@drawable/search_bar_btn_nav_check"
-                android:button="@null"
-                android:gravity="center"
-                android:padding="10dp"
-                android:text="@string/netease"
-                android:textColor="@color/search_bar_nav_btn_text_check"
-                android:textSize="@dimen/small" />
-
-            <RadioButton
-                android:id="@+id/tencent"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_marginLeft="5dp"
-                android:layout_marginRight="5dp"
-                android:background="@drawable/search_bar_btn_nav_check"
-                android:button="@null"
-                android:gravity="center"
-                android:padding="10dp"
-                android:text="@string/tencent"
-                android:textColor="@color/search_bar_nav_btn_text_check"
-                android:textSize="@dimen/small" />
-        </RadioGroup>
-    </HorizontalScrollView>
-
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <com.scwang.smart.refresh.layout.SmartRefreshLayout
-            android:id="@+id/indexList_container"
+        <LinearLayout
+            android:id="@+id/index_container"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            android:orientation="vertical">
 
-            <com.scwang.smart.refresh.header.MaterialHeader
-                android:id="@+id/indexList_header"
+            <HorizontalScrollView
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="55dp"
+                android:background="@color/foreground">
 
-            </com.scwang.smart.refresh.header.MaterialHeader>
+                <RadioGroup
+                    android:id="@+id/source_group"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center"
+                    android:checkedButton="@id/kugou"
+                    android:gravity="center"
+                    android:orientation="horizontal"
+                    android:paddingTop="5dp"
+                    android:paddingBottom="10dp">
 
-            <ListView
-                android:id="@+id/indexList_list"
+                    <RadioButton
+                        android:id="@+id/kugou"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_marginLeft="5dp"
+                        android:layout_marginRight="5dp"
+                        android:background="@drawable/search_bar_btn_nav_check"
+                        android:button="@null"
+                        android:gravity="center"
+                        android:padding="10dp"
+                        android:text="@string/kugou"
+                        android:textColor="@color/search_bar_nav_btn_text_check"
+                        android:textSize="@dimen/small" />
+
+                    <RadioButton
+                        android:id="@+id/netease"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_marginLeft="5dp"
+                        android:layout_marginRight="5dp"
+                        android:background="@drawable/search_bar_btn_nav_check"
+                        android:button="@null"
+                        android:gravity="center"
+                        android:padding="10dp"
+                        android:text="@string/netease"
+                        android:textColor="@color/search_bar_nav_btn_text_check"
+                        android:textSize="@dimen/small" />
+
+                    <RadioButton
+                        android:id="@+id/tencent"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_marginLeft="5dp"
+                        android:layout_marginRight="5dp"
+                        android:background="@drawable/search_bar_btn_nav_check"
+                        android:button="@null"
+                        android:gravity="center"
+                        android:padding="10dp"
+                        android:text="@string/tencent"
+                        android:textColor="@color/search_bar_nav_btn_text_check"
+                        android:textSize="@dimen/small" />
+                </RadioGroup>
+            </HorizontalScrollView>
+
+            <com.scwang.smart.refresh.layout.SmartRefreshLayout
+                android:id="@+id/indexList_refresh"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:background="@color/foreground"
-                android:divider="@color/transparent"
-                android:dividerHeight="@dimen/none"
-                android:overScrollMode="never"></ListView>
+                android:layout_height="match_parent">
 
-            <com.scwang.smart.refresh.footer.ClassicsFooter
-                android:id="@+id/indexList_footer"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
+                <com.scwang.smart.refresh.header.MaterialHeader
+                    android:id="@+id/indexList_header"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
 
-        </com.scwang.smart.refresh.layout.SmartRefreshLayout>
+                </com.scwang.smart.refresh.header.MaterialHeader>
+
+                <ListView
+                    android:id="@+id/indexList_list"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@color/foreground"
+                    android:divider="@color/transparent"
+                    android:dividerHeight="@dimen/none"
+                    android:overScrollMode="never"></ListView>
+
+                <com.scwang.smart.refresh.footer.ClassicsFooter
+                    android:id="@+id/indexList_footer"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+
+            </com.scwang.smart.refresh.layout.SmartRefreshLayout>
+
+        </LinearLayout>
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/loading"

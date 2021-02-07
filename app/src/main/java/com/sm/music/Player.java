@@ -8,6 +8,8 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 
+import com.sm.music.UIUtils.Util;
+
 public class Player extends AppCompatActivity {
 
     private ConstraintLayout playerTop = null;

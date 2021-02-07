@@ -1,4 +1,4 @@
-package com.sm.music;
+package com.sm.music.UIUtils;
 import android.app.Activity;
 import android.content.Context;
 import android.content.res.Resources;

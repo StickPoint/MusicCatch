@@ -1,4 +1,4 @@
-package com.sm.music;
+package com.sm.music.Bean;
 
 import java.util.Arrays;
 

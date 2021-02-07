@@ -12,7 +12,7 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 
 import com.sm.music.R;
-import com.sm.music.Util;
+import com.sm.music.UIUtils.Util;
 
 /**
  * A simple {@link Fragment} subclass.

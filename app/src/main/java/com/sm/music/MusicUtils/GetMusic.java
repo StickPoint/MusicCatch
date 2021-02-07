@@ -1,7 +1,7 @@
-package com.sm.music;
+package com.sm.music.MusicUtils;
 
 import com.alibaba.fastjson.JSONObject;
-import com.sm.music.Music;
+import com.sm.music.Bean.Music;
 import org.jsoup.Connection;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;

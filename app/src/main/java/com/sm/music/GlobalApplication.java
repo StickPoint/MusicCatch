@@ -6,6 +6,8 @@ import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.IBinder;
 
+import com.sm.music.Bean.Music;
+
 import java.util.List;
 
 public class GlobalApplication extends Application {

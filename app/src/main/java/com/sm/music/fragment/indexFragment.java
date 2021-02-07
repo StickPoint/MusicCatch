@@ -16,7 +16,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RadioButton;
@@ -32,9 +31,9 @@ import com.scwang.smart.refresh.layout.listener.OnRefreshListener;
 import com.sm.music.GetMusic;
 import com.sm.music.GlobalApplication;
 import com.sm.music.MainActivity;
-import com.sm.music.Music;
+import com.sm.music.Bean.Music;
 import com.sm.music.R;
-import com.sm.music.Util;
+import com.sm.music.UIUtils.Util;
 
 import java.util.List;
 

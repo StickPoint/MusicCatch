@@ -21,6 +21,8 @@ import android.widget.RadioButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.sm.music.Bean.Music;
+import com.sm.music.UIUtils.Util;
 import com.sm.music.fragment.downloadFragment;
 import com.sm.music.fragment.indexFragment;
 import com.sm.music.fragment.likeFragment;

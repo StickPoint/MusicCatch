@@ -28,7 +28,7 @@ import com.scwang.smart.refresh.header.MaterialHeader;
 import com.scwang.smart.refresh.layout.api.RefreshLayout;
 import com.scwang.smart.refresh.layout.listener.OnLoadMoreListener;
 import com.scwang.smart.refresh.layout.listener.OnRefreshListener;
-import com.sm.music.GetMusic;
+import com.sm.music.MusicUtils.GetMusic;
 import com.sm.music.GlobalApplication;
 import com.sm.music.MainActivity;
 import com.sm.music.Bean.Music;

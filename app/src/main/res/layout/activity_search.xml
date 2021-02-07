@@ -1,0 +1,367 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/searchPage"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".SearchActivity">
+
+
+    <LinearLayout
+        android:id="@+id/search_container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/searchBar"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:background="@color/foreground">
+
+            <EditText
+                android:id="@+id/search"
+                android:layout_width="0dp"
+                android:layout_height="36dp"
+                android:layout_marginStart="16dp"
+                android:layout_marginLeft="16dp"
+                android:layout_marginEnd="16dp"
+                android:layout_marginRight="16dp"
+                android:background="@drawable/search_radius"
+                android:ems="10"
+                android:hint="@string/search_hint"
+                android:inputType="text"
+                android:paddingLeft="40dp"
+                android:paddingRight="18dp"
+                android:textColor="@color/textBlack"
+                android:textColorHint="@color/textHint"
+                android:textSize="18sp"
+                android:visibility="visible"
+                app:layout_constraintBaseline_toBaselineOf="@+id/search_button"
+                app:layout_constraintEnd_toStartOf="@+id/search_button"
+                app:layout_constraintStart_toStartOf="parent" />
+
+            <ImageView
+                android:id="@+id/searchIcon"
+                android:layout_width="20sp"
+                android:layout_height="20sp"
+                android:layout_marginStart="10dp"
+                app:layout_constraintBottom_toBottomOf="@+id/search"
+                app:layout_constraintStart_toStartOf="@+id/search"
+                app:layout_constraintTop_toTopOf="@+id/search"
+                app:srcCompat="@mipmap/search" />
+
+            <TextView
+                android:id="@+id/search_button"
+                android:layout_width="wrap_content"
+                android:layout_height="36dp"
+                android:layout_marginEnd="16dp"
+                android:background="@drawable/search_button_radius"
+                android:gravity="center"
+                android:paddingLeft="18dp"
+                android:paddingRight="18dp"
+                android:text="@string/cancel"
+                android:textColor="@color/textWhite"
+                android:textSize="18sp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <HorizontalScrollView
+            android:layout_width="match_parent"
+            android:layout_height="55dp"
+            android:background="@color/foreground">
+
+            <RadioGroup
+                android:id="@+id/source_group"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_gravity="center"
+                android:checkedButton="@id/kugou"
+                android:gravity="center"
+                android:orientation="horizontal"
+                android:paddingTop="5dp"
+                android:paddingBottom="10dp">
+
+                <RadioButton
+                    android:id="@+id/kugou"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_marginLeft="5dp"
+                    android:layout_marginRight="5dp"
+                    android:background="@drawable/search_bar_btn_nav_check"
+                    android:button="@null"
+                    android:gravity="center"
+                    android:padding="10dp"
+                    android:text="@string/kugou"
+                    android:textColor="@color/search_bar_nav_btn_text_check"
+                    android:textSize="@dimen/small" />
+
+                <RadioButton
+                    android:id="@+id/netease"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_marginLeft="5dp"
+                    android:layout_marginRight="5dp"
+                    android:background="@drawable/search_bar_btn_nav_check"
+                    android:button="@null"
+                    android:gravity="center"
+                    android:padding="10dp"
+                    android:text="@string/netease"
+                    android:textColor="@color/search_bar_nav_btn_text_check"
+                    android:textSize="@dimen/small" />
+
+                <RadioButton
+                    android:id="@+id/tencent"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_marginLeft="5dp"
+                    android:layout_marginRight="5dp"
+                    android:background="@drawable/search_bar_btn_nav_check"
+                    android:button="@null"
+                    android:gravity="center"
+                    android:padding="10dp"
+                    android:text="@string/tencent"
+                    android:textColor="@color/search_bar_nav_btn_text_check"
+                    android:textSize="@dimen/small" />
+            </RadioGroup>
+        </HorizontalScrollView>
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/searchLoading"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@color/foreground"
+                android:visibility="invisible">
+
+                <pl.droidsonroids.gif.GifImageView
+                    android:id="@+id/searchLoading_icon"
+                    android:layout_width="80dp"
+                    android:layout_height="80dp"
+                    android:src="@drawable/loading"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <com.scwang.smart.refresh.layout.SmartRefreshLayout
+                android:id="@+id/indexList_refresh"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <com.scwang.smart.refresh.header.MaterialHeader
+                    android:id="@+id/indexList_header"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                </com.scwang.smart.refresh.header.MaterialHeader>
+
+                <ListView
+                    android:id="@+id/indexList_list"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@color/foreground"
+                    android:divider="@color/transparent"
+                    android:dividerHeight="@dimen/none"
+                    android:overScrollMode="never"></ListView>
+
+                <com.scwang.smart.refresh.footer.ClassicsFooter
+                    android:id="@+id/indexList_footer"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+
+            </com.scwang.smart.refresh.layout.SmartRefreshLayout>
+        </FrameLayout>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/searchPlayer"
+            android:layout_width="match_parent"
+            android:layout_height="80dp"
+            android:background="@color/foreground">
+
+
+            <ImageView
+                android:id="@+id/musicPic"
+                android:layout_width="80dp"
+                android:layout_height="80dp"
+                android:contentDescription="@string/picture"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:srcCompat="@mipmap/default_pic" />
+
+            <TextView
+                android:id="@+id/current_music_name"
+                android:layout_width="250dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginLeft="16dp"
+                android:layout_marginTop="16dp"
+                android:lines="1"
+                android:maxLines="1"
+                android:minLines="1"
+                android:singleLine="true"
+                android:text="@string/default_music_name"
+                android:textColor="@color/textBlack"
+                android:textSize="@dimen/normal"
+                app:layout_constraintStart_toEndOf="@+id/musicPic"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/current_music_time"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/default_music_time"
+                android:textColor="@color/textHint"
+                android:textSize="@dimen/small"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="@+id/current_music_name"
+                app:layout_constraintTop_toBottomOf="@+id/current_music_name" />
+
+            <ImageView
+                android:id="@+id/min_music_control"
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                android:layout_marginEnd="8dp"
+                android:layout_marginRight="8dp"
+                android:contentDescription="@string/play"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:srcCompat="@drawable/ic_play" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </LinearLayout>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/more"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/tipBg"
+        android:visibility="invisible">
+
+        <LinearLayout
+            android:id="@+id/more_container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="32dp"
+            android:layout_marginLeft="32dp"
+            android:layout_marginEnd="32dp"
+            android:layout_marginRight="32dp"
+            android:background="@drawable/tip_box_radius"
+            android:orientation="vertical"
+            android:paddingLeft="15dp"
+            android:paddingTop="15dp"
+            android:paddingRight="15dp"
+            android:paddingBottom="15dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <LinearLayout
+                android:id="@+id/more_top"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/indexMore_name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/musicName"
+                    android:textColor="@color/textBlack"
+                    android:textSize="@dimen/normal" />
+
+                <TextView
+                    android:id="@+id/indexMore_singer"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/singer"
+                    android:textColor="@color/textHint"
+                    android:textSize="@dimen/small" />
+
+                <TextView
+                    android:id="@+id/indexMore_album"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/album"
+                    android:textColor="@color/textHint"
+                    android:textSize="@dimen/small" />
+
+            </LinearLayout>
+
+            <View
+                android:id="@+id/divider"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="10dp"
+                android:background="?android:attr/listDivider" />
+
+            <LinearLayout
+                android:id="@+id/more_choose"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <CheckBox
+                    android:id="@+id/forLike"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:button="@null"
+                    android:drawableStart="@drawable/more_like_checked"
+                    android:paddingTop="10dp"
+                    android:paddingBottom="10dp"
+                    android:text="@string/add_like"
+                    android:textColor="@color/textBlack"
+                    android:textSize="@dimen/normal" />
+
+                <TextView
+                    android:id="@+id/ToDown"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:background="@color/foreground"
+                    android:drawableStart="@drawable/ic_local"
+                    android:fontFamily="sans-serif"
+                    android:gravity="left|center_vertical"
+                    android:paddingTop="10dp"
+                    android:paddingBottom="10dp"
+                    android:text="@string/download_this_music"
+                    android:textColor="@color/textBlack"
+                    android:textSize="@dimen/normal" />
+
+                <Button
+                    android:id="@+id/ToShare"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:background="@color/foreground"
+                    android:drawableStart="@drawable/ic_share"
+                    android:fontFamily="sans-serif"
+                    android:gravity="left|center_vertical"
+                    android:paddingTop="10dp"
+                    android:paddingBottom="10dp"
+                    android:text="@string/share"
+                    android:textColor="@color/textBlack"
+                    android:textSize="@dimen/normal" />
+            </LinearLayout>
+
+
+        </LinearLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+</FrameLayout>

@@ -1,7 +1,9 @@
 package com.sm.music.fragment;
 
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -11,9 +13,12 @@ import androidx.fragment.app.Fragment;
 
 import android.os.Handler;
 import android.os.Message;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.BaseAdapter;
 import android.widget.EditText;
 import android.widget.LinearLayout;
@@ -33,6 +38,7 @@ import com.sm.music.GlobalApplication;
 import com.sm.music.MainActivity;
 import com.sm.music.Bean.Music;
 import com.sm.music.R;
+import com.sm.music.SearchActivity;
 import com.sm.music.UIUtils.Util;
 
 import java.util.List;
@@ -45,40 +51,22 @@ public class indexFragment extends Fragment {
 
     final static private int SHOW_SONG_LIST = 301;
 
-    final static private int SHOW_MUSIC_LIST = 302;
 
     final static private int SHOW_LOADING = 303;
-
-    final static private int SEARCH_SHOW_LOADING = 304;
 
     private GlobalApplication globalApplication = null;
 
     private ConstraintLayout top = null;
 
-    private RadioGroup source_group = null;
-
-    private RadioButton kugou = null;
-    private RadioButton netease = null;
-    private RadioButton tencent = null;
-
-    private TextView search_button = null;
-    private EditText search = null;
-
-    private int currentType = GetMusic.MUSIC_SOURCE_KUGOU;
-    private String search_text = null;
-
-    private LinearLayout index_container = null;
     private ListView songList_container = null;
 
     private RefreshLayout indexSongList_refresh = null;
 
-    private RefreshLayout indexList_refresh = null;
-    private ListView indexList_list = null;
     private ConstraintLayout loading = null;
-    private ConstraintLayout searchLoading = null;
 
     private GetMusic conn = null;
 
+    private TextView searchPageIn = null;
 
     public indexFragment() {
         conn = new GetMusic();
@@ -109,37 +97,16 @@ public class indexFragment extends Fragment {
 
         globalApplication = (GlobalApplication) getActivity().getApplication();
 
-        source_group = view.findViewById(R.id.source_group);
-        kugou = view.findViewById(R.id.kugou);
-        netease = view.findViewById(R.id.netease);
-        tencent = view.findViewById(R.id.tencent);
-        index_container = view.findViewById(R.id.index_container);
+
         songList_container = view.findViewById(R.id.songList_container);
-        indexList_refresh = view.findViewById(R.id.indexList_refresh);
-        indexList_list = view.findViewById(R.id.indexList_list);
         loading = view.findViewById(R.id.loading);
-        searchLoading = view.findViewById(R.id.searchLoading);
         indexSongList_refresh = view.findViewById(R.id.indexSongList_refresh);
 
-        search_button = view.findViewById(R.id.search_button);
-        search = view.findViewById(R.id.search);
-
-        indexList_refresh.setRefreshHeader(new MaterialHeader(getActivity()));
-        indexList_refresh.setRefreshFooter(new ClassicsFooter(getActivity()));
-        indexList_refresh.setOnRefreshListener(new OnRefreshListener() {
+        searchPageIn = view.findViewById(R.id.searchPageIn);
+        searchPageIn.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onRefresh(RefreshLayout refreshlayout) {
-                //TODO: Index page refresh to do
-                refresh_music_list_data(search_text, currentType,getActivity());
-                refreshlayout.finishRefresh(2000);
-            }
-        });
-        indexList_refresh.setOnLoadMoreListener(new OnLoadMoreListener() {
-            @Override
-            public void onLoadMore(RefreshLayout refreshlayout) {
-                //TODO: Index page load more to do
-
-                refreshlayout.finishLoadMore(2000);
+            public void onClick(View v) {
+                startActivity(new Intent(getActivity(), SearchActivity.class));
             }
         });
 
@@ -161,189 +128,29 @@ public class indexFragment extends Fragment {
             }
         });
 
-        search_button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                showContainer(SEARCH_SHOW_LOADING);
-                search_text = String.valueOf(search.getText());
-                refresh_music_list_data(search_text, currentType,getActivity());
-            }
-        });
-
-        currentType = getCurrentType();
-        source_group.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(RadioGroup group, int checkedId) {
-                currentType = getCurrentType();
-                if (search_text != null){
-                    showContainer(SEARCH_SHOW_LOADING);
-                    refresh_music_list_data(search_text, currentType,getActivity());
-                }
-            }
-        });
-
-        if (!globalApplication.isMusicListEmpty()){
-            indexList_list.setAdapter(new indexListAdapter());
-        }
 
 
         return view;
     }
 
-    private int getCurrentType(){
-        int currentId = source_group.getCheckedRadioButtonId();
-        if (currentId == kugou.getId()){
-            return GetMusic.MUSIC_SOURCE_KUGOU;
-        }else if (currentId == netease.getId()){
-            return GetMusic.MUSIC_SOURCE_NETEASE;
-        }else if (currentId == tencent.getId()){
-            return GetMusic.MUSIC_SOURCE_TENCENT;
-        }else {
-            return GetMusic.MUSIC_SOURCE_KUGOU;
-        }
-    }
-
-
-    public Handler handler = new Handler(){
-        @Override
-        public void handleMessage(@NonNull Message msg) {
-            super.handleMessage(msg);
-            showContainer(SHOW_MUSIC_LIST);
-            if (msg.what == GetMusic.RESPOND_SUCCESS){
-                if (msg.arg1 == NETWORK_REFRESH_TAG){
-                    globalApplication.setMusicList((List<Music>) msg.obj);
-                    indexList_list.setAdapter(new indexListAdapter());
-                }else if (msg.arg1 == NETWORK_ONLOAD_TAG){
-                    globalApplication.addMusicList((List<Music>) msg.obj);
-                    ((indexListAdapter) indexList_list.getAdapter()).notifyDataSetChanged();
-                }
-            }else{
-                Toast.makeText(getActivity(),R.string.network_wrong,Toast.LENGTH_SHORT).show();
-            }
-        }
-    };
-
-    private void refresh_music_list_data(final String text, final int type, final Context context){
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                String url = conn.getSearchRequsetURL(text, type);
-                String json_string = null;
-                try {
-                    json_string = conn.getJSON(url);
-                    List temp = conn.getMusicList(json_string);
-                    if (temp != null){
-                        Message msg = Message.obtain();
-                        msg.what = GetMusic.RESPOND_SUCCESS;
-                        msg.arg1 = NETWORK_REFRESH_TAG;
-                        msg.obj = temp;
-                        handler.sendMessage(msg);
-                    }else {
-                        return;
-                    }
-                } catch (Exception e) {
-                    e.printStackTrace();
-                    Toast.makeText(context, R.string.network_wrong, Toast.LENGTH_SHORT).show();
-                }
-
-            }
-        }).start();
-    }
 
     private void showContainer(int container){
         switch (container){
             case SHOW_SONG_LIST:
                 ((View) indexSongList_refresh).setVisibility(View.VISIBLE);
-
                 loading.setVisibility(View.INVISIBLE);
-                index_container.setVisibility(View.INVISIBLE);
-                break;
-            case SHOW_MUSIC_LIST:
-                index_container.setVisibility(View.VISIBLE);
-                ((View) indexList_refresh).setVisibility(View.VISIBLE);
-
-                ((View) indexSongList_refresh).setVisibility(View.INVISIBLE);
-                loading.setVisibility(View.INVISIBLE);
-                searchLoading.setVisibility(View.INVISIBLE);
                 break;
             case SHOW_LOADING:
                 loading.setVisibility(View.VISIBLE);
 
                 ((View) indexSongList_refresh).setVisibility(View.INVISIBLE);
-                index_container.setVisibility(View.INVISIBLE);
-                break;
-            case SEARCH_SHOW_LOADING:
-                index_container.setVisibility(View.VISIBLE);
-                searchLoading.setVisibility(View.VISIBLE);
-
-                ((View) indexSongList_refresh).setVisibility(View.INVISIBLE);
-                loading.setVisibility(View.INVISIBLE);
-                ((View) indexList_refresh).setVisibility(View.INVISIBLE);
                 break;
             default:
                 ((View) indexSongList_refresh).setVisibility(View.VISIBLE);
-
                 loading.setVisibility(View.INVISIBLE);
-                index_container.setVisibility(View.INVISIBLE);
                 break;
         }
 
-    }
-
-    class indexListAdapter extends BaseAdapter{
-
-        @Override
-        public int getCount() {
-            return globalApplication.getMusicList().size();
-        }
-
-        @Override
-        public Object getItem(int position) {
-            return null;
-        }
-
-        @Override
-        public long getItemId(int position) {
-            return 0;
-        }
-
-        @Override
-        public View getView(final int position, View convertView, ViewGroup parent) {
-            View view = View.inflate(getActivity(), R.layout.index_list_ltem_layout, null);
-            final Music music = globalApplication.getMusicList().get(position);
-            ((TextView) view.findViewById(R.id.index_list_item_music_name)).setText(music.getName());
-            String temp = "";
-            for (int i = 0; i < music.getArtist().length; i++){
-                if (i == 0){
-                    temp += music.getArtist()[i];
-                }else {
-                    temp += "/" + music.getArtist()[i];
-                }
-            }
-            ((TextView) view.findViewById(R.id.index_list_item_music_singer)).setText(temp);
-            ((TextView) view.findViewById(R.id.index_list_item_music_album)).setText(music.getAlbum());
-            view.findViewById(R.id.index_list_item_music_more).setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    ((MainActivity) getActivity()).showMore(music);
-                }
-            });
-            view.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    ((TextView) v.findViewById(R.id.index_list_item_music_name)).setTextColor(getActivity().getResources().getColor(R.color.textHint));
-                    globalApplication.setMusicUrl(music.getUrl_id());
-                }
-            });
-            view.setOnLongClickListener(new View.OnLongClickListener() {
-                @Override
-                public boolean onLongClick(View v) {
-                    ((MainActivity) getActivity()).showMore(music);
-                    return true;
-                }
-            });
-            return view;
-        }
     }
 
 }

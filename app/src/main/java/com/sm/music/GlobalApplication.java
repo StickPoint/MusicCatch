@@ -56,6 +56,10 @@ public class GlobalApplication extends Application {
         return binder.isPlaying();
     }
 
+    public void setMusicUrl(String url){
+        binder.setMusicUrl(url);
+    }
+
 
 
     private class MusicPlayerConnection implements ServiceConnection {

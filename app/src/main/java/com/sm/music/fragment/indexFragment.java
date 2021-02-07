@@ -243,13 +243,19 @@ public class indexFragment extends Fragment {
             ((TextView) view.findViewById(R.id.index_list_item_music_name)).setText(music.getName());
             ((TextView) view.findViewById(R.id.index_list_item_music_singer)).setText(music.getArtist()[0]);
             ((TextView) view.findViewById(R.id.index_list_item_music_adlbm)).setText(music.getAlbum());
-            ((ImageView) view.findViewById(R.id.index_list_item_music_more)).setOnClickListener(new View.OnClickListener() {
+            view.findViewById(R.id.index_list_item_music_more).setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     ((MainActivity) getActivity()).showMore(music);
                 }
             });
-
+            view.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    ((TextView) v.findViewById(R.id.index_list_item_music_name)).setTextColor(getActivity().getResources().getColor(R.color.textHint));
+                    globalApplication.setMusicUrl(music.getUrl_id());
+                }
+            });
             return view;
         }
     }

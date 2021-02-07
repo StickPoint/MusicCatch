@@ -19,13 +19,19 @@ public class MusicPlayer extends Service {
 
     @Override
     public IBinder onBind(Intent intent) {
-        return new Binder();
+        return new musicBinder();
     }
 
     @Override
     public void onCreate() {
         super.onCreate();
         player = new MediaPlayer();
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        player.release();
     }
 
     public class musicBinder extends Binder {

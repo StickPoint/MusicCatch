@@ -26,4 +26,6 @@
     <string name="download_this_music">下载此音乐</string>
     <string name="add_like">添加到喜欢</string>
     <string name="share">分享</string>
+    <string name="setting">设置</string>
+    <string name="network_wrong">无法连接到服务器，请检查您的网络设置</string>
 </resources>

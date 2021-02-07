@@ -25,6 +25,8 @@
     <string name="download_this_music">Download this music</string>
     <string name="add_like">Add to like</string>
     <string name="share">Share</string>
+    <string name="setting">Setting</string>
+    <string name="network_wrong">Unable to connect to the server, please check your network Settings</string>
 
     <!-- TODO: Remove or change this placeholder text -->
 

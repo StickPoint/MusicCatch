@@ -2,7 +2,6 @@ package com.sm.music;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentPagerAdapter;
 import androidx.viewpager.widget.PagerAdapter;
@@ -10,7 +9,6 @@ import androidx.viewpager.widget.ViewPager;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
-import android.content.PeriodicSync;
 import android.os.Bundle;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,7 +18,6 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
-import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -33,16 +30,14 @@ import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
 
+    //globe class
+    GlobalApplication globalApplication = null;
     //main page
     private FrameLayout mainPage = null;
     //bottom nav
     private ViewPager nav = null;
     //music player min at nav
     private ImageView min_music_control = null;
-    //This is a tag which music play or stop
-    public Boolean isPlaying = false;
-    //This is current music id
-    public String currentMusicId = "0";
     //nav Array List
     private ArrayList<View> nav_list = new ArrayList();
     //nav bar layout view
@@ -74,6 +69,9 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         final int NavigationBarHeight = Util.getNavigationBarHeight(MainActivity.this);
         final Boolean HasNavigationBar = !Util.checkDeviceHasNavigationBar(this);
+
+        globalApplication = (GlobalApplication) getApplication();
+
         mainPage = findViewById(R.id.mainPage);
         nav = findViewById(R.id.nav);
 
@@ -98,7 +96,7 @@ public class MainActivity extends AppCompatActivity {
         musicPlayer_layout.findViewById(R.id.mainPlayer).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (!currentMusicId.equals("0")){
+                if (globalApplication.getCurrentMusicId() != null){
                     startActivity(new Intent(MainActivity.this, Player.class));
                     //TODO: To shart music player and post some arguments
 
@@ -111,17 +109,15 @@ public class MainActivity extends AppCompatActivity {
         min_music_control.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (!currentMusicId.equals("0")){
-                    if (isPlaying){
+                if (globalApplication.getCurrentMusicId() != null){
+                    if (globalApplication.isPlaying()){
                         min_music_control.setImageResource(R.drawable.ic_play);
                         //TODO: Music to stop
 
-                        isPlaying = false;
                     }else {
                         min_music_control.setImageResource(R.drawable.ic_stop);
                         //TODO: Music to play
 
-                        isPlaying = true;
                     }
                 }else {
                     //No music to play

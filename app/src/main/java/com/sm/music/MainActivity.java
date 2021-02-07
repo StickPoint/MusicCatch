@@ -11,6 +11,7 @@ import android.annotation.SuppressLint;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
 import android.view.ViewGroup;
@@ -71,6 +72,17 @@ public class MainActivity extends AppCompatActivity {
         final Boolean HasNavigationBar = !Util.checkDeviceHasNavigationBar(this);
 
         globalApplication = (GlobalApplication) getApplication();
+
+
+        Intent musicIntent = new Intent(this, MusicPlayer.class);
+        GlobalApplication.MusicPlayerConnection musicPlayerConnection = new GlobalApplication.MusicPlayerConnection();
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            startForegroundService(musicIntent);
+        } else {
+            startService(musicIntent);
+        }
+        bindService(musicIntent, musicPlayerConnection, BIND_AUTO_CREATE);
+
 
         mainPage = findViewById(R.id.mainPage);
         nav = findViewById(R.id.nav);

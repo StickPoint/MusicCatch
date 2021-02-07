@@ -1,6 +1,10 @@
 package com.sm.music;
 
+import android.app.Notification;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
 import android.app.Service;
+import android.content.Context;
 import android.content.Intent;
 import android.media.MediaPlayer;
 import android.os.Binder;
@@ -11,8 +15,6 @@ import java.io.IOException;
 public class MusicPlayer extends Service {
 
     private MediaPlayer player = null;
-
-    private String url = null;
 
     public MusicPlayer() {
     }
@@ -25,6 +27,16 @@ public class MusicPlayer extends Service {
     @Override
     public void onCreate() {
         super.onCreate();
+
+
+        NotificationChannel channel = null;
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+            channel = new NotificationChannel("1","1", NotificationManager.IMPORTANCE_HIGH);
+            NotificationManager manager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+            manager.createNotificationChannel(channel);
+            Notification notification = new Notification.Builder(getApplicationContext(),"1").build();
+            startForeground(1, notification);
+        }
         player = new MediaPlayer();
     }
 
@@ -63,6 +75,7 @@ public class MusicPlayer extends Service {
         public void setMusicUrl(String url){
             if (player != null){
                 try {
+                    player.reset();
                     player.setDataSource(url);
                     player.prepareAsync();
                     player.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {

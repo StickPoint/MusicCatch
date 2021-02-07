@@ -7,11 +7,13 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
+import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
@@ -35,6 +37,7 @@ import com.sm.music.MusicUtils.GetMusic;
 import com.sm.music.UIUtils.Util;
 import com.sm.music.fragment.indexFragment;
 
+import java.io.IOException;
 import java.util.List;
 
 public class SearchActivity extends AppCompatActivity {
@@ -224,7 +227,7 @@ public class SearchActivity extends AppCompatActivity {
             showContainer(SHOW_SEARCH_MUSIC_LIST);
             if (msg.what == GetMusic.RESPOND_SUCCESS){
                 if (msg.arg2 == REQUEST_MUSIC_URL){
-
+                    globalApplication.setMusicUrl((String) msg.obj);
                 }else if (msg.arg2 == REQUEST_MUSIC_LIST){
                     if (msg.arg1 == NETWORK_REFRESH_TAG){
                         searchList = (List<Music>) msg.obj;
@@ -253,7 +256,7 @@ public class SearchActivity extends AppCompatActivity {
                         Message msg = Message.obtain();
                         msg.what = GetMusic.RESPOND_SUCCESS;
                         msg.arg1 = NETWORK_REFRESH_TAG;
-                        msg.arg1 = REQUEST_MUSIC_LIST;
+                        msg.arg2 = REQUEST_MUSIC_LIST;
                         msg.obj = temp;
                         handler.sendMessage(msg);
                     }else {
@@ -261,7 +264,6 @@ public class SearchActivity extends AppCompatActivity {
                     }
                 } catch (Exception e) {
                     e.printStackTrace();
-                    Toast.makeText(context, R.string.network_wrong, Toast.LENGTH_SHORT).show();
                 }
 
             }
@@ -277,15 +279,14 @@ public class SearchActivity extends AppCompatActivity {
                     if (url != null){
                         Message msg = Message.obtain();
                         msg.what = GetMusic.RESPOND_SUCCESS;
-                        msg.arg1 = NETWORK_REFRESH_TAG;
-                        msg.arg1 = REQUEST_MUSIC_URL;
+                        msg.arg2 = REQUEST_MUSIC_URL;
                         msg.obj = url;
                         handler.sendMessage(msg);
                     }else {
                         Toast.makeText(context, R.string.network_wrong, Toast.LENGTH_SHORT).show();
                     }
                 } catch (Exception e) {
-                    Toast.makeText(context, R.string.network_wrong, Toast.LENGTH_SHORT).show();
+                    e.printStackTrace();
                 };
 
             }

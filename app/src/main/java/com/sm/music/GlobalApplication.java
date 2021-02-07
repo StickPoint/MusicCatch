@@ -4,6 +4,7 @@ import android.app.Application;
 import android.content.ComponentName;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.os.Build;
 import android.os.IBinder;
 
 import com.sm.music.Bean.Music;
@@ -18,15 +19,11 @@ public class GlobalApplication extends Application {
     //index search music list
     private List<Music> musicList = null;
     //music control
-    MusicPlayer.musicBinder binder = null;
+    static MusicPlayer.musicBinder binder = null;
 
     @Override
     public void onCreate() {
         super.onCreate();
-        Intent musicIntent = new Intent(this, MusicPlayer.class);
-        MusicPlayerConnection musicPlayerConnection = new MusicPlayerConnection();
-        bindService(musicIntent, musicPlayerConnection, BIND_AUTO_CREATE);
-        startService(musicIntent);
     }
 
 
@@ -64,7 +61,7 @@ public class GlobalApplication extends Application {
 
 
 
-    private class MusicPlayerConnection implements ServiceConnection {
+    public static class MusicPlayerConnection implements ServiceConnection {
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
             binder = (MusicPlayer.musicBinder) service;

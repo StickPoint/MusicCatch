@@ -1,4 +1,4 @@
-package com.sm.music;
+package com.sm.music.Activity;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -8,8 +8,6 @@ import androidx.viewpager.widget.PagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 
 import android.annotation.SuppressLint;
-import android.content.Intent;
-import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,8 +15,9 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
-import android.widget.Toast;
 
+import com.sm.music.GlobalApplication;
+import com.sm.music.R;
 import com.sm.music.UIUtils.Util;
 import com.sm.music.Fragment.downloadFragment;
 import com.sm.music.Fragment.indexFragment;
@@ -45,6 +44,8 @@ public class MainActivity extends AppCompatActivity {
     private ViewPager mainWrapper = null;
     //child page view
     private static ArrayList<Fragment> FragmentList = new ArrayList<Fragment>();
+    //tag
+    private static final int ACTICITY_TAG = 410;
 
     //add child page view to FragmentList
     static {
@@ -65,17 +66,6 @@ public class MainActivity extends AppCompatActivity {
 
         globalApplication = (GlobalApplication) getApplication();
 
-
-        Intent musicIntent = new Intent(this, MusicPlayer.class);
-        GlobalApplication.MusicPlayerConnection musicPlayerConnection = new GlobalApplication.MusicPlayerConnection();
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            startForegroundService(musicIntent);
-        } else {
-            startService(musicIntent);
-        }
-        bindService(musicIntent, musicPlayerConnection, BIND_AUTO_CREATE);
-
-
         mainPage = findViewById(R.id.mainPage);
         nav = findViewById(R.id.nav);
 
@@ -93,7 +83,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
         nav_list.add(0,navBar_layout);
-        nav_list.add(1, globalApplication.getMinMusicPlayer(MainActivity.this));
+        nav_list.add(1, globalApplication.createMinMusicPlayer(MainActivity.this, ACTICITY_TAG));
         nav.setAdapter(new PagerAdapter() {
             @Override
             public int getCount() {
@@ -189,4 +179,9 @@ public class MainActivity extends AppCompatActivity {
         //TODO: Other code
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        globalApplication.destroyMinMusicPlayer(ACTICITY_TAG);
+    }
 }

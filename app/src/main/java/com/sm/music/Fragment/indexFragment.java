@@ -23,7 +23,7 @@ import com.scwang.smart.refresh.layout.listener.OnRefreshListener;
 import com.sm.music.MusicUtils.GetMusic;
 import com.sm.music.GlobalApplication;
 import com.sm.music.R;
-import com.sm.music.SearchActivity;
+import com.sm.music.Activity.SearchActivity;
 import com.sm.music.UIUtils.Util;
 
 public class indexFragment extends Fragment {

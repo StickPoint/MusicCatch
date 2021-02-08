@@ -449,6 +449,18 @@ public class GetMusic {
 		return  recMusicListByPages;
 	}
 
+	/**
+	 * 分页查询获得MusicList
+	 * 传入的参数一共有三个，
+	 * 搜索的歌曲名字
+	 * 搜索的歌曲的来源
+	 * 搜索的歌曲的页码
+	 * @param musicName
+	 * @param musicSource
+	 * @param pageIndex
+	 * @return
+	 * @throws Exception
+	 */
 	public List<Music> getMusicPlayURLByPages(String musicName,String musicSource,int pageIndex) throws Exception {
 		String reqMusicPlayUrlByPagesUrl = REQUEST_URL_SEARCH + "&name="+musicName+"&source="+musicSource+"&count=20"+"&pages="+pageIndex;
 		String json = getJSON(reqMusicPlayUrlByPagesUrl);
@@ -457,7 +469,7 @@ public class GetMusic {
 	}
 	public static void main(String[] args) throws Exception {
 		GetMusic getMusic =new GetMusic();
-		System.out.println(getMusic.getMusicPlayURLByPages("我不对","kugou",1));
+		System.out.println(getMusic.getMusicPlayURLByPages("我不对","kugou",2));
 //		String json = getMusic.getJSON("https://api.zhuolin.wang/api.php?types=search&count=20&source=tencent&pages=1&name=%E6%88%91%E4%B8%8D%E5%AF%B9");
 //		List<Music> musicList = getMusic.getMusicList(json);
 //		System.out.println(musicList);

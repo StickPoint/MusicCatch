@@ -3,6 +3,7 @@ package com.sm.music;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 
@@ -62,6 +63,7 @@ public class SearchActivity extends AppCompatActivity {
     //more windows is open
     private Boolean isMoreOpen = false;
     private ArrayList<search_pager> search_pager = new ArrayList<>();
+    private FragmentManager search_pager_manager = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -106,7 +108,10 @@ public class SearchActivity extends AppCompatActivity {
                 }
             }
         });
-        search_wapper.setAdapter(new FragmentPagerAdapter(getSupportFragmentManager()) {
+
+        search_pager_manager = getSupportFragmentManager();
+
+        search_wapper.setAdapter(new FragmentPagerAdapter(search_pager_manager) {
             @Override
             public int getCount() {
                 return search_pager.size();
@@ -116,12 +121,15 @@ public class SearchActivity extends AppCompatActivity {
                 return search_pager.get(position);
             }
         });
+
+
         search_wapper.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
             }
             @Override
             public void onPageSelected(int position) {
+                search_pager.get(search_wapper.getCurrentItem()).search_music_list_data(search_text);
                 switch (position){
                     case 0:
                         Util.setActivityBarAlpha(SearchActivity.this, false);
@@ -174,6 +182,7 @@ public class SearchActivity extends AppCompatActivity {
                             String temp = String.valueOf(search.getText());
                             if (temp != null && !temp.replace(" ","").equals("")){
                                 search_text = temp;
+                                Log.e("log::e", String.valueOf(search_pager_manager.getFragments().size()));;
                                 search_pager.get(search_wapper.getCurrentItem()).search_music_list_data(search_text);
                             }else {
                                 Toast.makeText(SearchActivity.this, R.string.no_search_input, Toast.LENGTH_SHORT).show();;
@@ -206,8 +215,6 @@ public class SearchActivity extends AppCompatActivity {
                             search_wapper.setCurrentItem(0,true);
                             break;
                     }
-                    search_pager.get(search_wapper.getCurrentItem()).search_music_list_data(search_text);
-                    Log.e("aaa", String.valueOf(search_wapper.getCurrentItem()));
                 }
             }
         });

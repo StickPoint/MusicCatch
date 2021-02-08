@@ -10,6 +10,7 @@ import androidx.fragment.app.Fragment;
 
 import android.os.Handler;
 import android.os.Message;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -79,6 +80,7 @@ public class search_pager extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.fragment_search_pager, container, false);
+        globalApplication = (GlobalApplication) getActivity().getApplication();
         searchList_refresh = view.findViewById(R.id.searchList_refresh);
         searchList_list = view.findViewById(R.id.searchList_list);
         searchLoading = view.findViewById(R.id.searchLoading);
@@ -215,8 +217,8 @@ public class search_pager extends Fragment {
                     String url = conn.getMusicPlayURL(musicID, musicSource);
                     Message msg = Message.obtain();
                     if (url != null){
-                        msg.what = GetMusic.RESPOND_SUCCESS;
-                        msg.arg2 = REQUEST_MUSIC_URL;
+                        msg.what = REQUEST_MUSIC_URL;
+                        msg.arg1 = GetMusic.RESPOND_SUCCESS;
                         msg.obj = url;
                     }else {
                         msg.what = GetMusic.RESPOND_TIMEOUT;

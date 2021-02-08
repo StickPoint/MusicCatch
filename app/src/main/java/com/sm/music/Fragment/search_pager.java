@@ -42,7 +42,6 @@ public class search_pager extends Fragment {
 
     final static private int NETWORK_ONLOAD_TAG = 201;
 
-    final static private int REQUEST_MUSIC_URL = 203;
 
     final static private int REQUEST_MUSIC_LIST = 204;
 
@@ -138,10 +137,6 @@ public class search_pager extends Fragment {
                         ((searchListAdapter) searchList_list.getAdapter()).notifyDataSetChanged();
                     }
 
-                }else if (msg.what == REQUEST_MUSIC_URL){
-
-                    globalApplication.setMusicUrl((String) msg.obj);
-
                 }
 
             }else{
@@ -209,28 +204,6 @@ public class search_pager extends Fragment {
         }
     }
 
-    private void setPlayerUrl(final String musicID, final String musicSource, final Context context){
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    String url = conn.getMusicPlayURL(musicID, musicSource);
-                    Message msg = Message.obtain();
-                    if (url != null){
-                        msg.what = REQUEST_MUSIC_URL;
-                        msg.arg1 = GetMusic.RESPOND_SUCCESS;
-                        msg.obj = url;
-                    }else {
-                        msg.what = GetMusic.RESPOND_TIMEOUT;
-                    }
-                    handler.sendMessage(msg);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                };
-            }
-        }).start();
-    }
-
     class searchListAdapter extends BaseAdapter {
 
         @Override
@@ -273,7 +246,7 @@ public class search_pager extends Fragment {
                 @Override
                 public void onClick(View v) {
                     ((TextView) v.findViewById(R.id.index_list_item_music_name)).setTextColor(getActivity().getResources().getColor(R.color.textHint));
-                    setPlayerUrl(music.getId(),music.getSource(), getActivity());
+                    globalApplication.setPlayMusic(music);
                 }
             });
             view.setOnLongClickListener(new View.OnLongClickListener() {

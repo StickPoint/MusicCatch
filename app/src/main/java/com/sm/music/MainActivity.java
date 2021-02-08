@@ -41,8 +41,6 @@ public class MainActivity extends AppCompatActivity {
     private ArrayList<View> nav_list = new ArrayList();
     //nav bar layout view
     private View navBar_layout = null;
-    //music player bar layout view
-    private View musicPlayer_layout = null;
     //main content
     private ViewPager mainWrapper = null;
     //child page view
@@ -82,9 +80,6 @@ public class MainActivity extends AppCompatActivity {
         nav = findViewById(R.id.nav);
 
         navBar_layout = View.inflate(this, R.layout.nav_bar,null);
-        musicPlayer_layout = View.inflate(this, R.layout.music_player,null);
-
-        min_music_control = musicPlayer_layout.findViewById(R.id.min_music_control);
 
         nav.post(new Runnable() {
             @Override
@@ -97,40 +92,8 @@ public class MainActivity extends AppCompatActivity {
             }
             }
         });
-        musicPlayer_layout.findViewById(R.id.mainPlayer).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (globalApplication.getCurrentMusicId() != null){
-                    startActivity(new Intent(MainActivity.this, Player.class));
-                    //TODO: To shart music player and post some arguments
-
-                }else {
-                    //No music to play
-                    Toast.makeText(MainActivity.this, R.string.no_music_to_play, Toast.LENGTH_SHORT).show();
-                }
-            }
-        });
-        min_music_control.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (globalApplication.getCurrentMusicId() != null){
-                    if (globalApplication.isPlaying()){
-                        min_music_control.setImageResource(R.drawable.ic_play);
-                        //TODO: Music to stop
-
-                    }else {
-                        min_music_control.setImageResource(R.drawable.ic_stop);
-                        //TODO: Music to play
-
-                    }
-                }else {
-                    //No music to play
-                    Toast.makeText(MainActivity.this, R.string.no_music_to_play, Toast.LENGTH_SHORT).show();
-                }
-            }
-        });
         nav_list.add(0,navBar_layout);
-        nav_list.add(1, musicPlayer_layout);
+        nav_list.add(1, globalApplication.getMinMusicPlayer(MainActivity.this));
         nav.setAdapter(new PagerAdapter() {
             @Override
             public int getCount() {

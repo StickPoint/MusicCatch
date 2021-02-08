@@ -9,6 +9,7 @@ import androidx.viewpager.widget.ViewPager;
 
 import android.content.ClipData;
 import android.content.ClipboardManager;
+import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -17,6 +18,7 @@ import android.view.View;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
@@ -47,7 +49,7 @@ public class SearchActivity extends AppCompatActivity {
     private RadioButton tencent = null;
 
     private ConstraintLayout searchBar = null;
-    private ConstraintLayout searchPlayer = null;
+    private FrameLayout searchPlayer = null;
 
     private TextView search_button = null;
     private EditText search = null;
@@ -109,7 +111,12 @@ public class SearchActivity extends AppCompatActivity {
             }
         });
 
+
         search_pager_manager = getSupportFragmentManager();
+
+        searchPlayer.addView(globalApplication.getMinMusicPlayer(SearchActivity.this));
+
+
 
         search_wapper.setAdapter(new FragmentPagerAdapter(search_pager_manager) {
             @Override
@@ -218,6 +225,7 @@ public class SearchActivity extends AppCompatActivity {
                 }
             }
         });
+
     }
 
     public String getSearchText(){

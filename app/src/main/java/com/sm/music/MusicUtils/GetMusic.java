@@ -461,15 +461,28 @@ public class GetMusic {
 	 * @return
 	 * @throws Exception
 	 */
-	public List<Music> getMusicPlayURLByPages(String musicName,String musicSource,int pageIndex) throws Exception {
-		String reqMusicPlayUrlByPagesUrl = REQUEST_URL_SEARCH + "&name="+musicName+"&source="+musicSource+"&count=20"+"&pages="+pageIndex;
+	public List<Music> getMusicPlayURLByPages(String musicName,int musicSource,int pageIndex) throws Exception {
+		String reqMusicPlayUrlByPagesUrl = REQUEST_URL_SEARCH + "&name="+musicName+"&source="+chooseMusicSource(musicSource)+"&count=20"+"&pages="+pageIndex;
 		String json = getJSON(reqMusicPlayUrlByPagesUrl);
 		List<Music> musicList = getMusicList(json);
 		return musicList;
 	}
+
+	/**
+	 * 获得歌曲的播放图片地址
+	 * @param musicId
+	 * @param musicSource
+	 * @return
+	 */
+	public String getMusicPlayPicUrl(String musicId,String musicSource) throws Exception {
+		String musicPicRequestUrl = REQUEST_URL_PIC+"&id="+musicId+"&source="+musicSource;
+		String json = getJSON(musicPicRequestUrl);
+		return json;
+	}
 	public static void main(String[] args) throws Exception {
 		GetMusic getMusic =new GetMusic();
-		System.out.println(getMusic.getMusicPlayURLByPages("我不对","kugou",2));
+//		System.out.println(getMusic.getMusicPlayPicUrl("73b13a791e782f3db39b434e2a44e589", "kugou"));
+		System.out.println(getMusic.getMusicPlayURLByPages("我不对",1,1));
 //		String json = getMusic.getJSON("https://api.zhuolin.wang/api.php?types=search&count=20&source=tencent&pages=1&name=%E6%88%91%E4%B8%8D%E5%AF%B9");
 //		List<Music> musicList = getMusic.getMusicList(json);
 //		System.out.println(musicList);

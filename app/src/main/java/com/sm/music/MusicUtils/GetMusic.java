@@ -395,7 +395,6 @@ public class GetMusic {
 		//第一步： 获得request（Get请求）请求的url,也就是拼装url
 		String url = REQUEST_URL_URL + "&id=" + requestMusicID + "&source=" + requestMusicSource;
 		//第二步： 发起请求，解析数据
-		System.out.println(url);
 		String  mp3PlayURL = fengeURL(getMusicPlayJson(url)).replace("\\","");
 		//第三步:
 		return  mp3PlayURL;
@@ -425,9 +424,32 @@ public class GetMusic {
 		}
 		return recMusicPlayList;
 	}
+
+	/**
+	 * 这是分页获取音乐播放列表
+	 * 传入两个参数 一个playListId 一个页数页码
+	 * @param playListId
+	 * @return
+	 */
+	public List<RecMusic> getRecMusicListByPages(String playListId,int pageIndex) throws Exception {
+		recMusicList = new ArrayList<>();
+		//第一步 拿到歌单的json
+		String musicPlayListJson = getMusicPlayJson(REQUEST_URL_PLAYLIST + playListId);
+		//第二步 将获得的JSON字符串转成封装好的RecMusic对象
+		JSONObject jsonObject = JSONObject.parseObject(musicPlayListJson);
+		String playlist = jsonObject.getString("playlist");
+		jsonObject = JSONObject.parseObject(playlist);
+		String tracks = jsonObject.getString("tracks");
+		recMusicList = JSONObject.parseArray(tracks,RecMusic.class);
+		List<RecMusic> recMusicListByPages = new ArrayList<>();
+		for (int i = 20 * pageIndex; i < 20 * (1+pageIndex)  ; i++) {
+			recMusicListByPages.add(recMusicList.get(i));
+		}
+		return  recMusicListByPages;
+	}
 	public static void main(String[] args) throws Exception {
 		GetMusic getMusic =new GetMusic();
-		System.out.println(getMusic.getRecMusicPlayURL("3778678"));
+		System.out.println(getMusic.getRecMusicListByPages("3778678",9).size());
 //		String json = getMusic.getJSON("https://api.zhuolin.wang/api.php?types=search&count=20&source=tencent&pages=1&name=%E6%88%91%E4%B8%8D%E5%AF%B9");
 //		List<Music> musicList = getMusic.getMusicList(json);
 //		System.out.println(musicList);

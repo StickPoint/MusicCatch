@@ -102,7 +102,7 @@ public class search_pager extends Fragment {
             public void onLoadMore(RefreshLayout refreshlayout) {
                 //TODO: Search page load more to do
                 if (search_text != null){
-                    refresh_music_list_data(search_text);
+                    onload_music_list_data(search_text);
                     refreshlayout.finishLoadMore(2000);
                 }else {
                     refreshlayout.finishLoadMore(false);
@@ -169,18 +169,17 @@ public class search_pager extends Fragment {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                String url = conn.getSearchRequsetURL(text, source);
-                String json_string = null;
                 try {
-                    json_string = conn.getJSON(url);
                     List temp = null;
                     if (arg2 == NETWORK_REFRESH_TAG){
-                        temp = conn.getMusicList(json_string);
+                        currentPage = 1;
+                        temp = conn.getMusicPlayURLByPages(text, source, currentPage);
                     }else if (arg2 == NETWORK_ONLOAD_TAG){
                         temp = conn.getMusicPlayURLByPages(text, source, currentPage);
                     }
                     Message msg = Message.obtain();
                     if (temp != null){
+                        currentPage ++;
                         msg.what = what;
                         msg.arg1 = GetMusic.RESPOND_SUCCESS;
                         msg.arg2 = arg2;

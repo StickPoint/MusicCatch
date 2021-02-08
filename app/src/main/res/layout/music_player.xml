@@ -30,7 +30,7 @@
         android:singleLine="true"
         android:text="@string/default_music_name"
         android:textColor="@color/textBlack"
-        android:textSize="@dimen/small"
+        android:textSize="@dimen/normal"
         app:layout_constraintEnd_toStartOf="@+id/min_music_control"
         app:layout_constraintStart_toEndOf="@+id/musicPic"
         app:layout_constraintTop_toTopOf="parent" />

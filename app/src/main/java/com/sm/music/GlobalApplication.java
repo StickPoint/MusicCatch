@@ -5,6 +5,7 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.media.MediaPlayer;
 import android.os.Build;
 import android.os.Handler;
 import android.os.IBinder;
@@ -21,6 +22,7 @@ import com.sm.music.Bean.Music;
 import com.sm.music.MusicUtils.GetMusic;
 import com.sm.music.Server.MusicPlayer;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -28,17 +30,34 @@ import java.util.Map;
 
 public class GlobalApplication extends Application {
 
+
+
     final static private int REQUEST_MUSIC_URL = 203;
+    //updata frequency ms
+    final static private int UPDATA_FREQUENCY = 500;
 
     private Context context = null;
     //This is current music id
     private Music currentMusic = null;
+    //This is current music duration
+    private String currentMusicDuration = "";
     //index search music list
     private List<Music> musicList = new ArrayList<Music>();
-    //music control
-    static MusicPlayer.musicBinder binder = null;
     //min music player list
     private static Map<Integer,View> minMusicPlayerList = new HashMap<>();
+    //MediaPlayer control
+    private static MediaPlayer player = null;
+    //updata thread
+    private static Thread updataThread = null;
+    //updata thread handler
+    private Handler updata_thread_handler = new Handler(){
+        @Override
+        public void handleMessage(@NonNull Message msg) {
+            super.handleMessage(msg);
+            updataPlayer();
+        }
+    };
+
 
     private GetMusic conn = null;
 
@@ -80,15 +99,17 @@ public class GlobalApplication extends Application {
     //music control
 
     private Boolean isPlaying(){
-        return binder.isPlaying();
+        return player.isPlaying();
     }
 
     private void musicPlay(){
-        binder.start();
+        player.start();
+        updataPlayer();
     }
 
     private void musicPause(){
-        binder.pause();
+        player.pause();
+        updataPlayer();
     }
 
     private void updataPlayer(){
@@ -97,21 +118,27 @@ public class GlobalApplication extends Application {
     }
 
     private void updataMinMusicPlayer(){
+        int currentPosition = player.getCurrentPosition() / 1000;
+        String currentMusicPosition = (currentPosition / 60) + ":" + (currentPosition % 60);
         for (Map.Entry<Integer,View> i : minMusicPlayerList.entrySet()) {
             View view = i.getValue();
             ImageView min_music_control = view.findViewById(R.id.min_music_control);
             if (isPlaying()){
-                min_music_control.setImageResource(R.drawable.ic_play);
-                musicPause();
-            }else {
                 min_music_control.setImageResource(R.drawable.ic_stop);
-                musicPlay();
+            }else {
+                min_music_control.setImageResource(R.drawable.ic_play);
             }
+            ImageView musicPic = view.findViewById(R.id.musicPic);
+            TextView current_music_name = view.findViewById(R.id.current_music_name);
+            current_music_name.setText(currentMusic.getName());
+            TextView current_music_time = view.findViewById(R.id.current_music_time);
+            current_music_time.setText( currentMusicPosition + "/" + currentMusicDuration);
         }
     }
 
     private void updataMusicPlayer(){
     }
+
     //user
 
     public void setCurrentMusic(final Music music){
@@ -122,7 +149,26 @@ public class GlobalApplication extends Application {
                 if (msg.arg1 == GetMusic.RESPOND_SUCCESS ){
 
                     if (msg.what == REQUEST_MUSIC_URL){
-                        binder.setMusicUrl((String) msg.obj);
+                        try {
+                            player.reset();
+                            player.setDataSource((String) msg.obj);
+                            player.prepareAsync();
+                            player.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
+                                @Override
+                                public void onPrepared(MediaPlayer mediaPlayer) {
+                                    if (updataThread != null){
+                                        updataThread.interrupt();
+                                    }
+                                    mediaPlayer.start();
+                                    int currentDuration = mediaPlayer.getDuration() / 1000;
+                                    currentMusicDuration = (currentDuration / 60) + ":" + (currentDuration % 60);
+                                    updataThread = new UpdataThread();
+                                    updataThread.start();
+                                }
+                            });
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
                     }
 
                 }else{
@@ -142,7 +188,6 @@ public class GlobalApplication extends Application {
                         msg.obj = url;
 
                         currentMusic = music;
-
                     }else {
                         msg.what = GetMusic.RESPOND_TIMEOUT;
                     }
@@ -177,10 +222,10 @@ public class GlobalApplication extends Application {
             public void onClick(View v) {
                 if (getCurrentMusic() != null){
                     if (isPlaying()){
-                        min_music_control.setImageResource(R.drawable.ic_play);
+                        min_music_control.setImageResource(R.drawable.ic_stop);
                         musicPause();
                     }else {
-                        min_music_control.setImageResource(R.drawable.ic_stop);
+                        min_music_control.setImageResource(R.drawable.ic_play);
                         musicPlay();
                     }
                 }else {
@@ -199,10 +244,25 @@ public class GlobalApplication extends Application {
     private static class MusicPlayerConnection implements ServiceConnection {
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
-            binder = (MusicPlayer.musicBinder) service;
+            player = ((MusicPlayer.musicBinder) service).getPlayer();
         }
         @Override
         public void onServiceDisconnected(ComponentName name) {
+        }
+    }
+
+    private class UpdataThread extends Thread{
+        @Override
+        public void run() {
+            while (!isInterrupted()){
+                updata_thread_handler.sendMessage(Message.obtain());
+                try {
+                    sleep(UPDATA_FREQUENCY);
+                } catch (InterruptedException e) {
+                    break;
+                }
+
+            }
         }
     }
 }

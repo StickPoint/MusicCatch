@@ -27,8 +27,6 @@ public class MusicPlayer extends Service {
     @Override
     public void onCreate() {
         super.onCreate();
-
-
         NotificationChannel channel = null;
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
             channel = new NotificationChannel("1","1", NotificationManager.IMPORTANCE_HIGH);
@@ -47,49 +45,9 @@ public class MusicPlayer extends Service {
     }
 
     public class musicBinder extends Binder {
-
-        public boolean isPlaying(){
-            return player.isPlaying();
+        public MediaPlayer getPlayer(){
+            return player;
         }
-
-        public void start() {
-            player.start();
-        }
-
-        public void pause(){
-            player.pause();
-        }
-
-        public int getDuration(){
-            return player.getDuration();
-        }
-
-        public int getCurrenPostion(){
-            return player.getCurrentPosition();
-        }
-
-        public void seekTo(int mesc){
-            player.seekTo(mesc);
-        }
-
-        public void setMusicUrl(String url){
-            if (player != null){
-                try {
-                    player.reset();
-                    player.setDataSource(url);
-                    player.prepareAsync();
-                    player.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
-                        @Override
-                        public void onPrepared(MediaPlayer mediaPlayer) {
-                            mediaPlayer.start();
-                        }
-                    });
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
-
     }
 
 }

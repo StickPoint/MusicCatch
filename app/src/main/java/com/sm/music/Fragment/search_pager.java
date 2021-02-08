@@ -35,7 +35,8 @@ import java.util.List;
  */
 public class search_pager extends Fragment {
 
-
+    private static final int NETWORK_SEARCH_TAG = 448;
+    
     final static private int NETWORK_REFRESH_TAG = 202;
 
     final static private int NETWORK_ONLOAD_TAG = 201;
@@ -64,7 +65,7 @@ public class search_pager extends Fragment {
 
     private String search_text = null;
 
-    private int currentPage = 1;
+    private int currentPage = 0;
 
     private GetMusic conn = null;
 
@@ -91,7 +92,6 @@ public class search_pager extends Fragment {
                 //TODO: Search page refresh to do
                 if (search_text != null){
                     refresh_music_list_data(search_text);
-                    refreshlayout.finishRefresh(2000);
                 }else {
                     refreshlayout.finishRefresh(false);
                 }
@@ -103,7 +103,6 @@ public class search_pager extends Fragment {
                 //TODO: Search page load more to do
                 if (search_text != null){
                     onload_music_list_data(search_text);
-                    refreshlayout.finishLoadMore(2000);
                 }else {
                     refreshlayout.finishLoadMore(false);
                 }
@@ -120,40 +119,13 @@ public class search_pager extends Fragment {
 
         return view;
     }
-    public Handler handler = new Handler(){
-        @Override
-        public void handleMessage(@NonNull Message msg) {
-            super.handleMessage(msg);
-            if (msg.arg1 == GetMusic.RESPOND_SUCCESS ){
-
-                if (msg.what == REQUEST_MUSIC_LIST){
-                    showContainer(SHOW_SEARCH_MUSIC_LIST);
-
-                    if (msg.arg2 == NETWORK_REFRESH_TAG){
-                        searchList = (List<Music>) msg.obj;
-                        searchList_list.setAdapter(new searchListAdapter());
-                    }else if (msg.arg2 == NETWORK_ONLOAD_TAG){
-                        searchList.addAll((List<Music>) msg.obj);
-                        ((searchListAdapter) searchList_list.getAdapter()).notifyDataSetChanged();
-                    }
-
-                }
-
-            }else{
-                Toast.makeText(getActivity(),R.string.network_wrong,Toast.LENGTH_SHORT).show();
-            }
-        }
-    };
-
-
-
     public void search_music_list_data(String text){
         if (search_text != null && search_text.equals(text) && searchList != null){
             return;
         }
         search_text = text;
         showContainer(SHOW_SEARCH_LOADING);
-        get_List(text, REQUEST_MUSIC_LIST, NETWORK_REFRESH_TAG);
+        get_List(text, REQUEST_MUSIC_LIST, NETWORK_SEARCH_TAG);
     }
 
     public void refresh_music_list_data(String text){
@@ -166,13 +138,46 @@ public class search_pager extends Fragment {
     }
 
     private void get_List(final String text, final int what, final int arg2){
+        final Handler handler = new Handler(){
+            @Override
+            public void handleMessage(@NonNull Message msg) {
+                super.handleMessage(msg);
+                if (msg.arg1 == GetMusic.RESPOND_SUCCESS ){
+
+                    if (msg.what == REQUEST_MUSIC_LIST){
+                        showContainer(SHOW_SEARCH_MUSIC_LIST);
+
+                        if (msg.arg2 == NETWORK_REFRESH_TAG || msg.arg2 == NETWORK_SEARCH_TAG){
+                            searchList = (List<Music>) msg.obj;
+                            if (msg.arg2 == NETWORK_REFRESH_TAG)
+                                searchList_refresh.finishRefresh(true);
+                            searchList_list.setAdapter(new searchListAdapter());
+                        }else if (msg.arg2 == NETWORK_ONLOAD_TAG){
+                            searchList_refresh.finishLoadMore(true);
+                            if (searchList != null){
+                                searchList.addAll((List<Music>) msg.obj);
+                                ((searchListAdapter) searchList_list.getAdapter()).notifyDataSetChanged();
+                            }else {
+                                search_music_list_data(search_text);
+                            }
+                        }
+                    }
+                }else{
+                    if (msg.arg2 == NETWORK_REFRESH_TAG)
+                        searchList_refresh.finishRefresh(false);
+                    if (msg.arg2 == NETWORK_ONLOAD_TAG)
+                        searchList_refresh.finishLoadMore(false);
+                    Toast.makeText(getActivity(),R.string.network_wrong,Toast.LENGTH_SHORT).show();
+                }
+            }
+        };
         new Thread(new Runnable() {
             @Override
             public void run() {
                 try {
                     List temp = null;
-                    if (arg2 == NETWORK_REFRESH_TAG){
-                        currentPage = 1;
+                    if (arg2 == NETWORK_REFRESH_TAG || arg2 == NETWORK_SEARCH_TAG){
+                        currentPage = 0;
                         temp = conn.getMusicPlayURLByPages(text, source, currentPage);
                     }else if (arg2 == NETWORK_ONLOAD_TAG){
                         temp = conn.getMusicPlayURLByPages(text, source, currentPage);

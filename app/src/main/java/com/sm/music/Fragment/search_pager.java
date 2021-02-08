@@ -1,7 +1,6 @@
 package com.sm.music.Fragment;
 
 
-import android.content.Context;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -10,7 +9,6 @@ import androidx.fragment.app.Fragment;
 
 import android.os.Handler;
 import android.os.Message;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -28,7 +26,7 @@ import com.sm.music.Bean.Music;
 import com.sm.music.GlobalApplication;
 import com.sm.music.MusicUtils.GetMusic;
 import com.sm.music.R;
-import com.sm.music.SearchActivity;
+import com.sm.music.Activity.SearchActivity;
 
 import java.util.List;
 
@@ -246,7 +244,7 @@ public class search_pager extends Fragment {
                 @Override
                 public void onClick(View v) {
                     ((TextView) v.findViewById(R.id.index_list_item_music_name)).setTextColor(getActivity().getResources().getColor(R.color.textHint));
-                    globalApplication.setPlayMusic(music);
+                    globalApplication.setCurrentMusic(music);
                 }
             });
             view.setOnLongClickListener(new View.OnLongClickListener() {

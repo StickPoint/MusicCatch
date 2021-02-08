@@ -16,16 +16,16 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
-        <activity android:name=".SearchActivity"></activity>
+        <activity android:name=".Activity.SearchActivity"></activity>
 
         <service
-            android:name=".MusicPlayer"
+            android:name=".Server.MusicPlayer"
             android:enabled="true"
             android:exported="true" />
 
-        <activity android:name=".Player" />
+        <activity android:name=".Activity.PlayerActivity" />
         <activity
-            android:name=".MainActivity"
+            android:name=".Activity.MainActivity"
             android:configChanges="uiMode">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

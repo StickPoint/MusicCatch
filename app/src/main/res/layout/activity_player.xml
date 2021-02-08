@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:background="@color/player_bg"
     android:orientation="vertical"
-    tools:context=".Player">
+    tools:context=".Activity.PlayerActivity">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/playerTop"

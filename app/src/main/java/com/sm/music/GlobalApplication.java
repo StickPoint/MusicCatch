@@ -15,13 +15,16 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.constraintlayout.widget.ConstraintLayout;
 
+import com.sm.music.Activity.PlayerActivity;
 import com.sm.music.Bean.Music;
-import com.sm.music.Fragment.search_pager;
 import com.sm.music.MusicUtils.GetMusic;
+import com.sm.music.Server.MusicPlayer;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class GlobalApplication extends Application {
 
@@ -29,11 +32,13 @@ public class GlobalApplication extends Application {
 
     private Context context = null;
     //This is current music id
-    private String currentMusicId = null;
+    private Music currentMusic = null;
     //index search music list
-    private List<Music> musicList = null;
+    private List<Music> musicList = new ArrayList<Music>();
     //music control
     static MusicPlayer.musicBinder binder = null;
+    //min music player list
+    private static Map<Integer,View> minMusicPlayerList = new HashMap<>();
 
     private GetMusic conn = null;
 
@@ -41,64 +46,90 @@ public class GlobalApplication extends Application {
     public void onCreate() {
         super.onCreate();
         conn = new GetMusic();
+        Intent musicIntent = new Intent(getApplicationContext(), MusicPlayer.class);
+        GlobalApplication.MusicPlayerConnection musicPlayerConnection = new GlobalApplication.MusicPlayerConnection();
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            startForegroundService(musicIntent);
+        } else {
+            startService(musicIntent);
+        }
+        bindService(musicIntent, musicPlayerConnection, BIND_AUTO_CREATE);
     }
 
 
-    public String getCurrentMusicId() {
-        return currentMusicId;
+    public Music getCurrentMusic() {
+        return currentMusic;
     }
 
-    public void setCurrentMusicId(String currentMusicId) {
-        this.currentMusicId = currentMusicId;
-    }
-
-    public List<Music> getMusicList() {
-        return musicList;
-    }
-
-    public void setMusicList(List<Music> musicList) {
-        this.musicList = musicList;
+    public void addMusicList(Music musicList) {
+        this.musicList.add(musicList);
     }
 
     public void addMusicList(List<Music> musicList) {
         this.musicList.addAll(musicList);
     }
 
+    public List<Music> getMusicList() {
+        return musicList;
+    }
+
     public Boolean isMusicListEmpty(){
-        return musicList == null;
+        return musicList.isEmpty();
     }
 
     //music control
 
-    public Boolean isPlaying(){
+    private Boolean isPlaying(){
         return binder.isPlaying();
     }
 
-    public void musicPlay(){
+    private void musicPlay(){
         binder.start();
     }
 
-    public void musicPause(){
+    private void musicPause(){
         binder.pause();
     }
 
-    private Handler handler = new Handler(){
-        @Override
-        public void handleMessage(@NonNull Message msg) {
-            super.handleMessage(msg);
-            if (msg.arg1 == GetMusic.RESPOND_SUCCESS ){
+    private void updataPlayer(){
+        updataMinMusicPlayer();
+        updataMusicPlayer();
+    }
 
-                if (msg.what == REQUEST_MUSIC_URL){
-                    binder.setMusicUrl((String) msg.obj);
-                }
-
-            }else{
-//                Toast.makeText(getActivity(),R.string.network_wrong,Toast.LENGTH_SHORT).show();
+    private void updataMinMusicPlayer(){
+        for (Map.Entry<Integer,View> i : minMusicPlayerList.entrySet()) {
+            View view = i.getValue();
+            ImageView min_music_control = view.findViewById(R.id.min_music_control);
+            if (isPlaying()){
+                min_music_control.setImageResource(R.drawable.ic_play);
+                musicPause();
+            }else {
+                min_music_control.setImageResource(R.drawable.ic_stop);
+                musicPlay();
             }
         }
-    };
+    }
 
-    public void setPlayMusic(final Music music){
+    private void updataMusicPlayer(){
+    }
+    //user
+
+    public void setCurrentMusic(final Music music){
+        final Handler handler = new Handler(){
+            @Override
+            public void handleMessage(@NonNull Message msg) {
+                super.handleMessage(msg);
+                if (msg.arg1 == GetMusic.RESPOND_SUCCESS ){
+
+                    if (msg.what == REQUEST_MUSIC_URL){
+                        binder.setMusicUrl((String) msg.obj);
+                    }
+
+                }else{
+                    Toast.makeText(getApplicationContext(),R.string.network_wrong,Toast.LENGTH_SHORT).show();
+                }
+            }
+        };
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -110,7 +141,7 @@ public class GlobalApplication extends Application {
                         msg.arg1 = GetMusic.RESPOND_SUCCESS;
                         msg.obj = url;
 
-                        setCurrentMusicId(music.getId());
+                        currentMusic = music;
 
                     }else {
                         msg.what = GetMusic.RESPOND_TIMEOUT;
@@ -123,7 +154,7 @@ public class GlobalApplication extends Application {
         }).start();
     }
 
-    public View getMinMusicPlayer(final Context context){
+    public View createMinMusicPlayer(final Context context, int tag){
         View view = View.inflate(context, R.layout.music_player,null);
         final ImageView min_music_control = view.findViewById(R.id.min_music_control);
         ImageView musicPic = view.findViewById(R.id.musicPic);
@@ -132,8 +163,8 @@ public class GlobalApplication extends Application {
         view.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (getCurrentMusicId() != null){
-                    context.startActivity(new Intent(context, Player.class));
+                if (getCurrentMusic() != null){
+                    context.startActivity(new Intent(context, PlayerActivity.class));
                     //TODO: To shart music player and post some arguments
 
                 }else {
@@ -144,7 +175,7 @@ public class GlobalApplication extends Application {
         min_music_control.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (getCurrentMusicId() != null){
+                if (getCurrentMusic() != null){
                     if (isPlaying()){
                         min_music_control.setImageResource(R.drawable.ic_play);
                         musicPause();
@@ -157,10 +188,15 @@ public class GlobalApplication extends Application {
                 }
             }
         });
+        minMusicPlayerList.put(Integer.valueOf(tag), view);
         return view;
     }
 
-    public static class MusicPlayerConnection implements ServiceConnection {
+    public void destroyMinMusicPlayer(int tag){
+        minMusicPlayerList.remove(Integer.valueOf(tag));
+    }
+
+    private static class MusicPlayerConnection implements ServiceConnection {
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
             binder = (MusicPlayer.musicBinder) service;

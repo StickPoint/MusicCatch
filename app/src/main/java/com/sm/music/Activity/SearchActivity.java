@@ -1,4 +1,4 @@
-package com.sm.music;
+package com.sm.music.Activity;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
@@ -9,7 +9,6 @@ import androidx.viewpager.widget.ViewPager;
 
 import android.content.ClipData;
 import android.content.ClipboardManager;
-import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -26,7 +25,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.sm.music.Bean.Music;
+import com.sm.music.GlobalApplication;
 import com.sm.music.MusicUtils.GetMusic;
+import com.sm.music.R;
 import com.sm.music.UIUtils.Util;
 import com.sm.music.Fragment.search_pager;
 
@@ -35,7 +36,7 @@ import java.util.ArrayList;
 public class SearchActivity extends AppCompatActivity {
 
 
-
+    private static final int ACTIVITY_TAG = 547;
 
     final static private int TYPES[] = {GetMusic.MUSIC_SOURCE_KUGOU, GetMusic.MUSIC_SOURCE_NETEASE, GetMusic.MUSIC_SOURCE_TENCENT};
 
@@ -114,7 +115,7 @@ public class SearchActivity extends AppCompatActivity {
 
         search_pager_manager = getSupportFragmentManager();
 
-        searchPlayer.addView(globalApplication.getMinMusicPlayer(SearchActivity.this));
+        searchPlayer.addView(globalApplication.createMinMusicPlayer(SearchActivity.this, ACTIVITY_TAG));
 
 
 
@@ -226,6 +227,12 @@ public class SearchActivity extends AppCompatActivity {
             }
         });
 
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        globalApplication.destroyMinMusicPlayer(ACTIVITY_TAG);
     }
 
     public String getSearchText(){

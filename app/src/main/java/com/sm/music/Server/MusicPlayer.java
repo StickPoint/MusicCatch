@@ -1,4 +1,4 @@
-package com.sm.music;
+package com.sm.music.Server;
 
 import android.app.Notification;
 import android.app.NotificationChannel;

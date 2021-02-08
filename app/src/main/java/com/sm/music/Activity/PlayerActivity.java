@@ -1,4 +1,4 @@
-package com.sm.music;
+package com.sm.music.Activity;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
@@ -8,9 +8,10 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 
+import com.sm.music.R;
 import com.sm.music.UIUtils.Util;
 
-public class Player extends AppCompatActivity {
+public class PlayerActivity extends AppCompatActivity {
 
     private ConstraintLayout playerTop = null;
     private ConstraintLayout player_control = null;
@@ -21,8 +22,8 @@ public class Player extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         Util.setActivityBarAlpha(this, true);
         setContentView(R.layout.activity_player);
-        final int statusBarHeight = Util.getStatusBarHeight(Player.this);
-        final int NavigationBarHeight = Util.getNavigationBarHeight(Player.this);
+        final int statusBarHeight = Util.getStatusBarHeight(PlayerActivity.this);
+        final int NavigationBarHeight = Util.getNavigationBarHeight(PlayerActivity.this);
         final Boolean HasNavigationBar = !Util.checkDeviceHasNavigationBar(this);
 
         playerTop = findViewById(R.id.playerTop);
@@ -53,7 +54,7 @@ public class Player extends AppCompatActivity {
         playerTop_close.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Player.this.finish();
+                PlayerActivity.this.finish();
             }
         });
 

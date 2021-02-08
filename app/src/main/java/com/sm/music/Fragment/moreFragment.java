@@ -1,4 +1,4 @@
-package com.sm.music.fragment;
+package com.sm.music.Fragment;
 
 
 import android.os.Bundle;
@@ -17,11 +17,11 @@ import com.sm.music.UIUtils.Util;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class downloadFragment extends Fragment {
+public class moreFragment extends Fragment {
 
     private ConstraintLayout top = null;
 
-    public downloadFragment() {
+    public moreFragment() {
         // Required empty public constructor
     }
 
@@ -29,10 +29,9 @@ public class downloadFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        View view = inflater.inflate(R.layout.fragment_download, container, false);
+        View view = inflater.inflate(R.layout.fragment_more, container, false);
         final int statusBarHeight = Util.getStatusBarHeight(getActivity());
-        top = view.findViewById(R.id.downloadBar);
+        top = view.findViewById(R.id.moreBar);
         top.post(new Runnable() {
             public void run() {
                 LinearLayout.LayoutParams layoutParams = (LinearLayout.LayoutParams) top.getLayoutParams();

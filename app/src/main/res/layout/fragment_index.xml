@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context=".fragment.indexFragment">
+    tools:context=".Fragment.indexFragment">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/searchBar"
@@ -29,7 +29,7 @@
             android:paddingRight="18dp"
             android:textColor="@color/textBlack"
             android:textColorHint="@color/textHint"
-            android:textSize="18sp"
+            android:textSize="@dimen/small"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"

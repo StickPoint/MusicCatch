@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/search_pager"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <com.scwang.smart.refresh.layout.SmartRefreshLayout
+        android:id="@+id/searchList_refresh"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <com.scwang.smart.refresh.header.MaterialHeader
+            android:id="@+id/searchList_header"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+        </com.scwang.smart.refresh.header.MaterialHeader>
+
+        <ListView
+            android:id="@+id/searchList_list"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/foreground"
+            android:divider="@color/transparent"
+            android:dividerHeight="@dimen/none"
+            android:overScrollMode="never"></ListView>
+
+        <com.scwang.smart.refresh.footer.ClassicsFooter
+            android:id="@+id/searchList_footer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+    </com.scwang.smart.refresh.layout.SmartRefreshLayout>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/searchLoading"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/foreground"
+        android:visibility="invisible">
+
+        <pl.droidsonroids.gif.GifImageView
+            android:id="@+id/searchLoading_icon"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:src="@drawable/loading"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</FrameLayout>

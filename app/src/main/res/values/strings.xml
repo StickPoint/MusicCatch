@@ -31,6 +31,9 @@
     <string name="introduce">Welcome to use vertex music, full web music download for free, start now -> github</string>
     <string name="copy_introduce">The song information has been copied to the clipboard</string>
     <string name="cancel">Cancel</string>
+    <string name="no_search_input">Please type in the search box</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
 
     <!-- TODO: Remove or change this placeholder text -->
 

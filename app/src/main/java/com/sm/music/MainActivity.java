@@ -8,28 +8,22 @@ import androidx.viewpager.widget.PagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 
 import android.annotation.SuppressLint;
-import android.content.ClipData;
-import android.content.ClipboardManager;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.CheckBox;
-import android.widget.CompoundButton;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
-import android.widget.TextView;
 import android.widget.Toast;
 
-import com.sm.music.Bean.Music;
 import com.sm.music.UIUtils.Util;
-import com.sm.music.fragment.downloadFragment;
-import com.sm.music.fragment.indexFragment;
-import com.sm.music.fragment.likeFragment;
-import com.sm.music.fragment.moreFragment;
+import com.sm.music.Fragment.downloadFragment;
+import com.sm.music.Fragment.indexFragment;
+import com.sm.music.Fragment.likeFragment;
+import com.sm.music.Fragment.moreFragment;
 
 import java.util.ArrayList;
 

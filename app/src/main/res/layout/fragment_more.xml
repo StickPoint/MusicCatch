@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context=".fragment.moreFragment">
+    tools:context=".Fragment.moreFragment">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/moreBar"

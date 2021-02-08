@@ -1,8 +1,9 @@
-package com.sm.music.fragment;
+package com.sm.music.Fragment;
 
 
 import android.os.Bundle;
 
+import androidx.annotation.Nullable;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
 
@@ -17,21 +18,25 @@ import com.sm.music.UIUtils.Util;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class moreFragment extends Fragment {
+public class likeFragment extends Fragment {
 
     private ConstraintLayout top = null;
 
-    public moreFragment() {
+    public likeFragment() {
         // Required empty public constructor
     }
 
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_more, container, false);
+        View view = inflater.inflate(R.layout.fragment_like, container, false);
         final int statusBarHeight = Util.getStatusBarHeight(getActivity());
-        top = view.findViewById(R.id.moreBar);
+        top = view.findViewById(R.id.likeBar);
         top.post(new Runnable() {
             public void run() {
                 LinearLayout.LayoutParams layoutParams = (LinearLayout.LayoutParams) top.getLayoutParams();

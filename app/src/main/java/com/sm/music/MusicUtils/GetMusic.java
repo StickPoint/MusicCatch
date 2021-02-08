@@ -1,5 +1,7 @@
 package com.sm.music.MusicUtils;
 
+import android.icu.text.UFormat;
+
 import com.alibaba.fastjson.JSONObject;
 import com.sm.music.Bean.Music;
 import com.sm.music.Bean.RecMusic;
@@ -405,20 +407,27 @@ public class GetMusic {
 	 * @param playListId
 	 * @return
 	 */
-	public List<RecMusic> getRecMusList(String playListId) throws Exception{
-		//第零步 初始化resMusicList
+	public List<String> getRecMusicPlayURL(String playListId) throws Exception {
 		recMusicList = new ArrayList<>();
 		//第一步 拿到歌单的json
 		String musicPlayListJson = getMusicPlayJson(REQUEST_URL_PLAYLIST + playListId);
 		//第二步 将获得的JSON字符串转成封装好的RecMusic对象
-		 recMusicList = JSONObject.parseArray(musicPlayListJson, RecMusic.class);
-		//第三步 将List返回
-		return recMusicList;
+		JSONObject jsonObject = JSONObject.parseObject(musicPlayListJson);
+		String playlist = jsonObject.getString("playlist");
+		jsonObject = JSONObject.parseObject(playlist);
+		String tracks = jsonObject.getString("tracks");
+		recMusicList = JSONObject.parseArray(tracks,RecMusic.class);
+		//遍历recMusicList集合，拿到歌单中200首歌曲的每一首歌曲的播放地址
+		//首先遍历集合，拿到请求的地址
+		List<String> recMusicPlayList = new ArrayList<>();
+		for (RecMusic recMusic : recMusicList) {
+				recMusicPlayList.add(getMusicPlayURL(recMusic.getId(),"netease"));
+		}
+		return recMusicPlayList;
 	}
-
 	public static void main(String[] args) throws Exception {
 		GetMusic getMusic =new GetMusic();
-		System.out.println(getMusic.getRecMusList("3778678"));
+		System.out.println(getMusic.getRecMusicPlayURL("3778678"));
 //		String json = getMusic.getJSON("https://api.zhuolin.wang/api.php?types=search&count=20&source=tencent&pages=1&name=%E6%88%91%E4%B8%8D%E5%AF%B9");
 //		List<Music> musicList = getMusic.getMusicList(json);
 //		System.out.println(musicList);

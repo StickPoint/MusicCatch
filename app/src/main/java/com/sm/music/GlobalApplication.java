@@ -119,7 +119,8 @@ public class GlobalApplication extends Application {
 
     private void updataMinMusicPlayer(){
         int currentPosition = player.getCurrentPosition() / 1000;
-        String currentMusicPosition = (currentPosition / 60) + ":" + (currentPosition % 60);
+        String currentMusicPosition = ((currentPosition / 60) >= 10 ? String.valueOf(currentPosition / 60) : ("0" + (currentPosition / 60))) +
+                ":" + ((currentPosition % 60)  >= 10 ? String.valueOf(currentPosition % 60) : ("0" + (currentPosition % 60)));
         for (Map.Entry<Integer,View> i : minMusicPlayerList.entrySet()) {
             View view = i.getValue();
             ImageView min_music_control = view.findViewById(R.id.min_music_control);
@@ -161,7 +162,8 @@ public class GlobalApplication extends Application {
                                     }
                                     mediaPlayer.start();
                                     int currentDuration = mediaPlayer.getDuration() / 1000;
-                                    currentMusicDuration = (currentDuration / 60) + ":" + (currentDuration % 60);
+                                    currentMusicDuration = ((currentDuration / 60) >= 10 ? String.valueOf(currentDuration / 60) : ("0" + (currentDuration / 60))) +
+                                            ":" + ((currentDuration % 60)  >= 10 ? String.valueOf(currentDuration % 60) : ("0" + (currentDuration % 60)));
                                     updataThread = new UpdataThread();
                                     updataThread.start();
                                 }

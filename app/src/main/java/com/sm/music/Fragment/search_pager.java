@@ -64,6 +64,8 @@ public class search_pager extends Fragment {
 
     private String search_text = null;
 
+    private int currentPage = 1;
+
     private GetMusic conn = null;
 
 
@@ -158,6 +160,11 @@ public class search_pager extends Fragment {
         get_List(text, REQUEST_MUSIC_LIST, NETWORK_REFRESH_TAG);
     }
 
+
+    public void onload_music_list_data(String text){
+        get_List(text, REQUEST_MUSIC_LIST, NETWORK_ONLOAD_TAG);
+    }
+
     private void get_List(final String text, final int what, final int arg2){
         new Thread(new Runnable() {
             @Override
@@ -166,7 +173,12 @@ public class search_pager extends Fragment {
                 String json_string = null;
                 try {
                     json_string = conn.getJSON(url);
-                    List temp = conn.getMusicList(json_string);
+                    List temp = null;
+                    if (arg2 == NETWORK_REFRESH_TAG){
+                        temp = conn.getMusicList(json_string);
+                    }else if (arg2 == NETWORK_ONLOAD_TAG){
+                        temp = conn.getMusicPlayURLByPages(text, source, currentPage);
+                    }
                     Message msg = Message.obtain();
                     if (temp != null){
                         msg.what = what;

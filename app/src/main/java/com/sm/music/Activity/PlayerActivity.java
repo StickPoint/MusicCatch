@@ -8,10 +8,13 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 
+import com.sm.music.GlobalApplication;
 import com.sm.music.R;
 import com.sm.music.UIUtils.Util;
 
 public class PlayerActivity extends AppCompatActivity {
+
+    private GlobalApplication globalApplication = null;
 
     private ConstraintLayout playerTop = null;
     private ConstraintLayout player_control = null;
@@ -22,6 +25,8 @@ public class PlayerActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         Util.setActivityBarAlpha(this, true);
         setContentView(R.layout.activity_player);
+        globalApplication = (GlobalApplication)getApplication();
+        globalApplication.setMusicPlayerPageView(findViewById(R.id.playerPage));
         final int statusBarHeight = Util.getStatusBarHeight(PlayerActivity.this);
         final int NavigationBarHeight = Util.getNavigationBarHeight(PlayerActivity.this);
         final Boolean HasNavigationBar = !Util.checkDeviceHasNavigationBar(this);
@@ -55,8 +60,11 @@ public class PlayerActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 PlayerActivity.this.finish();
+                overridePendingTransition(0,R.anim.transfrom_buttom_out);
             }
         });
+
+
 
     }
 }

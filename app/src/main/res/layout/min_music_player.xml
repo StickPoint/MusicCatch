@@ -16,9 +16,9 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/minPlayerProgress"
-        app:srcCompat="@mipmap/default_pic" />
+        app:srcCompat="@mipmap/default_music_pic" />
 
-    <HorizontalScrollView
+    <com.sm.music.Override.UnclickableHorizontalScrollView
         android:id="@+id/minPlayer_title"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
@@ -26,7 +26,7 @@
         android:layout_marginEnd="8dp"
         android:layout_marginBottom="2dp"
         android:orientation="horizontal"
-        android:overScrollMode="always"
+        android:overScrollMode="never"
         android:scrollbars="none"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/min_music_control"
@@ -37,7 +37,7 @@
         <LinearLayout
             android:id="@+id/minPlayer_title_container"
             android:layout_width="wrap_content"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:gravity="left|center_vertical"
             android:orientation="horizontal">
 
@@ -51,7 +51,7 @@
                 android:singleLine="true"
                 android:text="@string/default_music_name"
                 android:textColor="@color/textBlack"
-                android:textSize="@dimen/large" />
+                android:textSize="@dimen/normal" />
 
             <TextView
                 android:id="@+id/current_music_singer"
@@ -63,7 +63,7 @@
                 android:textColor="@color/textHint"
                 android:textSize="@dimen/normal" />
         </LinearLayout>
-    </HorizontalScrollView>
+    </com.sm.music.Override.UnclickableHorizontalScrollView>
 
     <ImageView
         android:id="@+id/min_music_control"
@@ -83,6 +83,7 @@
         android:layout_height="2dp"
         android:background="@color/transparent"
         android:max="100"
+        android:progress="0"
         android:progressDrawable="@drawable/min_player_progress_bar"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

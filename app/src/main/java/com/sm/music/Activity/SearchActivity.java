@@ -120,6 +120,7 @@ public class SearchActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 SearchActivity.this.finish();
+                overridePendingTransition(0,R.anim.transfrom_buttom_out);
             }
         });
 

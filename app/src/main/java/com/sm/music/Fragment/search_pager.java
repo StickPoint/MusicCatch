@@ -72,6 +72,8 @@ public class search_pager extends Fragment {
 
     public search_pager(int source) {
         this.source = source;
+        if (source == GetMusic.MUSIC_SOURCE_NETEASE)
+            currentPage = 1;
         conn = new GetMusic();
     }
 
@@ -177,7 +179,10 @@ public class search_pager extends Fragment {
                 try {
                     List temp = null;
                     if (arg2 == NETWORK_REFRESH_TAG || arg2 == NETWORK_SEARCH_TAG){
-                        currentPage = 0;
+                        if (source == GetMusic.MUSIC_SOURCE_NETEASE)
+                            currentPage = 1;
+                        else
+                            currentPage = 0;
                         temp = conn.getMusicPlayURLByPages(text, source, currentPage);
                     }else if (arg2 == NETWORK_ONLOAD_TAG){
                         temp = conn.getMusicPlayURLByPages(text, source, currentPage);

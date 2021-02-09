@@ -10,8 +10,11 @@ import android.os.Build;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
+import android.view.MotionEvent;
 import android.view.View;
+import android.widget.HorizontalScrollView;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -34,7 +37,9 @@ public class GlobalApplication extends Application {
 
     final static private int REQUEST_MUSIC_URL = 203;
     //updata frequency ms
-    final static private int UPDATA_FREQUENCY = 500;
+    final static private int UPDATA_FREQUENCY = 1000;
+    //smooth frequency ms
+    final static private int SMOOTH_FREQUENCY = 70;
 
     private Context context = null;
     //This is current music id
@@ -103,12 +108,30 @@ public class GlobalApplication extends Application {
     }
 
     private void musicPlay(){
+        for (Map.Entry<Integer,View> i : minMusicPlayerList.entrySet()) {
+            View view = i.getValue();
+            ImageView min_music_control = view.findViewById(R.id.min_music_control);
+            if (isPlaying()){
+                min_music_control.setImageResource(R.drawable.ic_stop);
+            }else {
+                min_music_control.setImageResource(R.drawable.ic_play);
+            }
+        }
+        int currentDuration = player.getDuration() / 1000;
+        currentMusicDuration = ((currentDuration / 60) >= 10 ? String.valueOf(currentDuration / 60) : ("0" + (currentDuration / 60))) +
+                ":" + ((currentDuration % 60)  >= 10 ? String.valueOf(currentDuration % 60) : ("0" + (currentDuration % 60)));
         player.start();
-        updataPlayer();
+        updataThread = new UpdataThread();
+        updataThread.start();
     }
 
     private void musicPause(){
-        player.pause();
+        if (updataThread != null){
+            updataThread.interrupt();
+            updataThread = null;
+        }
+        if (player.isPlaying())
+            player.pause();
         updataPlayer();
     }
 
@@ -118,22 +141,46 @@ public class GlobalApplication extends Application {
     }
 
     private void updataMinMusicPlayer(){
-        int currentPosition = player.getCurrentPosition() / 1000;
-        String currentMusicPosition = ((currentPosition / 60) >= 10 ? String.valueOf(currentPosition / 60) : ("0" + (currentPosition / 60))) +
-                ":" + ((currentPosition % 60)  >= 10 ? String.valueOf(currentPosition % 60) : ("0" + (currentPosition % 60)));
         for (Map.Entry<Integer,View> i : minMusicPlayerList.entrySet()) {
             View view = i.getValue();
+
             ImageView min_music_control = view.findViewById(R.id.min_music_control);
             if (isPlaying()){
                 min_music_control.setImageResource(R.drawable.ic_stop);
             }else {
                 min_music_control.setImageResource(R.drawable.ic_play);
             }
+
             ImageView musicPic = view.findViewById(R.id.musicPic);
+
             TextView current_music_name = view.findViewById(R.id.current_music_name);
             current_music_name.setText(currentMusic.getName());
-            TextView current_music_time = view.findViewById(R.id.current_music_time);
-            current_music_time.setText( currentMusicPosition + "/" + currentMusicDuration);
+
+            TextView current_music_singer = view.findViewById(R.id.current_music_singer);
+            String temp = "";
+            for (int j = 0; j < currentMusic.getArtist().length; j++) {
+                if (j == 0) {
+                    temp += currentMusic.getArtist()[j];
+                } else {
+                    temp += "/" + currentMusic.getArtist()[j];
+                }
+            }
+            current_music_singer.setText(temp);
+
+            HorizontalScrollView minPlayer_title = view.findViewById(R.id.minPlayer_title);
+            int innerWidth = minPlayer_title.findViewById(R.id.minPlayer_title_container).getWidth();
+            int scrollViewWidth =  minPlayer_title.getWidth();
+            if (scrollViewWidth < innerWidth){
+                minPlayer_title.smoothScrollBy(SMOOTH_FREQUENCY,0);
+                if ((innerWidth - scrollViewWidth) <= minPlayer_title.getScrollX()){
+                    minPlayer_title.fullScroll(View.SCROLLBAR_POSITION_LEFT);
+                }
+            }
+
+            ProgressBar minPlayerProgress = view.findViewById(R.id.minPlayerProgress);
+            if (player.getDuration() != 0)
+                minPlayerProgress.setMax(player.getDuration());
+                minPlayerProgress.setProgress(player.getCurrentPosition());
         }
     }
 
@@ -143,6 +190,8 @@ public class GlobalApplication extends Application {
     //user
 
     public void setCurrentMusic(final Music music){
+        currentMusic = music;
+        musicPause();
         final Handler handler = new Handler(){
             @Override
             public void handleMessage(@NonNull Message msg) {
@@ -157,15 +206,7 @@ public class GlobalApplication extends Application {
                             player.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
                                 @Override
                                 public void onPrepared(MediaPlayer mediaPlayer) {
-                                    if (updataThread != null){
-                                        updataThread.interrupt();
-                                    }
-                                    mediaPlayer.start();
-                                    int currentDuration = mediaPlayer.getDuration() / 1000;
-                                    currentMusicDuration = ((currentDuration / 60) >= 10 ? String.valueOf(currentDuration / 60) : ("0" + (currentDuration / 60))) +
-                                            ":" + ((currentDuration % 60)  >= 10 ? String.valueOf(currentDuration % 60) : ("0" + (currentDuration % 60)));
-                                    updataThread = new UpdataThread();
-                                    updataThread.start();
+                                    musicPlay();
                                 }
                             });
                         } catch (IOException e) {
@@ -181,22 +222,25 @@ public class GlobalApplication extends Application {
         new Thread(new Runnable() {
             @Override
             public void run() {
+                Message msg = Message.obtain();
                 try {
-                    String url = conn.getMusicPlayURL(music.getId(), music.getSource());
-                    Message msg = Message.obtain();
-                    if (url != null){
-                        msg.what = REQUEST_MUSIC_URL;
-                        msg.arg1 = GetMusic.RESPOND_SUCCESS;
-                        msg.obj = url;
+                    String id = music.getId();
+                    String url = conn.getMusicPlayURL(id, music.getSource());
+                    if (id.equals(currentMusic.getId())){
+                        if (url != null){
+                            msg.what = REQUEST_MUSIC_URL;
+                            msg.arg1 = GetMusic.RESPOND_SUCCESS;
+                            msg.obj = url;
 
-                        currentMusic = music;
-                    }else {
-                        msg.what = GetMusic.RESPOND_TIMEOUT;
+                        }else {
+                            msg.what = GetMusic.RESPOND_TIMEOUT;
+                        }
                     }
-                    handler.sendMessage(msg);
                 } catch (Exception e) {
+                    msg.what = GetMusic.RESPOND_TIMEOUT;
                     e.printStackTrace();
                 };
+                handler.sendMessage(msg);
             }
         }).start();
     }
@@ -206,7 +250,6 @@ public class GlobalApplication extends Application {
         final ImageView min_music_control = view.findViewById(R.id.min_music_control);
         ImageView musicPic = view.findViewById(R.id.musicPic);
         TextView current_music_name = view.findViewById(R.id.current_music_name);
-        TextView current_music_time = view.findViewById(R.id.current_music_time);
         view.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -233,6 +276,13 @@ public class GlobalApplication extends Application {
                 }else {
                     Toast.makeText(context, R.string.no_music_to_play, Toast.LENGTH_SHORT).show();
                 }
+            }
+        });
+        HorizontalScrollView minPlayer_title = view.findViewById(R.id.minPlayer_title);
+        minPlayer_title.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                return true;
             }
         });
         minMusicPlayerList.put(Integer.valueOf(tag), view);

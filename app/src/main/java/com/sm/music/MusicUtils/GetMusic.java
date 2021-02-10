@@ -1,7 +1,5 @@
 package com.sm.music.MusicUtils;
 
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import com.alibaba.fastjson.JSONObject;
 import com.sm.music.Bean.Music;
 import com.sm.music.Bean.RecMusic;
@@ -490,10 +488,10 @@ public class GetMusic {
 	 * @param musicSource
 	 * @return
 	 */
-	public Bitmap getMusicPlayPicUrl(String musicId,String musicPic_id,int musicSource) throws Exception {
+	public InputStream getMusicPlayPicUrl(String musicId,String musicPic_id,int musicSource) throws Exception {
 		String musicPicRequestUrl = REQUEST_URL_PIC+"&id="+musicId+"&source="+chooseMusicSource(musicSource);
 		String json = "1";
-		Bitmap bitmap = null;
+		InputStream input = null;
 		if(musicSource==2){
 			musicPicRequestUrl = REQUEST_URL_PIC+"&id="+musicId+"&source="+chooseMusicSource(musicSource);
 			json= getJSON(musicPicRequestUrl).replace("\\","");
@@ -502,10 +500,9 @@ public class GetMusic {
 			json= getJSON(musicPicRequestUrl).replace("\\","");
 			json = fengeUrl2(json);
 			HttpConn httpConn = new HttpConn().setUri(json).setAccept("image/*");
-			InputStream input = httpConn.get().getInputStream();
-			bitmap = BitmapFactory.decodeStream(input);
+			input  = httpConn.get().getInputStream();
 		}
-		return bitmap;
+		return input;
 	}
 
 	/**
@@ -523,9 +520,16 @@ public class GetMusic {
 		return StringEscapeUtils.unescapeJava(json);
 	}
 
+	public String getMusicPlayListCover(Long musicPlayListCoverId) throws Exception {
+		String getMusicPlayListCoverRequestUrl = REQUEST_URL_PIC+"&pic_id="+musicPlayListCoverId;
+		String json= getJSON(getMusicPlayListCoverRequestUrl).replace("\\","");
+		json = fengeUrl2(json);
+		return json;
+	}
 	public static void main(String[] args) throws Exception {
 		GetMusic getMusic =new GetMusic();
-		System.out.println(getMusic.getMusicPlayPicUrl("1809286552","109951165605881639",0));
+		System.out.println(getMusic.getMusicPlayListCover(MUSIC_PLAY_LIST_1));
+//		System.out.println(getMusic.getMusicPlayPicUrl("1809286552","109951165605881639",0));
 //		System.out.println(getMusic.getMusicPlayURLByPages("我不对",0,1));
 //		String json = getMusic.getJSON("https://api.zhuolin.wang/api.php?types=search&count=20&source=tencent&pages=1&name=%E6%88%91%E4%B8%8D%E5%AF%B9");
 //		List<Music> musicList = getMusic.getMusicList(json);

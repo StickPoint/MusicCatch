@@ -30,7 +30,7 @@ dependencies {
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.1.1'
     implementation 'androidx.recyclerview:recyclerview:1.0.0'
     implementation "androidx.swiperefreshlayout:swiperefreshlayout:1.1.0"
-
+    implementation "com.squareup.okhttp3:okhttp:3.4.2"
     implementation 'com.alibaba:fastjson:1.2.62'
     implementation 'org.jsoup:jsoup:1.10.3'
     implementation 'pl.droidsonroids.gif:android-gif-drawable:1.2.19'

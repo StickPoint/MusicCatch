@@ -1,12 +1,26 @@
 package com.sm.music.MusicUtils;
 
+import android.os.Environment;
+import android.util.Log;
+
 import com.sm.music.Bean.Music;
 
-import java.net.URI;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
 
 public class MusicDownlaod {
+    private String url;
     public void downloadFile(Music music){
         OkHttpClient okHttpClient = new OkHttpClient();
+
         Request request = new Request.Builder().url(url).build();
         okHttpClient.newCall(request).enqueue(new Callback() {
             @Override

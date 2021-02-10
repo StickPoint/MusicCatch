@@ -18,6 +18,7 @@ import com.sm.music.Bean.Music;
 import com.sm.music.Bean.RecMusic;
 import com.sm.music.MusicUtils.MusicDownload;
 import com.sm.music.R;
+import com.sm.music.SQL.SQLUtils;
 
 import static android.content.Context.CLIPBOARD_SERVICE;
 
@@ -35,10 +36,13 @@ public class MoreWindows {
 
     boolean isMoreShow = false;
 
+    private SQLUtils sqlUtils = null;
+
     public MoreWindows(final Context context, final FrameLayout root) {
         this.context = context;
         this.root = root;
         musicDownlaod = new MusicDownload(context, root);
+        sqlUtils = new SQLUtils();
         more = View.inflate(context, R.layout.windows_more, null);
     }
 
@@ -103,7 +107,13 @@ public class MoreWindows {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 //TODO: to add & remove favoriate music
-
+                if (isChecked){
+                    if (sqlUtils.setFavMus(context, music))
+                        Toast.makeText(context, R.string.fav_failed, Toast.LENGTH_LONG);
+                }else {
+                    if (!sqlUtils.delFavMus(context, music.getId()))
+                        Toast.makeText(context, R.string.fav_del_failed, Toast.LENGTH_LONG);
+                }
             }
         });
         ToDown.setOnClickListener(new View.OnClickListener() {

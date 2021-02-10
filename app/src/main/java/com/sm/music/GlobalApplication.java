@@ -27,6 +27,7 @@ import androidx.annotation.NonNull;
 import com.sm.music.Activity.PlayerActivity;
 import com.sm.music.Bean.Music;
 import com.sm.music.MusicUtils.GetMusic;
+import com.sm.music.MusicUtils.RecentPlay;
 import com.sm.music.Override.UnclickableHorizontalScrollView;
 import com.sm.music.Server.MusicPlayer;
 
@@ -295,6 +296,7 @@ public class GlobalApplication extends Application {
                                 @Override
                                 public void onPrepared(MediaPlayer mediaPlayer) {
                                     initPlayerOnMusic();
+                                    RecentPlay.addRecentPlayMusic(getApplicationContext(),music);
                                     musicPlay();
                                 }
                             });

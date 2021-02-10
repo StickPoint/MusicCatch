@@ -5,10 +5,12 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 
 import android.os.Bundle;
 import android.view.View;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 
 import com.sm.music.GlobalApplication;
+import com.sm.music.MusicUtils.RecentPlay;
 import com.sm.music.R;
 import com.sm.music.UIUtils.Util;
 
@@ -16,9 +18,13 @@ public class PlayerActivity extends AppCompatActivity {
 
     private GlobalApplication globalApplication = null;
 
+    private FrameLayout playerPage = null;
     private ConstraintLayout playerTop = null;
     private ConstraintLayout player_control = null;
     private ImageView playerTop_close = null;
+    private ImageView recent_button = null;
+
+    private RecentPlay recentPlay = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,6 +39,9 @@ public class PlayerActivity extends AppCompatActivity {
 
         playerTop = findViewById(R.id.playerTop);
         player_control = findViewById(R.id.player_control);
+        playerPage = findViewById(R.id.playerPage);
+        recent_button = findViewById(R.id.recent_button);
+        recentPlay = new RecentPlay(PlayerActivity.this, globalApplication, playerPage);
 
         playerTop.post(new Runnable() {
             public void run() {
@@ -63,8 +72,23 @@ public class PlayerActivity extends AppCompatActivity {
                 overridePendingTransition(0,R.anim.transfrom_buttom_out);
             }
         });
+        recent_button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                recentPlay.show();
+            }
+        });
 
 
+    }
+
+
+    public void onBackPressed() {
+        if (recentPlay.isRecentShow()){
+            recentPlay.hide();
+        }else {
+            super.onBackPressed();
+        }
 
     }
 }

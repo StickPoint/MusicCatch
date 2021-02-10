@@ -16,7 +16,9 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
 
+import com.sm.music.Bean.Music;
 import com.sm.music.GlobalApplication;
+import com.sm.music.MusicUtils.MoreWindows;
 import com.sm.music.R;
 import com.sm.music.UIUtils.Util;
 import com.sm.music.Fragment.downloadFragment;
@@ -47,6 +49,8 @@ public class MainActivity extends AppCompatActivity {
     //tag
     private static final int ACTICITY_TAG = 410;
 
+    private MoreWindows moreWindows = null;
+
     //add child page view to FragmentList
     static {
         FragmentList.add(new indexFragment());
@@ -66,10 +70,13 @@ public class MainActivity extends AppCompatActivity {
 
         globalApplication = (GlobalApplication) getApplication();
 
+
         mainPage = findViewById(R.id.mainPage);
         nav = findViewById(R.id.nav);
 
         navBar_layout = View.inflate(this, R.layout.nav_bar,null);
+
+        moreWindows = new MoreWindows(MainActivity.this,mainPage);
 
         nav.post(new Runnable() {
             @Override
@@ -179,9 +186,21 @@ public class MainActivity extends AppCompatActivity {
         //TODO: Other code
     }
 
+    public void onBackPressed() {
+        if (moreWindows.isMoreShow()){
+            moreWindows.removeMore();
+        }else {
+            super.onBackPressed();
+        }
+
+    }
     @Override
     protected void onDestroy() {
         super.onDestroy();
         globalApplication.destroyMinMusicPlayer(ACTICITY_TAG);
+    }
+
+    public void showMore(Music music){
+        moreWindows.show(music);
     }
 }

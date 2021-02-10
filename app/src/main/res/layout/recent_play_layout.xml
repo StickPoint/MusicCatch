@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/recent_play_page"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/tipBg"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:id="@+id/recent_play_container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="128dp"
+        android:background="@drawable/recent_list_radius"
+        android:orientation="vertical"
+        android:paddingTop="15dp">
+
+        <TextView
+            android:id="@+id/recent_play_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="15dp"
+            android:text="@string/hsitory"
+            android:textColor="@color/textBlack"
+            android:textSize="@dimen/normal" />
+
+        <View
+            android:id="@+id/divider2"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginTop="15dp"
+            android:layout_marginBottom="15dp"
+            android:background="?android:attr/listDivider" />
+
+        <ListView
+            android:id="@+id/recent_play_list"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:divider="@color/transparent"
+            android:dividerHeight="@dimen/none" />
+    </LinearLayout>
+</LinearLayout>

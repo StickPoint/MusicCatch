@@ -175,9 +175,7 @@
             android:id="@+id/music_seekBar"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
             android:layout_marginTop="16dp"
-            android:layout_marginEnd="8dp"
             app:layout_constraintEnd_toStartOf="@+id/duration"
             app:layout_constraintStart_toEndOf="@+id/postion"
             app:layout_constraintTop_toTopOf="parent" />
@@ -190,20 +188,19 @@
             android:text="@string/zero_time"
             android:textColor="@color/textHint"
             android:textSize="@dimen/small"
-            app:layout_constraintBottom_toBottomOf="@+id/music_seekBar"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/music_seekBar" />
+            app:layout_constraintBaseline_toBaselineOf="@+id/duration"
+            app:layout_constraintStart_toStartOf="parent" />
 
         <TextView
             android:id="@+id/duration"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginTop="15dp"
             android:layout_marginEnd="16dp"
             android:text="@string/zero_time"
             android:textColor="@color/textHint"
             android:textSize="@dimen/small"
-            app:layout_constraintBottom_toBottomOf="@+id/music_seekBar"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/music_seekBar" />
+            app:layout_constraintTop_toTopOf="parent" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </LinearLayout>

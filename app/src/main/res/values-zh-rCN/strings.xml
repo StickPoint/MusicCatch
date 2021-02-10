@@ -38,4 +38,6 @@
     <string name="download_success">下载成功歌曲已保存在</string>
     <string name="download_failed">下载失败</string>
     <string name="zero_size">0.0M/0.0M</string>
+    <string name="hsitory">最近播放</string>
+    <string name="rank">排名</string>
 </resources>

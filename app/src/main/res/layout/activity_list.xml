@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/list_page"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".Activity.ListActivity">
+
+    <LinearLayout
+        android:id="@+id/list"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/list_top"
+            android:layout_width="match_parent"
+            android:layout_height="60dp">
+
+            <ImageView
+                android:id="@+id/list_cancel"
+                android:layout_width="wrap_content"
+                android:layout_height="0dp"
+                android:layout_marginStart="8dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:srcCompat="@drawable/ic_return" />
+
+            <TextView
+                android:id="@+id/list_title"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginEnd="8dp"
+                android:gravity="center"
+                android:text="TextView"
+                android:textColor="@color/textBlack"
+                android:textSize="@dimen/normal"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1">
+
+            <com.scwang.smart.refresh.layout.SmartRefreshLayout
+                android:id="@+id/list_refresh"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:visibility="invisible">
+
+                <com.scwang.smart.refresh.header.ClassicsHeader
+                    android:id="@+id/list_refresh_header"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+
+                <ListView
+                    android:id="@+id/list_container"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:divider="@color/transparent"
+                    android:dividerHeight="@dimen/none"
+                    android:overScrollMode="never" />
+
+                <com.scwang.smart.refresh.footer.ClassicsFooter
+                    android:id="@+id/list_refresh_footer"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+
+
+            </com.scwang.smart.refresh.layout.SmartRefreshLayout>
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/listLoading"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <pl.droidsonroids.gif.GifImageView
+                    android:id="@+id/listLoading_icon"
+                    android:layout_width="60dp"
+                    android:layout_height="60dp"
+                    android:src="@drawable/loading"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+        </FrameLayout>
+
+        <FrameLayout
+            android:id="@+id/list_buttom"
+            android:layout_width="match_parent"
+            android:layout_height="60dp">
+
+        </FrameLayout>
+
+    </LinearLayout>
+
+</FrameLayout>

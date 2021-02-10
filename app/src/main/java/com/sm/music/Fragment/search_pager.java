@@ -41,7 +41,6 @@ public class search_pager extends Fragment {
 
     final static private int NETWORK_ONLOAD_TAG = 201;
 
-
     final static private int REQUEST_MUSIC_LIST = 204;
 
     final static private int SHOW_SEARCH_LOADING = 304;
@@ -121,6 +120,7 @@ public class search_pager extends Fragment {
 
         return view;
     }
+
     public void search_music_list_data(String text){
         if (search_text != null && search_text.equals(text) && searchList != null){
             return;

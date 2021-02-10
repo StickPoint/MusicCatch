@@ -7,15 +7,10 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 
-import android.content.ClipData;
-import android.content.ClipboardManager;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.View;
-import android.widget.CheckBox;
-import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
@@ -29,7 +24,7 @@ import com.sm.music.Bean.Music;
 import com.sm.music.GlobalApplication;
 import com.sm.music.MusicUtils.GetMusic;
 import com.sm.music.R;
-import com.sm.music.UIUtils.MoreWindows;
+import com.sm.music.MusicUtils.MoreWindows;
 import com.sm.music.UIUtils.Util;
 import com.sm.music.Fragment.search_pager;
 
@@ -174,6 +169,7 @@ public class SearchActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 SearchActivity.this.finish();
+                overridePendingTransition(0,R.anim.transfrom_buttom_out);
             }
         });
         search.addTextChangedListener(new TextWatcher() {
@@ -188,6 +184,7 @@ public class SearchActivity extends AppCompatActivity {
                         @Override
                         public void onClick(View v) {
                             SearchActivity.this.finish();
+                            overridePendingTransition(0,R.anim.transfrom_buttom_out);
                         }
                     });
                 }else {

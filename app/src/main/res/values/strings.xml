@@ -37,6 +37,8 @@
     <string name="download_success">Download successful songs saved in</string>
     <string name="download_failed">Download failed</string>
     <string name="zero_size">0.0M/0.0M</string>
+    <string name="hsitory">Recent play</string>
+    <string name="rank">Rank</string>
 
     <!-- TODO: Remove or change this placeholder text -->
 

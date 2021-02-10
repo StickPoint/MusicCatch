@@ -132,42 +132,39 @@ public class GlobalApplication extends Application {
     }
 
     private void initPlayerOnMusic(){
-        initMinPlayerOnMusic();
+        for (Map.Entry<Integer,View> i : minMusicPlayerList.entrySet()) {
+            initMinPlayerOnMusic(i.getValue());
+        }
         initPagePlayerOnMusic();
     }
 
-    private void initMinPlayerOnMusic(){
-        for (Map.Entry<Integer,View> i : minMusicPlayerList.entrySet()) {
-            View view = i.getValue();
-
-            ImageView min_music_control = view.findViewById(R.id.min_music_control);
-            if (isPlaying()){
-                min_music_control.setImageResource(R.drawable.ic_stop);
-            }else {
-                min_music_control.setImageResource(R.drawable.ic_play);
-            }
-
-            ImageView musicPic = view.findViewById(R.id.musicPic);
-
-            TextView current_music_name = view.findViewById(R.id.current_music_name);
-            current_music_name.setText(currentMusic.getName());
-
-            TextView current_music_singer = view.findViewById(R.id.current_music_singer);
-            String temp = "";
-            for (int j = 0; j < currentMusic.getArtist().length; j++) {
-                if (j == 0) {
-                    temp += currentMusic.getArtist()[j];
-                } else {
-                    temp += "/" + currentMusic.getArtist()[j];
-                }
-            }
-            current_music_singer.setText(temp);
-
-            ProgressBar minPlayerProgress = view.findViewById(R.id.minPlayerProgress);
-            minPlayerProgress.setMax(100);
-            minPlayerProgress.setProgress(0);
+    private void initMinPlayerOnMusic(View view){
+        ImageView min_music_control = view.findViewById(R.id.min_music_control);
+        if (isPlaying()){
+            min_music_control.setImageResource(R.drawable.ic_stop);
+        }else {
+            min_music_control.setImageResource(R.drawable.ic_play);
         }
 
+        ImageView musicPic = view.findViewById(R.id.musicPic);
+
+        TextView current_music_name = view.findViewById(R.id.current_music_name);
+        current_music_name.setText(currentMusic.getName());
+
+        TextView current_music_singer = view.findViewById(R.id.current_music_singer);
+        String temp = "";
+        for (int j = 0; j < currentMusic.getArtist().length; j++) {
+            if (j == 0) {
+                temp += currentMusic.getArtist()[j];
+            } else {
+                temp += "/" + currentMusic.getArtist()[j];
+            }
+        }
+        current_music_singer.setText(temp);
+
+        ProgressBar minPlayerProgress = view.findViewById(R.id.minPlayerProgress);
+        minPlayerProgress.setMax(100);
+        minPlayerProgress.setProgress(0);
     }
 
     private void initPagePlayerOnMusic(){
@@ -391,6 +388,7 @@ public class GlobalApplication extends Application {
             }
         });
         UnclickableHorizontalScrollView minPlayer_title = view.findViewById(R.id.minPlayer_title);
+        initMinPlayerOnMusic(view);
         minMusicPlayerList.put(Integer.valueOf(tag), view);
         return view;
     }

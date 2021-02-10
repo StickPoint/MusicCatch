@@ -29,6 +29,7 @@ import com.sm.music.Bean.Music;
 import com.sm.music.GlobalApplication;
 import com.sm.music.MusicUtils.GetMusic;
 import com.sm.music.R;
+import com.sm.music.UIUtils.MoreWindows;
 import com.sm.music.UIUtils.Util;
 import com.sm.music.Fragment.search_pager;
 
@@ -61,15 +62,11 @@ public class SearchActivity extends AppCompatActivity {
     private int currentType = GetMusic.MUSIC_SOURCE_KUGOU;
     private String search_text = null;
 
-    //more windows view
-    private View more_view = null;
-
-
     private ViewPager search_wapper = null;
-    //more windows is open
-    private Boolean isMoreOpen = false;
     private ArrayList<search_pager> search_pager = new ArrayList<>();
     private FragmentManager search_pager_manager = null;
+
+    MoreWindows moreWindows = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -91,7 +88,7 @@ public class SearchActivity extends AppCompatActivity {
         search_cancel = findViewById(R.id.search_cancel);
         search = findViewById(R.id.search);
         search.requestFocus();
-        more_view = this.findViewById(R.id.more);
+        moreWindows = new MoreWindows(SearchActivity.this,(FrameLayout)findViewById(R.id.searchPage));
         for (int i : TYPES){
             search_pager.add(new search_pager(i));
         }
@@ -251,9 +248,8 @@ public class SearchActivity extends AppCompatActivity {
     }
 
     public void onBackPressed() {
-        if (isMoreOpen){
-            more_view.setVisibility(View.INVISIBLE);
-            isMoreOpen = false;
+        if (moreWindows.isMoreShow()){
+            moreWindows.removeMore();
         }else {
             super.onBackPressed();
         }
@@ -288,87 +284,10 @@ public class SearchActivity extends AppCompatActivity {
 //                break;
 //        }
 //    }
-
-
-
-
     public void showMore(Music music){
-        LinearLayout more_container =  more_view.findViewById(R.id.more_container);
-        LinearLayout more_top = more_view.findViewById(R.id.more_top);
-        TextView indexMore_name = more_view.findViewById(R.id.indexMore_name);
-        TextView indexMore_singer = more_view.findViewById(R.id.indexMore_singer);
-        TextView indexMore_album = more_view.findViewById(R.id.indexMore_album);
-        CheckBox forLike = more_view.findViewById(R.id.forLike);
-        TextView ToDown = more_view.findViewById(R.id.ToDown);
-        TextView ToShare = more_view.findViewById(R.id.ToShare);
-
-        //TODO: to init like button
-
-        more_view.setVisibility(View.VISIBLE);
-        isMoreOpen = true;
-
-        indexMore_name.setText(music.getName());
-        more_view.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                more_view.setVisibility(View.INVISIBLE);
-                isMoreOpen = false;
-            }
-        });
-        more_container.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-            }
-        });
-        String temp = "";
-        for (int i = 0; i < music.getArtist().length; i++){
-            if (i == 0){
-                temp += music.getArtist()[i];
-            }else {
-                temp += "/" + music.getArtist()[i];
-            }
-        }
-        indexMore_singer.setText(temp);
-        indexMore_album.setText(music.getAlbum());
-
-        more_top.setOnLongClickListener(new View.OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View v) {
-                TextView indexMore_name = v.findViewById(R.id.indexMore_name);
-                TextView indexMore_singer = v.findViewById(R.id.indexMore_singer);
-                TextView indexMore_album = v.findViewById(R.id.indexMore_album);
-                String temp = indexMore_name.getText().toString() + "    " +
-                        indexMore_singer.getText().toString() + "    " +
-                        indexMore_album.getText().toString() + "    " +
-                        getResources().getString(R.string.introduce);
-                ((ClipboardManager) getSystemService(CLIPBOARD_SERVICE))
-                        .setPrimaryClip(ClipData.newPlainText("StickPoint Music Info", temp));
-                Toast.makeText(SearchActivity.this, R.string.copy_introduce, Toast.LENGTH_LONG).show();
-                return true;
-            }
-        });
-
-
-        forLike.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                //TODO: to add & remove favoriate music
-            }
-        });
-        ToDown.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                //TODO: to download music
-
-            }
-        });
-        ToShare.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                //TODO: to share music
-            }
-        });
+        moreWindows.show(music);
     }
+
+
 
 }

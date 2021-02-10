@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/more"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/tipBg"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:id="@+id/more_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="24dp"
+        android:layout_marginEnd="8dp"
+        android:background="@drawable/tip_box_radius"
+        android:orientation="vertical"
+        android:paddingLeft="15dp"
+        android:paddingTop="15dp"
+        android:paddingRight="15dp"
+        android:paddingBottom="15dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <LinearLayout
+            android:id="@+id/more_top"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/indexMore_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/musicName"
+                android:textColor="@color/textBlack"
+                android:textSize="@dimen/normal" />
+
+            <TextView
+                android:id="@+id/indexMore_singer"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/singer"
+                android:textColor="@color/textHint"
+                android:textSize="@dimen/small" />
+
+            <TextView
+                android:id="@+id/indexMore_album"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/album"
+                android:textColor="@color/textHint"
+                android:textSize="@dimen/small" />
+
+        </LinearLayout>
+
+        <View
+            android:id="@+id/divider"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="10dp"
+            android:background="?android:attr/listDivider" />
+
+        <LinearLayout
+            android:id="@+id/more_choose"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <CheckBox
+                android:id="@+id/forLike"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:button="@null"
+                android:drawableStart="@drawable/more_like_checked"
+                android:paddingTop="10dp"
+                android:paddingBottom="10dp"
+                android:text="@string/add_like"
+                android:textColor="@color/textBlack"
+                android:textSize="@dimen/normal" />
+
+            <TextView
+                android:id="@+id/ToDown"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="@color/foreground"
+                android:drawableStart="@drawable/ic_local"
+                android:fontFamily="sans-serif"
+                android:gravity="left|center_vertical"
+                android:paddingTop="10dp"
+                android:paddingBottom="10dp"
+                android:text="@string/download_this_music"
+                android:textColor="@color/textBlack"
+                android:textSize="@dimen/normal" />
+
+            <Button
+                android:id="@+id/ToShare"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="@color/foreground"
+                android:drawableStart="@drawable/ic_share"
+                android:fontFamily="sans-serif"
+                android:gravity="left|center_vertical"
+                android:paddingTop="10dp"
+                android:paddingBottom="10dp"
+                android:text="@string/share"
+                android:textColor="@color/textBlack"
+                android:textSize="@dimen/normal" />
+        </LinearLayout>
+
+
+    </LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

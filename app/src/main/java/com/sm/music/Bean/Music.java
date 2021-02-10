@@ -1,5 +1,7 @@
 package com.sm.music.Bean;
 
+import androidx.annotation.Nullable;
+
 import java.util.Arrays;
 
 /**
@@ -88,6 +90,11 @@ public class Music {
 
     public void setSource(String source) {
         this.source = source;
+    }
+
+    @Override
+    public boolean equals(@Nullable Object obj) {
+        return this.getId().equals( ((Music) obj).getId() );
     }
 
     @Override

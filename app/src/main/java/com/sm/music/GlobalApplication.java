@@ -139,32 +139,33 @@ public class GlobalApplication extends Application {
     }
 
     private void initMinPlayerOnMusic(View view){
-        ImageView min_music_control = view.findViewById(R.id.min_music_control);
-        if (isPlaying()){
-            min_music_control.setImageResource(R.drawable.ic_stop);
-        }else {
-            min_music_control.setImageResource(R.drawable.ic_play);
+        if (currentMusic != null){
+
+            ImageView musicPic = view.findViewById(R.id.musicPic);
+
+            TextView current_music_name = view.findViewById(R.id.current_music_name);
+            current_music_name.setText(currentMusic.getName());
+
+            TextView current_music_singer = view.findViewById(R.id.current_music_singer);
+            String temp = "";
+            for (int j = 0; j < currentMusic.getArtist().length; j++) {
+                if (j == 0) {
+                    temp += currentMusic.getArtist()[j];
+                } else {
+                    temp += "/" + currentMusic.getArtist()[j];
+                }
+            }
+            current_music_singer.setText(temp);
         }
-
-        ImageView musicPic = view.findViewById(R.id.musicPic);
-
-        TextView current_music_name = view.findViewById(R.id.current_music_name);
-        current_music_name.setText(currentMusic.getName());
-
-        TextView current_music_singer = view.findViewById(R.id.current_music_singer);
-        String temp = "";
-        for (int j = 0; j < currentMusic.getArtist().length; j++) {
-            if (j == 0) {
-                temp += currentMusic.getArtist()[j];
-            } else {
-                temp += "/" + currentMusic.getArtist()[j];
+        ImageView min_music_control = view.findViewById(R.id.min_music_control);
+        ProgressBar minPlayerProgress = view.findViewById(R.id.minPlayerProgress);
+        if (player != null){
+            if (isPlaying()){
+                min_music_control.setImageResource(R.drawable.ic_stop);
+            }else {
+                min_music_control.setImageResource(R.drawable.ic_play);
             }
         }
-        current_music_singer.setText(temp);
-
-        ProgressBar minPlayerProgress = view.findViewById(R.id.minPlayerProgress);
-        minPlayerProgress.setMax(100);
-        minPlayerProgress.setProgress(0);
     }
 
     private void initPagePlayerOnMusic(){
@@ -266,8 +267,6 @@ public class GlobalApplication extends Application {
     //user
 
     public void setCurrentMusic(final Music music){
-        currentMusic = music;
-        musicPause();
         final Handler handler = new Handler(){
             @Override
             public void handleMessage(@NonNull Message msg) {
@@ -296,30 +295,36 @@ public class GlobalApplication extends Application {
                 }
             }
         };
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                Message msg = Message.obtain();
-                try {
-                    String id = music.getId();
-                    String url = conn.getMusicPlayURL(id, music.getSource());
-                    if (id.equals(currentMusic.getId())){
-                        if (url != null){
-                            msg.what = REQUEST_MUSIC_URL;
-                            msg.arg1 = GetMusic.RESPOND_SUCCESS;
-                            msg.obj = url;
+        if (currentMusic != null && currentMusic.equals(music)){
+            musicPlay();
+        }else {
+            currentMusic = music;
+            musicPause();
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    Message msg = Message.obtain();
+                    try {
+                        String id = music.getId();
+                        String url = conn.getMusicPlayURL(id, music.getSource());
+                        if (id.equals(currentMusic.getId())){
+                            if (url != null){
+                                msg.what = REQUEST_MUSIC_URL;
+                                msg.arg1 = GetMusic.RESPOND_SUCCESS;
+                                msg.obj = url;
 
-                        }else {
-                            msg.what = GetMusic.RESPOND_TIMEOUT;
+                            }else {
+                                msg.what = GetMusic.RESPOND_TIMEOUT;
+                            }
                         }
-                    }
-                } catch (Exception e) {
-                    msg.what = GetMusic.RESPOND_TIMEOUT;
-                    e.printStackTrace();
-                };
-                handler.sendMessage(msg);
-            }
-        }).start();
+                    } catch (Exception e) {
+                        msg.what = GetMusic.RESPOND_TIMEOUT;
+                        e.printStackTrace();
+                    };
+                    handler.sendMessage(msg);
+                }
+            }).start();
+        }
     }
 
     public void setMusicPlayerPageView(View view){
@@ -339,15 +344,20 @@ public class GlobalApplication extends Application {
         music_seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                if (fromUser){
-                    player.seekTo(progress);
-                }
+                TextView postion = musicPlayerPageView.findViewById(R.id.postion);
+                int ic = seekBar.getProgress() / 1000;
+                postion.setText((ic / 60 >= 10 ? String.valueOf(ic / 60) : "0" + ic / 60) + ":" +
+                        (ic % 60 >= 10 ? String.valueOf(ic % 60) : "0" + ic % 60));
             }
             @Override
             public void onStartTrackingTouch(SeekBar seekBar) {
+
             }
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
+//                if (fromUser){
+                    player.seekTo(seekBar.getProgress());
+//                }
             }
         });
 

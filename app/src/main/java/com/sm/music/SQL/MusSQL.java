@@ -5,12 +5,12 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import androidx.annotation.Nullable;
 
-public class PersonSQL extends SQLiteOpenHelper {
-    public PersonSQL(@Nullable Context context, @Nullable String name, @Nullable SQLiteDatabase.CursorFactory factory, int version) {
+public class MusSQL extends SQLiteOpenHelper {
+    public MusSQL(@Nullable Context context, @Nullable String name, @Nullable SQLiteDatabase.CursorFactory factory, int version) {
         super(context, name, factory, version);
     }
 
-    public PersonSQL(Context applicationContext) {
+    public MusSQL(Context applicationContext) {
         super(applicationContext,"d_music_b",null,1);
     }
 
@@ -18,12 +18,12 @@ public class PersonSQL extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase db) {
         //建表
-        db.execSQL("create table favMus(music_id varchar(100) PRIMARY KEY," +
+        db.execSQL("create table favmus(musid varchar(100) PRIMARY KEY," +
                 "date timestamp not null default (datetime('now','localtime'))," +
                 "music text(100000))");
-        db.execSQL("create table locMus(_id integer primary key autoincrement," +
+        db.execSQL("create table locmus(musicid integer primary key autoincrement," +
                 "musname varchar(30)," +
-                "musarti varchar(30),location varchar(100))");
+                "location varchar(200))");
         db.execSQL("create table hisplay(_id integer primary key autoincrement," +
                 "musname varchar(50)," +
                 "musarti varchar(30),mussize int(100))");

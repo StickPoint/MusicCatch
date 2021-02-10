@@ -97,6 +97,8 @@ public class GetMusic {
 
 	private List<RecMusic> recMusicList;
 
+	private List<Music> recMusList;
+
 	public GetMusic(){}
 
 	/**
@@ -414,7 +416,8 @@ public class GetMusic {
 		return  mp3PlayURL;
 	}
 
-	/**
+	/** TODO 获得推荐歌单的音乐（封装的对象并不是Music，而是RecMusic）
+	 * TODO 此方法无分页
 	 * 获得指定推荐歌单的所有音乐播放地址
 	 * 返回的是一个List<Music>对象
 	 * @param playListId
@@ -439,8 +442,9 @@ public class GetMusic {
 		return recMusicPlayList;
 	}
 
-	/**
-	 * 这是分页获取音乐播放列表
+
+	/** TODO 分页获得推荐歌单的音乐（封装的对象并不是Music，而是RecMusic）
+	 * TODO 此方法需要重写 此方法有分页
 	 * 传入两个参数 一个playListId 一个页数页码 (注意： 这个是歌单列表分页，不是搜索分页)
 	 * 再就是注意：这个分页 起始的位置 起 index = 0 始 index = 9 （0~9）一共是十页
 	 * @param playListId
@@ -461,6 +465,40 @@ public class GetMusic {
 			recMusicListByPages.add(recMusicList.get(i));
 		}
 		return  recMusicListByPages;
+	}
+
+	/**
+	 * TODO 返回Music对象的推荐歌单，使用的是Music对象封装的
+	 * @param playListId
+	 * @param pageIndex
+	 * @return
+	 * @throws Exception
+	 */
+	public List<Music> getRecMusListByPages(String playListId,int pageIndex) throws Exception {
+		recMusicList = new ArrayList<>();
+		//第一步 拿到歌单的json
+		String musicPlayListJson = getMusicPlayJson(REQUEST_URL_PLAYLIST + playListId);
+		//第二步 将获得的JSON字符串转成封装好的RecMusic对象
+		JSONObject jsonObject = JSONObject.parseObject(musicPlayListJson);
+		String playlist = jsonObject.getString("playlist");
+		jsonObject = JSONObject.parseObject(playlist);
+		String tracks = jsonObject.getString("tracks");
+		recMusicList = JSONObject.parseArray(tracks,RecMusic.class);
+		List<Music> recMusicListByPages = new ArrayList<>();
+		for (int i = 20 * pageIndex; i < 20 * (1+pageIndex)  ; i++) {
+			Music music  = new Music();
+			music.setId(recMusicList.get(i).getId());
+			JSONObject al = JSONObject.parseObject(recMusicList.get(i).getAl().toString());
+			music.setAlbum(al.getString("name"));
+			music.setName(recMusicList.get(i).getName());
+			music.setSource("netease");
+			music.setArtist(recMusicList.get(i).getAr());
+			music.setPic_id(al.getString("pic_str"));
+			music.setLyric_id(recMusicList.get(i).getId());
+			music.setUrl_id(recMusicList.get(i).getId());
+			recMusicListByPages.add(music);
+		}
+		return recMusicListByPages;
 	}
 
 	/**
@@ -500,7 +538,7 @@ public class GetMusic {
 			json= getJSON(musicPicRequestUrl).replace("\\","");
 			json = fengeUrl2(json);
 			HttpConn httpConn = new HttpConn().setUri(json).setAccept("image/*");
-			input  = httpConn.get().getInputStream();
+				input  = httpConn.get().getInputStream();
 		}
 		return input;
 	}
@@ -520,15 +558,15 @@ public class GetMusic {
 		return StringEscapeUtils.unescapeJava(json);
 	}
 
-	public String getMusicPlayListCover(Long musicPlayListCoverId) throws Exception {
-		String getMusicPlayListCoverRequestUrl = REQUEST_URL_PIC+"&pic_id="+musicPlayListCoverId;
-		String json= getJSON(getMusicPlayListCoverRequestUrl).replace("\\","");
-		json = fengeUrl2(json);
-		return json;
-	}
+	/**
+	 * 测试方法
+	 * @param args
+	 * @throws Exception
+	 */
 	public static void main(String[] args) throws Exception {
 		GetMusic getMusic =new GetMusic();
-		System.out.println(getMusic.getMusicPlayListCover(MUSIC_PLAY_LIST_1));
+		System.out.println(getMusic.getRecMusListByPages(String.valueOf(MUSIC_PLAY_LIST_1), 1));
+//		System.out.println(getMusic.getMusicPlayListCover(MUSIC_PLAY_LIST_1));
 //		System.out.println(getMusic.getMusicPlayPicUrl("1809286552","109951165605881639",0));
 //		System.out.println(getMusic.getMusicPlayURLByPages("我不对",0,1));
 //		String json = getMusic.getJSON("https://api.zhuolin.wang/api.php?types=search&count=20&source=tencent&pages=1&name=%E6%88%91%E4%B8%8D%E5%AF%B9");

@@ -18,6 +18,7 @@ import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.FrameLayout;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
@@ -52,6 +53,8 @@ public class SearchActivity extends AppCompatActivity {
     private ConstraintLayout searchBar = null;
     private FrameLayout searchPlayer = null;
 
+    private ImageView search_cancel = null;
+
     private TextView search_button = null;
     private EditText search = null;
 
@@ -85,6 +88,7 @@ public class SearchActivity extends AppCompatActivity {
         searchBar = findViewById(R.id.searchBar);
         searchPlayer = findViewById(R.id.searchPlayer);
         search_button = findViewById(R.id.search_button);
+        search_cancel = findViewById(R.id.search_cancel);
         search = findViewById(R.id.search);
         search.requestFocus();
         more_view = this.findViewById(R.id.more);
@@ -112,6 +116,13 @@ public class SearchActivity extends AppCompatActivity {
             }
         });
 
+        search_cancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                SearchActivity.this.finish();
+                overridePendingTransition(0,R.anim.transfrom_buttom_out);
+            }
+        });
 
         search_pager_manager = getSupportFragmentManager();
 
@@ -190,7 +201,7 @@ public class SearchActivity extends AppCompatActivity {
                             String temp = String.valueOf(search.getText());
                             if (temp != null && !temp.replace(" ","").equals("")){
                                 search_text = temp;
-                                Log.e("log::e", String.valueOf(search_pager_manager.getFragments().size()));;
+                                search_wapper.setVisibility(View.VISIBLE);
                                 search_pager.get(search_wapper.getCurrentItem()).search_music_list_data(search_text);
                             }else {
                                 Toast.makeText(SearchActivity.this, R.string.no_search_input, Toast.LENGTH_SHORT).show();;

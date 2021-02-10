@@ -90,6 +90,7 @@ public class indexFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 startActivity(new Intent(getActivity(), SearchActivity.class));
+                getActivity().overridePendingTransition(R.anim.transfrom_buttom_in,R.anim.no_transfrom);
             }
         });
 

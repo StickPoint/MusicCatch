@@ -30,7 +30,8 @@
         <com.scwang.smart.refresh.footer.ClassicsFooter
             android:id="@+id/searchList_footer"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:background="@color/foreground" />
     </com.scwang.smart.refresh.layout.SmartRefreshLayout>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -42,8 +43,8 @@
 
         <pl.droidsonroids.gif.GifImageView
             android:id="@+id/searchLoading_icon"
-            android:layout_width="80dp"
-            android:layout_height="80dp"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
             android:src="@drawable/loading"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"

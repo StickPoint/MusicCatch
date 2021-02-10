@@ -33,4 +33,5 @@
     <string name="copy_introduce">已将歌曲信息复制到剪切板</string>
     <string name="cancel">取消</string>
     <string name="no_search_input">请在搜索框中输入内容</string>
+    <string name="zero_time">00:00</string>
 </resources>

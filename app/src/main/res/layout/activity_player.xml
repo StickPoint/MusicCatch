@@ -2,6 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/playerPage"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/player_bg"
@@ -26,45 +27,65 @@
             app:layout_constraintTop_toTopOf="parent"
             app:srcCompat="@drawable/ic_down" />
 
-        <TextView
-            android:id="@+id/player_musicName"
+        <com.sm.music.Override.UnclickableHorizontalScrollView
+            android:id="@+id/music_name_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginStart="64dp"
             android:layout_marginTop="8dp"
-            android:text="@string/musicName"
-            android:textColor="@color/textWhite"
-            android:textSize="@dimen/normal"
+            android:layout_marginEnd="60dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent">
 
-        <LinearLayout
-            android:id="@+id/player_musicInfo"
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/player_musicName"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/musicName"
+                    android:textColor="@color/textWhite"
+                    android:textSize="@dimen/normal" />
+            </LinearLayout>
+        </com.sm.music.Override.UnclickableHorizontalScrollView>
+
+        <com.sm.music.Override.UnclickableHorizontalScrollView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="@+id/player_musicName"
-            app:layout_constraintStart_toStartOf="@+id/player_musicName"
-            app:layout_constraintTop_toBottomOf="@+id/player_musicName">
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/music_name_title">
 
-            <TextView
-                android:id="@+id/player_musicInfo_singer"
+            <LinearLayout
+                android:id="@+id/player_musicInfo"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginEnd="16dp"
-                android:layout_marginRight="16dp"
-                android:text="@string/singer"
-                android:textColor="@color/textWhite"
-                android:textSize="@dimen/small" />
+                tools:layout_editor_absoluteY="41dp">
 
-            <TextView
-                android:id="@+id/player_musicInfo_album"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/album"
-                android:textColor="@color/textWhite"
-                android:textSize="@dimen/small" />
-        </LinearLayout>
+                <TextView
+                    android:id="@+id/player_musicInfo_singer"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="16dp"
+                    android:layout_marginRight="16dp"
+                    android:text="@string/singer"
+                    android:textColor="@color/textWhite"
+                    android:textSize="@dimen/small" />
+
+                <TextView
+                    android:id="@+id/player_musicInfo_album"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/album"
+                    android:textColor="@color/textWhite"
+                    android:textSize="@dimen/small" />
+            </LinearLayout>
+
+        </com.sm.music.Override.UnclickableHorizontalScrollView>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -87,7 +108,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:srcCompat="@mipmap/default_pic" />
+            app:srcCompat="@mipmap/default_music_pic" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -149,5 +170,40 @@
                 android:contentDescription="@string/next"
                 app:srcCompat="@drawable/ic_next" />
         </LinearLayout>
+
+        <SeekBar
+            android:id="@+id/music_seekBar"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="8dp"
+            app:layout_constraintEnd_toStartOf="@+id/duration"
+            app:layout_constraintStart_toEndOf="@+id/postion"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/postion"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:text="@string/zero_time"
+            android:textColor="@color/textHint"
+            android:textSize="@dimen/small"
+            app:layout_constraintBottom_toBottomOf="@+id/music_seekBar"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/music_seekBar" />
+
+        <TextView
+            android:id="@+id/duration"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="16dp"
+            android:text="@string/zero_time"
+            android:textColor="@color/textHint"
+            android:textSize="@dimen/small"
+            app:layout_constraintBottom_toBottomOf="@+id/music_seekBar"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/music_seekBar" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </LinearLayout>

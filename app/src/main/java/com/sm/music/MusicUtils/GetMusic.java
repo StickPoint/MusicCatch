@@ -1,19 +1,16 @@
 package com.sm.music.MusicUtils;
 
-import android.icu.text.UFormat;
-
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import com.alibaba.fastjson.JSONObject;
 import com.sm.music.Bean.Music;
 import com.sm.music.Bean.RecMusic;
-
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.jsoup.Connection;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Entities;
 import org.jsoup.parser.Parser;
-
-import java.net.URL;
+import java.io.InputStream;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -173,6 +170,23 @@ public class GetMusic {
 		return  url;
 	}
 
+	public String fengeUrl2(String URL){
+		String url ="";
+		String regex = "\"url\":\"(.*?)\"";
+		Pattern pattern1 = Pattern.compile(regex);
+		Matcher m = pattern1.matcher(URL);
+		while (m.find()) {
+			int i = 1;
+			url+=m.group(i);
+			i++;
+		}
+		return url;
+	}
+	/**
+	 * 分割url拿出主机地址
+	 * @param url
+	 * @return
+	 */
 	public static String getHost(String url) {
 		String cache = "";
 		if(url.contains("www.")) {
@@ -476,15 +490,22 @@ public class GetMusic {
 	 * @param musicSource
 	 * @return
 	 */
-	public String getMusicPlayPicUrl(String musicId,int musicSource) throws Exception {
+	public Bitmap getMusicPlayPicUrl(String musicId,String musicPic_id,int musicSource) throws Exception {
 		String musicPicRequestUrl = REQUEST_URL_PIC+"&id="+musicId+"&source="+chooseMusicSource(musicSource);
-		String json = "";
+		String json = "1";
+		Bitmap bitmap = null;
 		if(musicSource==2){
-			json = null;
-		}else if(musicSource==0||musicSource==1){
-			json= getMusicPlayJson(musicPicRequestUrl);
+			musicPicRequestUrl = REQUEST_URL_PIC+"&id="+musicId+"&source="+chooseMusicSource(musicSource);
+			json= getJSON(musicPicRequestUrl).replace("\\","");
+		}else if(musicSource==0){
+			musicPicRequestUrl = REQUEST_URL_PIC+"&id="+musicPic_id+"&pic_id="+musicId+"&source="+chooseMusicSource(musicSource);
+			json= getJSON(musicPicRequestUrl).replace("\\","");
+			json = fengeUrl2(json);
+			HttpConn httpConn = new HttpConn().setUri(json).setAccept("image/*");
+			InputStream input = httpConn.get().getInputStream();
+			bitmap = BitmapFactory.decodeStream(input);
 		}
-		return json;
+		return bitmap;
 	}
 
 	/**
@@ -504,8 +525,8 @@ public class GetMusic {
 
 	public static void main(String[] args) throws Exception {
 		GetMusic getMusic =new GetMusic();
-		System.out.println(getMusic.getMusicPlayPicUrl("9f513a599197d4f92a1fb0cd94e3e501",2));
-		System.out.println(getMusic.getMusicPlayURLByPages("我不对",1,1));
+		System.out.println(getMusic.getMusicPlayPicUrl("1809286552","109951165605881639",0));
+//		System.out.println(getMusic.getMusicPlayURLByPages("我不对",0,1));
 //		String json = getMusic.getJSON("https://api.zhuolin.wang/api.php?types=search&count=20&source=tencent&pages=1&name=%E6%88%91%E4%B8%8D%E5%AF%B9");
 //		List<Music> musicList = getMusic.getMusicList(json);
 //		System.out.println(musicList);

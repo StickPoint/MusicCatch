@@ -33,6 +33,7 @@
     <string name="cancel">Cancel</string>
     <string name="no_search_input">Please type in the search box</string>
     <string name="zero_time">00:00</string>
+    <string name="downloading">Downloading...</string>
 
     <!-- TODO: Remove or change this placeholder text -->
 

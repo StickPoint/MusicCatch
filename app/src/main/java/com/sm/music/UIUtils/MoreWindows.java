@@ -15,29 +15,33 @@ import android.widget.Toast;
 
 import com.sm.music.Activity.SearchActivity;
 import com.sm.music.Bean.Music;
+import com.sm.music.MusicUtils.MusicDownload;
 import com.sm.music.R;
 
 import static android.content.Context.CLIPBOARD_SERVICE;
 
 public class MoreWindows {
 
-    Context context;
+    private MusicDownload musicDownlaod;
 
-    FrameLayout root;
+    private Context context;
 
-    View more;
+    private FrameLayout root;
 
-    Music music;
+    private View more;
+
+    private Music music;
 
     boolean isMoreShow = false;
 
     public MoreWindows(final Context context, final FrameLayout root) {
         this.context = context;
         this.root = root;
+        musicDownlaod = new MusicDownload(context, root);
         more = View.inflate(context, R.layout.windows_more, null);
     }
 
-    public void show(Music music){
+    public void show(final Music music){
         this.music = music;
 
         LinearLayout more_container =  more.findViewById(R.id.more_container);
@@ -104,7 +108,8 @@ public class MoreWindows {
             @Override
             public void onClick(View v) {
                 //TODO: to download music
-
+                removeMore();
+                musicDownlaod.downloadFile(music);
             }
         });
         ToShare.setOnClickListener(new View.OnClickListener() {

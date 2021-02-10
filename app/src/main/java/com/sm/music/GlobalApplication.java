@@ -344,15 +344,20 @@ public class GlobalApplication extends Application {
         music_seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                if (fromUser){
-                    player.seekTo(progress);
-                }
+                TextView postion = musicPlayerPageView.findViewById(R.id.postion);
+                int ic = seekBar.getProgress() / 1000;
+                postion.setText((ic / 60 >= 10 ? String.valueOf(ic / 60) : "0" + ic / 60) + ":" +
+                        (ic % 60 >= 10 ? String.valueOf(ic % 60) : "0" + ic % 60));
             }
             @Override
             public void onStartTrackingTouch(SeekBar seekBar) {
+
             }
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
+//                if (fromUser){
+                    player.seekTo(seekBar.getProgress());
+//                }
             }
         });
 

@@ -31,6 +31,7 @@ import com.sm.music.R;
 import com.sm.music.Activity.SearchActivity;
 import com.sm.music.UIUtils.Util;
 
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -97,7 +98,7 @@ public class indexFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View view = inflater.inflate(R.layout.fragment_index, container, false);
+        final View view = inflater.inflate(R.layout.fragment_index, container, false);
         final int statusBarHeight = Util.getStatusBarHeight(getActivity());
         top = view.findViewById(R.id.indexBar);
         top.post(new Runnable() {
@@ -138,7 +139,8 @@ public class indexFragment extends Fragment {
                 try {
                     return musicIdList.getJSONObject(position).getLong("id");
                 } catch (JSONException e) {
-                    return position;
+                    e.printStackTrace();
+                    return 0;
                 }
             }
 
@@ -161,9 +163,17 @@ public class indexFragment extends Fragment {
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
-
-
                 return convertView;
+//                View v = inflate(getActivity(), R.layout.index_music_list_item, null);
+//
+//                try {
+//                    ((ImageView) v.findViewById(R.id.item_pic)).setImageResource(musicIdList.getJSONObject(position).getInt("layout_resource"));
+//                    ((TextView)v.findViewById(R.id.item_text)).setText(musicIdList.getJSONObject(position).getString("name"));
+//                } catch (JSONException e) {
+//                    e.printStackTrace();
+//                }
+//
+//                return v;
             }
         });
         index_list.setOnItemClickListener(new AdapterView.OnItemClickListener() {

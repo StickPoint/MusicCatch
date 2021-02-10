@@ -29,6 +29,7 @@ import com.sm.music.Fragment.search_pager;
 import com.sm.music.GlobalApplication;
 import com.sm.music.MusicUtils.ConvertBean;
 import com.sm.music.MusicUtils.GetMusic;
+import com.sm.music.MusicUtils.RecentPlay;
 import com.sm.music.R;
 import com.sm.music.MusicUtils.MoreWindows;
 import com.sm.music.UIUtils.Util;
@@ -311,6 +312,10 @@ public class ListActivity extends AppCompatActivity {
         public View getView(final int position, View convertView, ViewGroup parent) {
             View view = View.inflate(ListActivity.this, R.layout.ranking_list_item_layout, null);
             final Music music = music_list.get(position);
+            if (RecentPlay.isPlayedRecently(ListActivity.this,music.getId())){
+                ((TextView) view.findViewById(R.id.index_list_item_music_name)).setTextColor(ListActivity.this.getResources().getColor(R.color.textHint));
+            }
+
             if (position < 3){
                 ((TextView) view.findViewById(R.id.index_list_rank)).setText(String.valueOf(position + 1));
                 ((TextView) view.findViewById(R.id.index_list_rank)).setTextColor(getResources().getColor(R.color.colorPrimary));

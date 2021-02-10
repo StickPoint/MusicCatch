@@ -54,7 +54,7 @@ public class MoreWindows {
         TextView indexMore_name = more.findViewById(R.id.indexMore_name);
         TextView indexMore_singer = more.findViewById(R.id.indexMore_singer);
         TextView indexMore_album = more.findViewById(R.id.indexMore_album);
-        CheckBox forLike = more.findViewById(R.id.forLike);
+        final CheckBox forLike = more.findViewById(R.id.forLike);
         TextView ToDown = more.findViewById(R.id.ToDown);
         TextView ToShare = more.findViewById(R.id.ToShare);
 
@@ -108,9 +108,11 @@ public class MoreWindows {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 //TODO: to add & remove favoriate music
                 if (isChecked){
+                    forLike.setText(R.string.remove_like);
                     if (sqlUtils.setFavMus(context, music))
                         Toast.makeText(context, R.string.fav_failed, Toast.LENGTH_LONG);
                 }else {
+                    forLike.setText(R.string.add_like);
                     if (!sqlUtils.delFavMus(context, music.getId()))
                         Toast.makeText(context, R.string.fav_del_failed, Toast.LENGTH_LONG);
                 }

@@ -34,6 +34,9 @@
     <string name="no_search_input">Please type in the search box</string>
     <string name="zero_time">00:00</string>
     <string name="downloading">Downloading...</string>
+    <string name="download_success">Download successful songs saved in</string>
+    <string name="download_failed">Download failed</string>
+    <string name="zero_size">0.0M/0.0M</string>
 
     <!-- TODO: Remove or change this placeholder text -->
 

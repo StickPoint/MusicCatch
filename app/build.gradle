@@ -34,7 +34,7 @@ dependencies {
     implementation 'com.alibaba:fastjson:1.2.62'
     implementation 'org.jsoup:jsoup:1.10.3'
     implementation 'pl.droidsonroids.gif:android-gif-drawable:1.2.19'
-
+    implementation 'org.apache.commons:commons-lang3:3.5'
     implementation 'com.scwang.smart:refresh-layout-kernel:2.0.3'
     implementation 'com.scwang.smart:refresh-header-classics:2.0.3'
     implementation 'com.scwang.smart:refresh-header-material:2.0.3'

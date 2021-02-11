@@ -59,6 +59,14 @@ public class MoreWindows {
         TextView ToShare = more.findViewById(R.id.ToShare);
 
         //TODO: to init like button
+        if (sqlUtils.getFavMus(context, music.getId())){
+            forLike.setText(R.string.remove_like);
+            forLike.setChecked(true);
+        }else {
+            forLike.setText(R.string.add_like);
+            forLike.setChecked(false);
+        }
+
 
         indexMore_name.setText(music.getName());
         more.setOnClickListener(new View.OnClickListener() {

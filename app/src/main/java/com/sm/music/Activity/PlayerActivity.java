@@ -10,6 +10,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 
 import com.sm.music.GlobalApplication;
+import com.sm.music.Listener.OnRemoveAllRecentMusicListener;
 import com.sm.music.MusicUtils.RecentPlay;
 import com.sm.music.R;
 import com.sm.music.UIUtils.Util;
@@ -78,7 +79,13 @@ public class PlayerActivity extends AppCompatActivity {
                 recentPlay.show();
             }
         });
-
+        recentPlay.setOnRemoveAllRecentMusicListener(new OnRemoveAllRecentMusicListener() {
+            @Override
+            public void onRemoveAll() {
+                PlayerActivity.this.finish();
+                overridePendingTransition(0,R.anim.transfrom_buttom_out);
+            }
+        });
 
     }
 

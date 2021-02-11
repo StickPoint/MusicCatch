@@ -14,8 +14,9 @@
         android:button="@null"
         android:drawableTop="@drawable/nav_bar_btn_index_check"
         android:gravity="center"
-        android:paddingTop="15dp"
-        android:paddingBottom="15dp"
+        android:paddingTop="8dp"
+        android:paddingBottom="8dp"
+        android:text="@string/index"
         android:textColor="@color/nav_bar_btn_text_check"
         android:textSize="12sp" />
 
@@ -27,8 +28,9 @@
         android:button="@null"
         android:drawableTop="@drawable/nav_bar_btn_like_check"
         android:gravity="center"
-        android:paddingTop="15dp"
-        android:paddingBottom="15dp"
+        android:paddingTop="8dp"
+        android:paddingBottom="8dp"
+        android:text="@string/like"
         android:textColor="@color/nav_bar_btn_text_check"
         android:textSize="12sp" />
 
@@ -40,8 +42,9 @@
         android:button="@null"
         android:drawableTop="@drawable/nav_bar_btn_download_check"
         android:gravity="center"
-        android:paddingTop="15dp"
-        android:paddingBottom="15dp"
+        android:paddingTop="8dp"
+        android:paddingBottom="8dp"
+        android:text="@string/download"
         android:textColor="@color/nav_bar_btn_text_check"
         android:textSize="12sp"
         android:visibility="visible" />
@@ -54,8 +57,9 @@
         android:button="@null"
         android:drawableTop="@drawable/nav_bar_btn_more_check"
         android:gravity="center"
-        android:paddingTop="15dp"
-        android:paddingBottom="15dp"
+        android:paddingTop="8dp"
+        android:paddingBottom="8dp"
+        android:text="@string/more"
         android:textColor="@color/nav_bar_btn_text_check"
         android:textSize="12sp" />
 </RadioGroup>

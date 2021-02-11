@@ -76,8 +76,8 @@ public class SQLUtils {
     }
 
     /**
-     * 判断我喜欢的音乐是否存在
-     * @param applicationContext
+     * 判断我喜欢的音乐是否存在的方法
+     * * @param applicationContext
      * @return
      */
     public boolean getFavMus(Context applicationContext,String musicId) {

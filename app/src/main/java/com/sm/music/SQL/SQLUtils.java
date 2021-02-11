@@ -41,8 +41,8 @@ public class SQLUtils {
             musSQL = new MusSQL(applicationContext);
             database = musSQL.getWritableDatabase();
             String json = JSONArray.toJSONString(music);
-            database.execSQL("insert into favmus(music_id,music)values(" + music.getId() + music.getSource() + ","
-                    + json + ")");
+            database.execSQL("insert into favmus(music_id,music)values('" + music.getId() + music.getSource() + "','"
+                    + json + "');");
             database.close();
             flag = true;
         } catch (Exception e) {
@@ -109,9 +109,9 @@ public class SQLUtils {
         try {
             musSQL = new MusSQL(applicationContext);
             database = musSQL.getWritableDatabase();
-            database.execSQL("insert into favmus(musicid,musicname,location)values(" +
-                    music.getMusicid() + "," + music.getMusicname() + ","
-                    + music.getLocation() + ")");
+            database.execSQL("insert into favmus(musicid,musicname,location)values('" +
+                    music.getMusicid() + "','" + music.getMusicname() + "','"
+                    + music.getLocation() + "');");
             database.close();
             flag = true;
         } catch (Exception e) {

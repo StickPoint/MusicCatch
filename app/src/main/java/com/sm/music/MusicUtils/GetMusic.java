@@ -492,7 +492,8 @@ public class GetMusic {
 			music.setAlbum(al.getString("name"));
 			music.setName(recMusicList.get(i).getName());
 			music.setSource("netease");
-			music.setArtist(recMusicList.get(i).getAr());
+			JSONObject ar = JSONObject.parseObject(recMusicList.get(i).getAr()[0]);
+			music.setArtist(new String[]{ar.getString("name")});
 			music.setPic_id(al.getString("pic_str"));
 			music.setLyric_id(recMusicList.get(i).getId());
 			music.setUrl_id(recMusicList.get(i).getId());

@@ -76,6 +76,27 @@ public class SQLUtils {
     }
 
     /**
+     * 判断我喜欢的音乐是否存在
+     * @param applicationContext
+     * @return
+     */
+    public boolean getFavMus(Context applicationContext,String musicId) {
+        boolean flag = false;
+        try {
+            musSQL = new MusSQL(applicationContext);
+            database = musSQL.getReadableDatabase();
+            cursor = database.rawQuery("select * from favmus where musicid = ?", new String[]{musicId});
+            if (cursor.moveToNext()){
+                flag = true;
+            }
+            database.close();
+        } catch (Exception e) {
+            flag = false;
+        }
+        return flag;
+    }
+
+    /**
      * 删除我喜欢
      *
      * @param applicationContext

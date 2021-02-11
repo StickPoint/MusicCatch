@@ -46,6 +46,7 @@ public class SQLUtils {
             String json = JSONArray.toJSONString(music);
             database.execSQL("insert into favmus(musicid,music)values('" + music.getId() + music.getSource() + "','"+json+"');");
             database.setTransactionSuccessful();
+            database.endTransaction();
             database.close();
             flag = true;
         } catch (Exception e) {
@@ -75,6 +76,7 @@ public class SQLUtils {
                 musicList.add(JSONObject.parseObject(cursor.getString(nameColumnIndex), Music.class));
             }
             database.setTransactionSuccessful();
+            database.endTransaction();
             database.close();
         } catch (Exception e) {
             e.printStackTrace();
@@ -102,6 +104,7 @@ public class SQLUtils {
                 flag = true;
             }
             database.setTransactionSuccessful();
+            database.endTransaction();
             database.close();
         } catch (Exception e) {
             flag = false;
@@ -129,6 +132,7 @@ public class SQLUtils {
             database.execSQL("delete from favmus where musicid = ?", new Object[]{musicid});
             flag = true;
             database.setTransactionSuccessful();
+            database.endTransaction();
             database.close();
         } catch (Exception e) {
             flag = false;
@@ -157,8 +161,9 @@ public class SQLUtils {
             database.execSQL("insert into favmus(musicid,musicname,location)values('" +
                     music.getMusicid() + "','" + music.getMusicname() + "','"
                     + music.getLocation() + "');");
-            database.close();
             database.setTransactionSuccessful();
+            database.endTransaction();
+            database.close();
             flag = true;
         } catch (Exception e) {
             e.printStackTrace();
@@ -180,6 +185,7 @@ public class SQLUtils {
             database.execSQL("delete from locmus", new Object[]{});
             flag = true;
             database.setTransactionSuccessful();
+            database.endTransaction();
             database.close();
         } catch (Exception e) {
             flag = false;
@@ -205,6 +211,7 @@ public class SQLUtils {
                 locMusList.add(locMus);
             }
             database.setTransactionSuccessful();
+            database.endTransaction();
             database.close();
         } catch (Exception e) {
             e.printStackTrace();

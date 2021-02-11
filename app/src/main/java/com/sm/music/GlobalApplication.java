@@ -37,6 +37,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 
 public class GlobalApplication extends Application {
 
@@ -50,13 +51,18 @@ public class GlobalApplication extends Application {
     //smooth frequency ms
     final static private int SMOOTH_FREQUENCY = 70;
 
+    private static final int MUSIC_LOOP_CONTROL_REANDOM = 902;
+    private static final int MUSIC_LOOP_CONTROL_LOOP = 139;
+    private static final int MUSIC_LOOP_CONTROL_SINGLE = 129;
+
+
     private Bitmap music_pic = null;
 
     private Context context = null;
+    private String currentMusicDuration;
     //This is current music id
     private Music currentMusic = null;
-    //This is current music duration
-    private String currentMusicDuration = "";
+    private int currentMusicIndexInMusicList = 0;
     //index search music list
     private List<Music> musicList = new ArrayList<Music>();
     //min music player list
@@ -82,6 +88,7 @@ public class GlobalApplication extends Application {
     public void onCreate() {
         super.onCreate();
         conn = new GetMusic();
+        musicList = RecentPlay.getRecentPlayMusic(getApplicationContext());
         Intent musicIntent = new Intent(getApplicationContext(), MusicPlayer.class);
         GlobalApplication.MusicPlayerConnection musicPlayerConnection = new GlobalApplication.MusicPlayerConnection();
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -278,9 +285,43 @@ public class GlobalApplication extends Application {
         }
     }
 
+    private void setPlayerLoopControl(int tag){
+        switch (tag){
+            case MUSIC_LOOP_CONTROL_REANDOM:
+                player.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+                    @Override
+                    public void onCompletion(MediaPlayer mp) {
+                        setCurrentMusic(musicList.get(new Random().nextInt() % musicList.size()),false, true);
+                    }
+                });
+                break;
+            case MUSIC_LOOP_CONTROL_LOOP:
+                player.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+                    @Override
+                    public void onCompletion(MediaPlayer mp) {
+                        int next = currentMusicIndexInMusicList + 1 % musicList.size();
+                        setCurrentMusic(musicList.get(next),false, true);
+                    }
+                });
+                break;
+            case MUSIC_LOOP_CONTROL_SINGLE:
+                player.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+                    @Override
+                    public void onCompletion(MediaPlayer mp) {
+                        mp.seekTo(0);
+                    }
+                });
+                break;
+        }
+    }
+
     //user
 
-    public void setCurrentMusic(final Music music){
+    public void setCurrentMusic(Music music){
+        setCurrentMusic(music, true, true);
+    }
+
+    public void setCurrentMusic(final Music music, final Boolean updataRecentList, final Boolean autoPlay){
         final Handler handler = new Handler(){
             @Override
             public void handleMessage(@NonNull Message msg) {
@@ -296,8 +337,12 @@ public class GlobalApplication extends Application {
                                 @Override
                                 public void onPrepared(MediaPlayer mediaPlayer) {
                                     initPlayerOnMusic();
-                                    RecentPlay.addRecentPlayMusic(getApplicationContext(),music);
-                                    musicPlay();
+                                    if (updataRecentList){
+                                        musicList = RecentPlay.addRecentPlayMusic(getApplicationContext(),music);
+                                    }
+                                    currentMusicIndexInMusicList = RecentPlay.isPlayedRecently(getApplicationContext(), music.getId());
+                                    if (autoPlay)
+                                        musicPlay();
                                 }
                             });
                         } catch (IOException e) {
@@ -403,11 +448,17 @@ public class GlobalApplication extends Application {
             }
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
-//                if (fromUser){
                     player.seekTo(seekBar.getProgress());
-//                }
             }
         });
+        ImageView music_loop_control = view.findViewById(R.id.music_loop_control);
+        music_loop_control.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        });
+
 
         musicPlayerPageView = view;
         initPagePlayerOnMusic();
@@ -468,10 +519,12 @@ public class GlobalApplication extends Application {
         }
     }
 
-    private static class MusicPlayerConnection implements ServiceConnection {
+    private class MusicPlayerConnection implements ServiceConnection {
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
             player = ((MusicPlayer.musicBinder) service).getPlayer();
+            if (musicList.size() != 0)
+                setCurrentMusic(musicList.get(0), false, false);
         }
         @Override
         public void onServiceDisconnected(ComponentName name) {

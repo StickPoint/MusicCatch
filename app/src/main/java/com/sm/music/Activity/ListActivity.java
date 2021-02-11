@@ -312,7 +312,7 @@ public class ListActivity extends AppCompatActivity {
         public View getView(final int position, View convertView, ViewGroup parent) {
             View view = View.inflate(ListActivity.this, R.layout.ranking_list_item_layout, null);
             final Music music = music_list.get(position);
-            if (RecentPlay.isPlayedRecently(ListActivity.this,music.getId())){
+            if (RecentPlay.isPlayedRecently(ListActivity.this,music.getId()) != -1){
                 ((TextView) view.findViewById(R.id.index_list_item_music_name)).setTextColor(ListActivity.this.getResources().getColor(R.color.textHint));
             }
 

@@ -182,16 +182,16 @@ public class RecentPlay {
         }
     }
 
-    public static boolean isPlayedRecently(Context context, String id){
+    public static int isPlayedRecently(Context context, String id){
         JSONArray list = load(context);
         if (list == null || list.size() == 0){
-            return false;
+            return -1;
         }
         for (int i = 0; i < list.size(); i++){
             if (id.equals(list.getJSONObject(i).getString("id"))){
-                return true;
+                return i;
             }
         }
-        return false;
+        return -1;
     }
 }

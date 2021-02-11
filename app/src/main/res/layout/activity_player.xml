@@ -118,36 +118,29 @@
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/player_function"
-            android:layout_width="match_parent"
-            android:layout_height="80dp">
-
-            <LinearLayout
-                android:id="@+id/playerFun_container"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"></LinearLayout>
-        </androidx.constraintlayout.widget.ConstraintLayout>
-
-        <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/player_control"
             android:layout_width="match_parent"
-            android:layout_height="200dp">
+            android:layout_height="170dp">
 
             <LinearLayout
                 android:id="@+id/playerCon_container"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
                 android:gravity="center"
                 android:orientation="horizontal"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent">
+
+                <ImageView
+                    android:id="@+id/music_loop_control"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="10dp"
+                    android:layout_weight="1"
+                    app:srcCompat="@drawable/ic_loop" />
 
                 <ImageView
                     android:id="@+id/music_prev"
@@ -181,8 +174,9 @@
                     android:id="@+id/recent_button"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_marginStart="10dp"
                     android:layout_weight="1"
-                    app:srcCompat="@drawable/ic_adjust" />
+                    app:srcCompat="@drawable/ic_list" />
             </LinearLayout>
 
             <SeekBar

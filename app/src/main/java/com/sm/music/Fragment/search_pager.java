@@ -246,7 +246,7 @@ public class search_pager extends Fragment {
         public View getView(final int position, View convertView, ViewGroup parent) {
             View view = View.inflate(getActivity(), R.layout.index_list_ltem_layout, null);
             final Music music = searchList.get(position);
-            if (RecentPlay.isPlayedRecently(getContext(),music.getId())){
+            if (RecentPlay.isPlayedRecently(getContext(),music.getId()) != -1){
                 ((TextView) view.findViewById(R.id.index_list_item_music_name)).setTextColor(getContext().getResources().getColor(R.color.textHint));
             }
             ((TextView) view.findViewById(R.id.index_list_item_music_name)).setText(music.getName());

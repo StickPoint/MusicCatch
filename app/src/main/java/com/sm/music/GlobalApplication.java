@@ -108,12 +108,9 @@ public class GlobalApplication extends Application {
         return currentMusic;
     }
 
-    public void addMusicList(Music musicList) {
-        this.musicList.add(musicList);
-    }
 
-    public void addMusicList(List<Music> musicList) {
-        this.musicList.addAll(musicList);
+    public void setMusicList(List<Music> musicList) {
+        this.musicList = musicList;
     }
 
     public List<Music> getMusicList() {
@@ -276,6 +273,7 @@ public class GlobalApplication extends Application {
             if (player.getDuration() != 0){
                 minPlayerProgress.setMax(player.getDuration());
                 minPlayerProgress.setProgress(player.getCurrentPosition());
+
             }
         }
     }
@@ -343,34 +341,38 @@ public class GlobalApplication extends Application {
         }
     }
 
-    private void next(){
-        int next = (currentMusicIndexInMusicList + 1) % musicList.size();
-        switch (music_loop_method){
-            case MUSIC_LOOP_CONTROL_REANDOM:
-                setCurrentMusic(musicList.get((new Random().nextInt(musicList.size()))),false, true);
-                break;
-            case MUSIC_LOOP_CONTROL_LOOP:
-                setCurrentMusic(musicList.get(next),false, true);
-                break;
-            case MUSIC_LOOP_CONTROL_SINGLE:
-                setCurrentMusic(musicList.get(next),false, true);
-                break;
+    public void next(){
+        if (musicList != null){
+            int next = (currentMusicIndexInMusicList + 1) % musicList.size();
+            switch (music_loop_method){
+                case MUSIC_LOOP_CONTROL_REANDOM:
+                    setCurrentMusic(musicList.get((new Random().nextInt(musicList.size()))),false, true);
+                    break;
+                case MUSIC_LOOP_CONTROL_LOOP:
+                    setCurrentMusic(musicList.get(next),false, true);
+                    break;
+                case MUSIC_LOOP_CONTROL_SINGLE:
+                    setCurrentMusic(musicList.get(next),false, true);
+                    break;
+            }
         }
 
     }
 
-    private void prev(){
-        int next = (currentMusicIndexInMusicList - 1) % musicList.size();
-        switch (music_loop_method){
-            case MUSIC_LOOP_CONTROL_REANDOM:
-                setCurrentMusic(musicList.get((new Random().nextInt(musicList.size()))),false, true);
-                break;
-            case MUSIC_LOOP_CONTROL_LOOP:
-                setCurrentMusic(musicList.get(next),false, true);
-                break;
-            case MUSIC_LOOP_CONTROL_SINGLE:
-                setCurrentMusic(musicList.get(next),false, true);
-                break;
+    public void prev(){
+        if (musicList != null){
+            int next = (currentMusicIndexInMusicList - 1) % musicList.size();
+            switch (music_loop_method){
+                case MUSIC_LOOP_CONTROL_REANDOM:
+                    setCurrentMusic(musicList.get((new Random().nextInt(musicList.size()))),false, true);
+                    break;
+                case MUSIC_LOOP_CONTROL_LOOP:
+                    setCurrentMusic(musicList.get(next),false, true);
+                    break;
+                case MUSIC_LOOP_CONTROL_SINGLE:
+                    setCurrentMusic(musicList.get(next),false, true);
+                    break;
+            }
         }
 
     }

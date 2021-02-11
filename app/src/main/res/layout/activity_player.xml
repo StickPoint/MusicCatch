@@ -135,14 +135,6 @@
                 app:layout_constraintTop_toTopOf="parent">
 
                 <ImageView
-                    android:id="@+id/music_loop_control"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginEnd="10dp"
-                    android:layout_weight="1"
-                    app:srcCompat="@drawable/ic_loop" />
-
-                <ImageView
                     android:id="@+id/music_prev"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -170,20 +162,17 @@
                     android:contentDescription="@string/next"
                     app:srcCompat="@drawable/ic_next" />
 
-                <ImageView
-                    android:id="@+id/recent_button"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="10dp"
-                    android:layout_weight="1"
-                    app:srcCompat="@drawable/ic_list" />
             </LinearLayout>
 
             <SeekBar
                 android:id="@+id/music_seekBar"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
+                android:layout_marginTop="24dp"
+                android:background="@color/transparent"
+                android:progressDrawable="@drawable/player_page_seek_bar"
+                android:thumb="@drawable/player_page_thumb"
+                android:splitTrack="false"
                 app:layout_constraintEnd_toStartOf="@+id/duration"
                 app:layout_constraintStart_toEndOf="@+id/postion"
                 app:layout_constraintTop_toTopOf="parent" />
@@ -203,13 +192,35 @@
                 android:id="@+id/duration"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="15dp"
                 android:layout_marginEnd="16dp"
                 android:text="@string/zero_time"
                 android:textColor="@color/textHint"
                 android:textSize="@dimen/small"
+                app:layout_constraintBottom_toBottomOf="@+id/music_seekBar"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toTopOf="@+id/music_seekBar" />
+
+            <ImageView
+                android:id="@+id/recent_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="16dp"
+                android:layout_weight="1"
+                app:layout_constraintBottom_toBottomOf="@+id/playerCon_container"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/playerCon_container"
+                app:srcCompat="@drawable/ic_list" />
+
+            <ImageView
+                android:id="@+id/music_loop_control"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_weight="1"
+                app:layout_constraintBottom_toBottomOf="@+id/playerCon_container"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/playerCon_container"
+                app:srcCompat="@drawable/ic_loop" />
         </androidx.constraintlayout.widget.ConstraintLayout>
 
     </LinearLayout>

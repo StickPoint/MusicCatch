@@ -7,6 +7,7 @@ import android.view.ViewGroup;
 import android.view.animation.AnimationUtils;
 import android.widget.BaseAdapter;
 import android.widget.FrameLayout;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -39,6 +40,8 @@ public class RecentPlay {
 
     boolean isRecentShow = false;
 
+    private ListView recent_play_list = null;
+
     GlobalApplication globalApplication = null;
 
     public RecentPlay(Context context, GlobalApplication globalApplication, FrameLayout root) {
@@ -56,7 +59,15 @@ public class RecentPlay {
         isRecentShow = true;
         LinearLayout recent_play_page = recent.findViewById(R.id.recent_play_page);
         LinearLayout recent_play_container = recent.findViewById(R.id.recent_play_container);
-        final ListView recent_play_list = recent.findViewById(R.id.recent_play_list);
+        recent_play_list = recent.findViewById(R.id.recent_play_list);
+        TextView remove_all =  recent.findViewById(R.id.remove_all);
+        remove_all.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                clearRecentPlayMusic(context,globalApplication);
+                ((BaseAdapter)recent_play_list.getAdapter()).notifyDataSetChanged();
+            }
+        });
         music_list = getRecentPlayMusic(context);
         recent_play_page.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -104,6 +115,13 @@ public class RecentPlay {
                         ((BaseAdapter) recent_play_list.getAdapter()).notifyDataSetChanged();
                     }
                 });
+                ((ImageView) view.findViewById(R.id.remove_music)).setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        removeRecentPlayMusic(context, globalApplication, music);
+                        ((BaseAdapter)recent_play_list.getAdapter()).notifyDataSetChanged();
+                    }
+                });
                 return view;
             }
         });
@@ -114,6 +132,38 @@ public class RecentPlay {
     public void hide(){
         root.removeView(recent);
 
+    }
+
+    public static List<Music> clearRecentPlayMusic(Context context, GlobalApplication globalApplication){
+        save(context, new JSONArray());
+        globalApplication.setMusicList(null);
+        return getRecentPlayMusic(context);
+    }
+
+    public static List<Music> removeRecentPlayMusic(Context context, GlobalApplication application, Music music){
+        JSONArray old = load(context);
+        if (old == null || old.size() == 0){
+            old = new JSONArray();
+        }
+        int isHas = -1;
+        for (int i = 0; i < old.size(); i++){
+            if (music.getId().equals(old.getJSONObject(i).getString("id"))){
+                isHas = i;
+                break;
+            }
+        }
+        if (isHas == 0){
+            application.next();
+        }
+        JSONArray last = new JSONArray();
+        for (int i = 0; i < old.size() && last.size() <= 50; i++){
+            if (i == isHas)
+                continue;
+            last.add(old.getJSONObject(i));
+        }
+        save(context, last);
+        application.setMusicList(last.toJavaList(Music.class));
+        return last.toJavaList(Music.class);
     }
 
     public static List<Music> addRecentPlayMusic(Context context, Music music){

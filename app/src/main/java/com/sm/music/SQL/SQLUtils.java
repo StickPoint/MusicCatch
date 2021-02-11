@@ -41,7 +41,7 @@ public class SQLUtils {
             musSQL = new MusSQL(applicationContext);
             database = musSQL.getWritableDatabase();
             String json = JSONArray.toJSONString(music);
-            database.execSQL("insert into favmus(music_id,music)values('" + music.getId() + music.getSource() + "','"
+            database.execSQL("insert into favmus(musicid,music)values('" + music.getId() + music.getSource() + "','"
                     + json + "');");
             database.close();
             flag = true;

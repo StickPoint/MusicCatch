@@ -3,6 +3,7 @@ package com.sm.music.SQL;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.util.Log;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
@@ -45,7 +46,7 @@ public class SQLUtils {
             database.beginTransaction();
             String json = JSONArray.toJSONString(music);
             database.execSQL("insert into favmus(musicid,music)values('" + music.getId() + music.getSource() + "','"+json+"');");
-            database.setTransactionSuccessful();
+            Log.e("sql:del", "add_success:" + music.getName());
             database.endTransaction();
             database.close();
             flag = true;
@@ -74,6 +75,7 @@ public class SQLUtils {
             while (cursor.moveToNext()) {
                 int nameColumnIndex = cursor.getColumnIndex("music");
                 musicList.add(JSONObject.parseObject(cursor.getString(nameColumnIndex), Music.class));
+                Log.e("sql",JSONObject.parseObject(cursor.getString(nameColumnIndex), Music.class).toString());
             }
             database.setTransactionSuccessful();
             database.endTransaction();
@@ -131,8 +133,8 @@ public class SQLUtils {
             database.beginTransaction();
             database.execSQL("delete from favmus where musicid = ?", new Object[]{musicid});
             flag = true;
-            database.setTransactionSuccessful();
             database.endTransaction();
+            Log.e("sql:del", "del_success");
             database.close();
         } catch (Exception e) {
             flag = false;

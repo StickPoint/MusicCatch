@@ -61,7 +61,6 @@ public class RecentPlay {
     }
 
     public void show(){
-        isRecentShow = true;
         LinearLayout recent_play_page = recent.findViewById(R.id.recent_play_page);
         LinearLayout recent_play_container = recent.findViewById(R.id.recent_play_container);
         recent_play_list = recent.findViewById(R.id.recent_play_list);
@@ -143,6 +142,7 @@ public class RecentPlay {
         recent_play_container.startAnimation(AnimationUtils.loadAnimation(context, R.anim.transfrom_buttom_in));
         if (!isRecentShow)
             root.addView(recent);
+        isRecentShow = true;
     }
 
     public void hide(){

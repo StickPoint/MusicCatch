@@ -125,7 +125,7 @@ public class likeFragment extends Fragment {
     }
 
     private Boolean updataList(){
-        like_list = sqlUtils.getFavMus(getContext());
+        like_list = sqlUtils.getFavMus(getActivity().getApplicationContext());
         if (like_list != null && like_list.size() != 0){
             showContainer(SHOW_MUSIC_LIST);
             if (likeList_list.getAdapter() == null){

@@ -148,7 +148,9 @@ public class MoreWindows {
             }
         });
         more_container.startAnimation(AnimationUtils.loadAnimation(context, R.anim.show_more));
-        root.addView(more);
+        if (!isMoreShow){
+            root.addView(more);
+        }
         isMoreShow = true;
     }
 

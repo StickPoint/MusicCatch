@@ -1,6 +1,7 @@
 package com.sm.music.Fragment;
 
 
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.constraintlayout.widget.ConstraintLayout;
@@ -10,7 +11,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 
+import com.sm.music.Activity.AboutActivity;
 import com.sm.music.R;
 import com.sm.music.UIUtils.Util;
 
@@ -40,6 +43,16 @@ public class moreFragment extends Fragment {
                 top.setPadding(0,statusBarHeight,0,0);
             }
         });
+
+        TextView about_us_button = view.findViewById(R.id.about_us_button);
+        about_us_button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(getActivity(), AboutActivity.class));
+                getActivity().overridePendingTransition(R.anim.transfrom_buttom_in,R.anim.no_transfrom);
+            }
+        });
+
         return view;
     }
 

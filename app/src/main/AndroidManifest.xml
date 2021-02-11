@@ -16,7 +16,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
-        <activity android:name=".AboutActivity"></activity>
+        <activity android:name=".Activity.AboutActivity"></activity>
         <activity android:name=".Activity.ListActivity" />
         <activity android:name=".Activity.SearchActivity" />
 

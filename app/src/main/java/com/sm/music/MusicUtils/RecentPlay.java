@@ -141,7 +141,8 @@ public class RecentPlay {
             }
         });
         recent_play_container.startAnimation(AnimationUtils.loadAnimation(context, R.anim.transfrom_buttom_in));
-        root.addView(recent);
+        if (!isRecentShow)
+            root.addView(recent);
     }
 
     public void hide(){

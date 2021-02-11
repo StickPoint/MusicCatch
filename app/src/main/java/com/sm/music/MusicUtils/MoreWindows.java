@@ -13,10 +13,8 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.sm.music.Activity.SearchActivity;
 import com.sm.music.Bean.Music;
-import com.sm.music.Bean.RecMusic;
-import com.sm.music.MusicUtils.MusicDownload;
+import com.sm.music.Listener.OnChangeFavStatusListener;
 import com.sm.music.R;
 import com.sm.music.SQL.SQLUtils;
 
@@ -37,6 +35,9 @@ public class MoreWindows {
     boolean isMoreShow = false;
 
     private SQLUtils sqlUtils = null;
+
+    OnChangeFavStatusListener onChangeFavStatusListener = null;
+
 
     public MoreWindows(final Context context, final FrameLayout root) {
         this.context = context;
@@ -59,12 +60,15 @@ public class MoreWindows {
         TextView ToShare = more.findViewById(R.id.ToShare);
 
         //TODO: to init like button
-        if (sqlUtils.getFavMus(context, music.getId())){
+        if (sqlUtils.getFavMus(context.getApplicationContext(), music.getId() + music.getSource())){
             forLike.setText(R.string.remove_like);
             forLike.setChecked(true);
         }else {
             forLike.setText(R.string.add_like);
             forLike.setChecked(false);
+//            if (list != null){
+//                ((BaseAdapter) list.getAdapter()).notifyDataSetChanged();
+//            }
         }
 
 
@@ -121,8 +125,11 @@ public class MoreWindows {
                         Toast.makeText(context, R.string.fav_failed, Toast.LENGTH_LONG);
                 }else {
                     forLike.setText(R.string.add_like);
-                    if (!sqlUtils.delFavMus(context, music.getId()))
+                    if (!sqlUtils.delFavMus(context, music.getId() + music.getSource()))
                         Toast.makeText(context, R.string.fav_del_failed, Toast.LENGTH_LONG);
+                    if (onChangeFavStatusListener != null){
+                        onChangeFavStatusListener.OnChange();
+                    }
                 }
             }
         });
@@ -143,6 +150,10 @@ public class MoreWindows {
         more_container.startAnimation(AnimationUtils.loadAnimation(context, R.anim.show_more));
         root.addView(more);
         isMoreShow = true;
+    }
+
+    public void setOnChangeFavStatusListener(OnChangeFavStatusListener onChangeFavStatusListener){
+        this.onChangeFavStatusListener = onChangeFavStatusListener;
     }
 
     public void removeMore(){

@@ -121,6 +121,62 @@ public class GlobalApplication extends Application {
         return musicList.isEmpty();
     }
 
+    public void setDefaultMusicPlayer(){
+        player.reset();
+        if (updataThread != null){
+            updataThread.interrupt();
+        }
+        currentMusic = null;
+        music_pic = null;
+        currentMusicIndexInMusicList = 0;
+        musicList = null;
+        for (Map.Entry<Integer,View> i : minMusicPlayerList.entrySet()) {
+            View view = i.getValue();
+
+            ImageView min_music_control = view.findViewById(R.id.min_music_control);
+            min_music_control.setImageResource(R.drawable.ic_play);
+
+            ProgressBar minPlayerProgress = view.findViewById(R.id.minPlayerProgress);
+            minPlayerProgress.setMax(100);
+            minPlayerProgress.setProgress(0);
+
+            TextView current_music_name = view.findViewById(R.id.current_music_name);
+            current_music_name.setText(R.string.no_music_to_play);
+
+            TextView current_music_singer = view.findViewById(R.id.current_music_singer);
+            current_music_singer.setText(R.string.singer);
+
+            ImageView musicPic = view.findViewById(R.id.musicPic);
+            musicPic.setImageResource(R.mipmap.default_music_pic);
+
+        }
+        if (musicPlayerPageView != null){
+            ImageView StartAndStop = musicPlayerPageView.findViewById(R.id.StartAndStop);
+            StartAndStop.setImageResource(R.drawable.ic_play);
+
+            ImageView musicPic = musicPlayerPageView.findViewById(R.id.music_pic);
+            musicPic.setImageResource(R.mipmap.default_music_pic);
+
+            TextView player_musicName = musicPlayerPageView.findViewById(R.id.player_musicName);
+            player_musicName.setText(R.string.no_music_to_play);
+
+            TextView player_musicInfo_singer = musicPlayerPageView.findViewById(R.id.player_musicInfo_singer);
+            player_musicInfo_singer.setText(R.string.singer);
+
+            TextView player_musicInfo_album = musicPlayerPageView.findViewById(R.id.player_musicInfo_album);
+            player_musicInfo_album.setText(R.string.album);
+
+            TextView duration = musicPlayerPageView.findViewById(R.id.duration);
+            duration.setText(R.string.zero_time);
+            SeekBar music_seekBar = musicPlayerPageView.findViewById(R.id.music_seekBar);
+            music_seekBar.setMax(100);
+            music_seekBar.setProgress(0);
+
+            TextView postion = musicPlayerPageView.findViewById(R.id.postion);
+            postion.setText(R.string.zero_time);
+        }
+    }
+
     //music control
 
     private Boolean isPlaying(){

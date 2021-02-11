@@ -203,4 +203,8 @@ public class MainActivity extends AppCompatActivity {
     public void showMore(Music music){
         moreWindows.show(music);
     }
+
+    public MoreWindows getMoreWindowsObject(){
+        return moreWindows;
+    }
 }

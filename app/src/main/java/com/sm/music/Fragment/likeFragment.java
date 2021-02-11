@@ -16,24 +16,18 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import com.scwang.smart.refresh.footer.ClassicsFooter;
 import com.scwang.smart.refresh.header.MaterialHeader;
 import com.scwang.smart.refresh.layout.api.RefreshLayout;
-import com.scwang.smart.refresh.layout.listener.OnLoadMoreListener;
 import com.scwang.smart.refresh.layout.listener.OnRefreshListener;
-import com.sm.music.Activity.ListActivity;
 import com.sm.music.Activity.MainActivity;
-import com.sm.music.Bean.FavMus;
 import com.sm.music.Bean.Music;
 import com.sm.music.GlobalApplication;
-import com.sm.music.MusicUtils.GetMusic;
-import com.sm.music.MusicUtils.MoreWindows;
+import com.sm.music.Listener.OnChangeFavStatusListener;
 import com.sm.music.R;
 import com.sm.music.SQL.SQLUtils;
 import com.sm.music.UIUtils.Util;
 
 import java.util.List;
-import java.util.TreeSet;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -55,7 +49,7 @@ public class likeFragment extends Fragment {
     private SQLUtils sqlUtils = null;
     private ConstraintLayout no_fav = null;
 
-    private List<FavMus> like_list = null;
+    private List<Music> like_list = null;
 
 
     public likeFragment() {
@@ -99,6 +93,12 @@ public class likeFragment extends Fragment {
                 refreshlayout.finishRefresh(updataList());
             }
         });
+        ((MainActivity) getActivity()).getMoreWindowsObject().setOnChangeFavStatusListener(new OnChangeFavStatusListener() {
+            @Override
+            public void OnChange() {
+                updataList();
+            }
+        });
 
 
 
@@ -125,14 +125,14 @@ public class likeFragment extends Fragment {
     }
 
     private Boolean updataList(){
-//        TODO 我动了你的屎山
-        like_list = sqlUtils.getFavMus(getActivity().getApplication().getApplicationContext());
-        if (like_list != null){
+        like_list = sqlUtils.getFavMus(getContext());
+        if (like_list != null && like_list.size() != 0){
             showContainer(SHOW_MUSIC_LIST);
             if (likeList_list.getAdapter() == null){
                 likeList_list.setAdapter(new listPageAdapter());
             }else {
-                ((listPageAdapter) likeList_list.getAdapter()).notifyDataSetChanged();
+//                ((listPageAdapter) likeList_list.getAdapter()).notifyDataSetChanged();
+                likeList_list.setAdapter(new listPageAdapter());
             }
             return true;
         }else {
@@ -160,15 +160,8 @@ public class likeFragment extends Fragment {
 
         @Override
         public View getView(final int position, View convertView, ViewGroup parent) {
-            View view = View.inflate(getContext(), R.layout.ranking_list_item_layout, null);
-            final Music music = like_list.get(position).getMusic();
-            if (position < 3){
-                ((TextView) view.findViewById(R.id.index_list_rank)).setText(String.valueOf(position + 1));
-                ((TextView) view.findViewById(R.id.index_list_rank)).setTextColor(getResources().getColor(R.color.colorPrimary));
-            }else {
-                ((TextView) view.findViewById(R.id.index_list_rank)).setText(String.valueOf(position + 1));
-                ((TextView) view.findViewById(R.id.index_list_rank)).setTextColor(getResources().getColor(R.color.textHint));
-            }
+            View view = View.inflate(getContext(), R.layout.index_list_ltem_layout, null);
+            final Music music = like_list.get(position);
             ((TextView) view.findViewById(R.id.index_list_item_music_name)).setText(music.getName());
             String temp = "";
             for (int i = 0; i < music.getArtist().length; i++) {

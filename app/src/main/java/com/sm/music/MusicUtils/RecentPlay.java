@@ -21,6 +21,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 public class RecentPlay {
@@ -142,8 +143,11 @@ public class RecentPlay {
     }
 
     public static List<Music> getRecentPlayMusic(Context context){
-        return load(context).toJavaList(Music.class);
-
+        JSONArray j = load(context);
+        if (j != null)
+            return j.toJavaList(Music.class);
+        else
+            return new ArrayList<>();
     }
 
     private static JSONArray load(Context context) {

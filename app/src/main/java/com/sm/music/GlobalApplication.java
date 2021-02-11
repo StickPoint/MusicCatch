@@ -6,6 +6,7 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.media.MediaPlayer;
@@ -62,6 +63,9 @@ public class GlobalApplication extends Application {
     private String currentMusicDuration;
     //This is current music id
     private Music currentMusic = null;
+
+    private int music_loop_method = MUSIC_LOOP_CONTROL_LOOP;
+
     private int currentMusicIndexInMusicList = 0;
     //index search music list
     private List<Music> musicList = new ArrayList<Music>();
@@ -222,6 +226,20 @@ public class GlobalApplication extends Application {
             duration.setText((id / 60 >= 10 ? String.valueOf(id / 60) : "0" + id / 60) + ":" +
                     (id % 60 >= 10 ? String.valueOf(id % 60) : "0" + id % 60));
 
+            ImageView music_loop_control = musicPlayerPageView.findViewById(R.id.music_loop_control);
+            switch (music_loop_method){
+                case MUSIC_LOOP_CONTROL_REANDOM:
+                    music_loop_control.setImageResource(R.drawable.ic_random);
+                    break;
+                case MUSIC_LOOP_CONTROL_LOOP:
+                    music_loop_control.setImageResource(R.drawable.ic_loop);
+                    break;
+                case MUSIC_LOOP_CONTROL_SINGLE:
+                    music_loop_control.setImageResource(R.drawable.ic_single);
+                    break;
+            }
+
+
             SeekBar music_seekBar = musicPlayerPageView.findViewById(R.id.music_seekBar);
             music_seekBar.setMax(100);
             music_seekBar.setProgress(0);
@@ -286,12 +304,14 @@ public class GlobalApplication extends Application {
     }
 
     private void setPlayerLoopControl(int tag){
+        music_loop_method = tag;
         switch (tag){
             case MUSIC_LOOP_CONTROL_REANDOM:
                 player.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
                     @Override
                     public void onCompletion(MediaPlayer mp) {
-                        setCurrentMusic(musicList.get(new Random().nextInt() % musicList.size()),false, true);
+                        mp.reset();
+                        setCurrentMusic(musicList.get((new Random().nextInt(musicList.size()))),false, true);
                     }
                 });
                 break;
@@ -299,8 +319,15 @@ public class GlobalApplication extends Application {
                 player.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
                     @Override
                     public void onCompletion(MediaPlayer mp) {
-                        int next = currentMusicIndexInMusicList + 1 % musicList.size();
-                        setCurrentMusic(musicList.get(next),false, true);
+                        mp.reset();
+                        int next = 0;
+                        if (musicList.size() > 1){
+                            next = (currentMusicIndexInMusicList + 1) % musicList.size();
+                        }
+                        if (!musicList.isEmpty()){
+                            setCurrentMusic(musicList.get(next),false, true);
+                        }
+
                     }
                 });
                 break;
@@ -309,10 +336,43 @@ public class GlobalApplication extends Application {
                     @Override
                     public void onCompletion(MediaPlayer mp) {
                         mp.seekTo(0);
+                        mp.start();
                     }
                 });
                 break;
         }
+    }
+
+    private void next(){
+        int next = (currentMusicIndexInMusicList + 1) % musicList.size();
+        switch (music_loop_method){
+            case MUSIC_LOOP_CONTROL_REANDOM:
+                setCurrentMusic(musicList.get((new Random().nextInt(musicList.size()))),false, true);
+                break;
+            case MUSIC_LOOP_CONTROL_LOOP:
+                setCurrentMusic(musicList.get(next),false, true);
+                break;
+            case MUSIC_LOOP_CONTROL_SINGLE:
+                setCurrentMusic(musicList.get(next),false, true);
+                break;
+        }
+
+    }
+
+    private void prev(){
+        int next = (currentMusicIndexInMusicList - 1) % musicList.size();
+        switch (music_loop_method){
+            case MUSIC_LOOP_CONTROL_REANDOM:
+                setCurrentMusic(musicList.get((new Random().nextInt(musicList.size()))),false, true);
+                break;
+            case MUSIC_LOOP_CONTROL_LOOP:
+                setCurrentMusic(musicList.get(next),false, true);
+                break;
+            case MUSIC_LOOP_CONTROL_SINGLE:
+                setCurrentMusic(musicList.get(next),false, true);
+                break;
+        }
+
     }
 
     //user
@@ -343,6 +403,12 @@ public class GlobalApplication extends Application {
                                     currentMusicIndexInMusicList = RecentPlay.isPlayedRecently(getApplicationContext(), music.getId());
                                     if (autoPlay)
                                         musicPlay();
+                                    else {
+                                        int currentDuration = player.getDuration() / 1000;
+                                        currentMusicDuration = ((currentDuration / 60) >= 10 ? String.valueOf(currentDuration / 60) : ("0" + (currentDuration / 60))) +
+                                                ":" + ((currentDuration % 60)  >= 10 ? String.valueOf(currentDuration % 60) : ("0" + (currentDuration % 60)));
+                                        updataPlayer();
+                                    }
                                 }
                             });
                         } catch (IOException e) {
@@ -451,11 +517,43 @@ public class GlobalApplication extends Application {
                     player.seekTo(seekBar.getProgress());
             }
         });
-        ImageView music_loop_control = view.findViewById(R.id.music_loop_control);
+        final ImageView music_loop_control = view.findViewById(R.id.music_loop_control);
         music_loop_control.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                SharedPreferences.Editor editor = getSharedPreferences("data",MODE_PRIVATE).edit();
+                switch (music_loop_method){
+                    case MUSIC_LOOP_CONTROL_REANDOM:
+                        setPlayerLoopControl(MUSIC_LOOP_CONTROL_SINGLE);
+                        music_loop_control.setImageResource(R.drawable.ic_single);
+                        editor.putInt("music_loop_method",MUSIC_LOOP_CONTROL_SINGLE);
+                        break;
+                    case MUSIC_LOOP_CONTROL_LOOP:
+                        setPlayerLoopControl(MUSIC_LOOP_CONTROL_REANDOM);
+                        music_loop_control.setImageResource(R.drawable.ic_random);
+                        editor.putInt("music_loop_method",MUSIC_LOOP_CONTROL_REANDOM);
+                        break;
+                    case MUSIC_LOOP_CONTROL_SINGLE:
+                        setPlayerLoopControl(MUSIC_LOOP_CONTROL_LOOP);
+                        music_loop_control.setImageResource(R.drawable.ic_loop);
+                        editor.putInt("music_loop_method",MUSIC_LOOP_CONTROL_LOOP);
+                        break;
+                }
+                editor.commit();
+            }
+        });
+        ImageView music_prev = view.findViewById(R.id.music_prev);
+        music_prev.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                prev();
+            }
+        });
+        ImageView music_next = view.findViewById(R.id.music_next);
+        music_next.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                next();
             }
         });
 
@@ -525,6 +623,14 @@ public class GlobalApplication extends Application {
             player = ((MusicPlayer.musicBinder) service).getPlayer();
             if (musicList.size() != 0)
                 setCurrentMusic(musicList.get(0), false, false);
+            SharedPreferences pref = getSharedPreferences("data",MODE_PRIVATE);
+            setPlayerLoopControl(pref.getInt("music_loop_method", MUSIC_LOOP_CONTROL_LOOP));
+            player.setOnErrorListener(new MediaPlayer.OnErrorListener() {
+                @Override
+                public boolean onError(MediaPlayer mp, int what, int extra) {
+                    return true;
+                }
+            });
         }
         @Override
         public void onServiceDisconnected(ComponentName name) {

@@ -52,7 +52,9 @@ public class SQLUtils {
             e.printStackTrace();
             flag = false;
             database = musSQL.getWritableDatabase();
-            database.endTransaction();
+            if(database != null && database.inTransaction()){
+                database.endTransaction();
+            }
         }
         return flag;
     }
@@ -76,8 +78,10 @@ public class SQLUtils {
             database.close();
         } catch (Exception e) {
             e.printStackTrace();
-            database = musSQL.getReadableDatabase();
-            database.endTransaction();
+            database = musSQL.getWritableDatabase();
+            if(database != null && database.inTransaction()){
+                database.endTransaction();
+            }
         }
         return musicList;
     }
@@ -101,8 +105,10 @@ public class SQLUtils {
             database.close();
         } catch (Exception e) {
             flag = false;
-            database = musSQL.getReadableDatabase();
-            database.endTransaction();
+            database = musSQL.getWritableDatabase();
+            if(database != null && database.inTransaction()){
+                database.endTransaction();
+            }
         }
         return flag;
     }
@@ -127,7 +133,9 @@ public class SQLUtils {
         } catch (Exception e) {
             flag = false;
             database = musSQL.getWritableDatabase();
-            database.endTransaction();
+            if(database != null && database.inTransaction()){
+                database.endTransaction();
+            }
         }
         return flag;
     }
@@ -154,9 +162,11 @@ public class SQLUtils {
             flag = true;
         } catch (Exception e) {
             e.printStackTrace();
-            database = musSQL.getWritableDatabase();
-            database.endTransaction();
             flag = false;
+            database = musSQL.getWritableDatabase();
+            if(database != null && database.inTransaction()){
+                database.endTransaction();
+            }
         }
         return flag;
     }
@@ -174,7 +184,9 @@ public class SQLUtils {
         } catch (Exception e) {
             flag = false;
             database = musSQL.getWritableDatabase();
-            database.endTransaction();
+            if(database != null && database.inTransaction()){
+                database.endTransaction();
+            }
         }
         return flag;
     }
@@ -197,7 +209,9 @@ public class SQLUtils {
         } catch (Exception e) {
             e.printStackTrace();
             database = musSQL.getWritableDatabase();
-            database.endTransaction();
+            if(database != null && database.inTransaction()){
+                database.endTransaction();
+            }
         }
         return locMusList;
     }

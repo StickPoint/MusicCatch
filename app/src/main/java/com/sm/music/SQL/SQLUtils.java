@@ -12,6 +12,7 @@ import com.sm.music.Bean.LocMus;
 import com.sm.music.Bean.Music;
 import com.sm.music.Bean.RecMusic;
 
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -29,6 +30,7 @@ public class SQLUtils {
     private FavMus favMus;
     private LocMus locMus;
     private List<FavMus> favMusList;
+    private List<Music> musicList;
     private List<LocMus> locMusList;
 
     /**
@@ -41,8 +43,7 @@ public class SQLUtils {
             musSQL = new MusSQL(applicationContext);
             database = musSQL.getWritableDatabase();
             String json = JSONArray.toJSONString(music);
-            database.execSQL("insert into favmus(musicid,music)values('" + music.getId() + music.getSource() + "','"
-                    + json + "');");
+            database.execSQL("insert into favmus(musicid,music)values('" + music.getId() + music.getSource() + "','"+json+"');");
             database.close();
             flag = true;
         } catch (Exception e) {
@@ -56,23 +57,21 @@ public class SQLUtils {
      * @param applicationContext
      * @return
      */
-    public List<FavMus> getFavMus(Context applicationContext) {
+    public List<Music> getFavMus(Context applicationContext) {
         try {
             musSQL = new MusSQL(applicationContext);
             database = musSQL.getReadableDatabase();
-            cursor = database.rawQuery("select * from favmus", new String[]{});
-            favMus = new FavMus();
+            musicList = new ArrayList<>();
+            cursor = database.rawQuery("select * from favmus order by date", new String[]{});
             while (cursor.moveToNext()) {
-                favMus.setMusicid(cursor.getString(1));
-                favMus.setDate(cursor.getString(2));
-                favMus.setMusic(JSONObject.parseObject(cursor.getString(3), Music.class));
-                favMusList.add(favMus);
+                int nameColumnIndex = cursor.getColumnIndex("music");
+                musicList.add(JSONObject.parseObject(cursor.getString(nameColumnIndex), Music.class));
             }
             database.close();
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return favMusList;
+        return musicList;
     }
 
     /**

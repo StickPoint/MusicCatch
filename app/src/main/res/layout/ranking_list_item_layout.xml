@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/index_list_item"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingTop="10dp"
+        android:paddingBottom="10dp">
+
+        <TextView
+            android:id="@+id/index_list_item_music_album"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:lines="1"
+            android:maxEms="15"
+            android:maxLines="1"
+            android:minLines="1"
+            android:singleLine="true"
+            android:text="@string/album"
+            android:textColor="@color/textHint"
+            android:textSize="@dimen/small"
+            app:layout_constraintBaseline_toBaselineOf="@+id/hr"
+            app:layout_constraintStart_toEndOf="@+id/hr" />
+
+        <TextView
+            android:id="@+id/index_list_item_music_singer"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:lines="1"
+            android:maxEms="10"
+            android:maxLines="1"
+            android:minLines="1"
+            android:singleLine="true"
+            android:text="@string/singer"
+            android:textColor="@color/textHint"
+            android:textSize="@dimen/small"
+            app:layout_constraintStart_toStartOf="@+id/index_list_item_music_name"
+            app:layout_constraintTop_toBottomOf="@+id/index_list_item_music_name" />
+
+        <TextView
+            android:id="@+id/hr"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:text="@string/to"
+            android:textColor="@color/textHint"
+            app:layout_constraintBaseline_toBaselineOf="@+id/index_list_item_music_singer"
+            app:layout_constraintStart_toEndOf="@+id/index_list_item_music_singer" />
+
+        <TextView
+            android:id="@+id/index_list_item_music_name"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="16dp"
+            android:lines="1"
+            android:maxLines="1"
+            android:minLines="1"
+            android:singleLine="true"
+            android:text="@string/musicName"
+            android:textColor="@color/textBlack"
+            android:textSize="@dimen/normal"
+            app:layout_constraintEnd_toStartOf="@+id/index_list_item_music_more"
+            app:layout_constraintStart_toEndOf="@+id/index_list_rank"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <ImageView
+            android:id="@+id/index_list_item_music_more"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="16dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/ic_more_vertical" />
+
+        <TextView
+            android:id="@+id/index_list_rank"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginBottom="8dp"
+            android:ems="2"
+            android:gravity="center"
+            android:text="@string/rank"
+            android:textAllCaps="false"
+            android:textColor="@color/colorPrimary"
+            android:textSize="@dimen/large"
+            android:textStyle="italic"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</RelativeLayout>

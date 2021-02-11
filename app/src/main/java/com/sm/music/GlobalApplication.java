@@ -6,6 +6,8 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.media.MediaPlayer;
 import android.os.Build;
 import android.os.Handler;
@@ -25,10 +27,12 @@ import androidx.annotation.NonNull;
 import com.sm.music.Activity.PlayerActivity;
 import com.sm.music.Bean.Music;
 import com.sm.music.MusicUtils.GetMusic;
+import com.sm.music.MusicUtils.RecentPlay;
 import com.sm.music.Override.UnclickableHorizontalScrollView;
 import com.sm.music.Server.MusicPlayer;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -37,12 +41,16 @@ import java.util.Map;
 public class GlobalApplication extends Application {
 
 
+    private static final int REQUEST_MUSIC_PIC = 159;
+    private static final int REQUEST_MUSIC_PIC_DEFAULT = 160;
 
     final static private int REQUEST_MUSIC_URL = 203;
     //updata frequency ms
     final static private int UPDATA_FREQUENCY = 1000;
     //smooth frequency ms
     final static private int SMOOTH_FREQUENCY = 70;
+
+    private Bitmap music_pic = null;
 
     private Context context = null;
     //This is current music id
@@ -141,7 +149,10 @@ public class GlobalApplication extends Application {
     private void initMinPlayerOnMusic(View view){
         if (currentMusic != null){
 
-            ImageView musicPic = view.findViewById(R.id.musicPic);
+            if (music_pic != null){
+                ImageView musicPic = view.findViewById(R.id.musicPic);
+                musicPic.setImageBitmap(music_pic);
+            }
 
             TextView current_music_name = view.findViewById(R.id.current_music_name);
             current_music_name.setText(currentMusic.getName());
@@ -177,7 +188,10 @@ public class GlobalApplication extends Application {
                 StartAndStop.setImageResource(R.drawable.ic_play);
             }
 
-            ImageView musicPic = musicPlayerPageView.findViewById(R.id.musicPic);
+            if (music_pic != null){
+                ImageView musicPic = musicPlayerPageView.findViewById(R.id.music_pic);
+                musicPic.setImageBitmap(music_pic);
+            }
 
             TextView player_musicName = musicPlayerPageView.findViewById(R.id.player_musicName);
             player_musicName.setText(currentMusic.getName());
@@ -282,12 +296,16 @@ public class GlobalApplication extends Application {
                                 @Override
                                 public void onPrepared(MediaPlayer mediaPlayer) {
                                     initPlayerOnMusic();
+                                    RecentPlay.addRecentPlayMusic(getApplicationContext(),music);
                                     musicPlay();
                                 }
                             });
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
+                    }else if (msg.what == REQUEST_MUSIC_PIC){
+                        music_pic = (Bitmap) msg.obj;
+                        initPlayerOnMusic();
                     }
 
                 }else{
@@ -312,10 +330,40 @@ public class GlobalApplication extends Application {
                                 msg.what = REQUEST_MUSIC_URL;
                                 msg.arg1 = GetMusic.RESPOND_SUCCESS;
                                 msg.obj = url;
-
                             }else {
                                 msg.what = GetMusic.RESPOND_TIMEOUT;
                             }
+                        }
+                    } catch (Exception e) {
+                        msg.what = GetMusic.RESPOND_TIMEOUT;
+                        e.printStackTrace();
+                    };
+                    handler.sendMessage(msg);
+                }
+            }).start();
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    Message msg = Message.obtain();
+                    try {
+                        String id = music.getId();
+                        if (id != null){
+                            InputStream inputStream = conn.getMusicPlayPicUrl(id, music.getPic_id(), getMusicSourceInt(music.getSource()));
+                            if (music.getId().equals(currentMusic.getId())){
+                                if (inputStream != null){
+                                    msg.what = REQUEST_MUSIC_PIC;
+                                    msg.arg1 = GetMusic.RESPOND_SUCCESS;
+                                    msg.obj = BitmapFactory.decodeStream(inputStream);
+                                }else {
+                                    msg.what = REQUEST_MUSIC_PIC;
+                                    msg.arg1 = GetMusic.RESPOND_SUCCESS;
+                                    msg.obj = BitmapFactory.decodeResource(getResources(), R.mipmap.default_music_pic);
+                                }
+                            }
+                        }else {
+                            msg.what = REQUEST_MUSIC_PIC_DEFAULT;
+                            msg.arg1 = GetMusic.RESPOND_SUCCESS;
+                            msg.obj = BitmapFactory.decodeResource(getResources(), R.mipmap.default_music_pic);
                         }
                     } catch (Exception e) {
                         msg.what = GetMusic.RESPOND_TIMEOUT;
@@ -405,6 +453,19 @@ public class GlobalApplication extends Application {
 
     public void destroyMinMusicPlayer(int tag){
         minMusicPlayerList.remove(Integer.valueOf(tag));
+    }
+
+    private int getMusicSourceInt(String source){
+        switch (source){
+            case "netease":
+                return  0;
+            case "tencent":
+                return  1;
+            case "kugou":
+                return  2;
+            default:
+                return  0;
+        }
     }
 
     private static class MusicPlayerConnection implements ServiceConnection {

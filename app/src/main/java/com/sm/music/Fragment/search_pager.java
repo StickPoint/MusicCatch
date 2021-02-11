@@ -22,9 +22,11 @@ import com.scwang.smart.refresh.header.MaterialHeader;
 import com.scwang.smart.refresh.layout.api.RefreshLayout;
 import com.scwang.smart.refresh.layout.listener.OnLoadMoreListener;
 import com.scwang.smart.refresh.layout.listener.OnRefreshListener;
+import com.sm.music.Activity.ListActivity;
 import com.sm.music.Bean.Music;
 import com.sm.music.GlobalApplication;
 import com.sm.music.MusicUtils.GetMusic;
+import com.sm.music.MusicUtils.RecentPlay;
 import com.sm.music.R;
 import com.sm.music.Activity.SearchActivity;
 
@@ -40,7 +42,6 @@ public class search_pager extends Fragment {
     final static private int NETWORK_REFRESH_TAG = 202;
 
     final static private int NETWORK_ONLOAD_TAG = 201;
-
 
     final static private int REQUEST_MUSIC_LIST = 204;
 
@@ -121,6 +122,7 @@ public class search_pager extends Fragment {
 
         return view;
     }
+
     public void search_music_list_data(String text){
         if (search_text != null && search_text.equals(text) && searchList != null){
             return;
@@ -244,6 +246,9 @@ public class search_pager extends Fragment {
         public View getView(final int position, View convertView, ViewGroup parent) {
             View view = View.inflate(getActivity(), R.layout.index_list_ltem_layout, null);
             final Music music = searchList.get(position);
+            if (RecentPlay.isPlayedRecently(getContext(),music.getId())){
+                ((TextView) view.findViewById(R.id.index_list_item_music_name)).setTextColor(getContext().getResources().getColor(R.color.textHint));
+            }
             ((TextView) view.findViewById(R.id.index_list_item_music_name)).setText(music.getName());
             String temp = "";
             for (int i = 0; i < music.getArtist().length; i++) {

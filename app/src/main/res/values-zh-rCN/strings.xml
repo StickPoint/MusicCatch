@@ -38,4 +38,13 @@
     <string name="download_success">下载成功歌曲已保存在</string>
     <string name="download_failed">下载失败</string>
     <string name="zero_size">0.0M/0.0M</string>
+    <string name="hsitory">最近播放</string>
+    <string name="rank">排名</string>
+    <string name="fav_failed">成功添加到我的喜欢</string>
+    <string name="fav_success">添加到我的喜欢失败</string>
+    <string name="fav_del_success">移除我的喜欢成功</string>
+    <string name="fav_del_failed">移除我的喜欢失败</string>
+    <string name="no_fav">您还没有喜欢的音乐哦</string>
+    <string name="about_us">关于我们</string>
+    <string name="remove_like">从喜欢中移除</string>
 </resources>

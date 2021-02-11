@@ -18,7 +18,7 @@ public class MusSQL extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase db) {
         //建表
-        db.execSQL("create table favmus(musid varchar(100) PRIMARY KEY," +
+        db.execSQL("create table favmus(musicid varchar(100) PRIMARY KEY," +
                 "date timestamp not null default (datetime('now','localtime'))," +
                 "music text(100000))");
         db.execSQL("create table locmus(musicid integer primary key autoincrement," +

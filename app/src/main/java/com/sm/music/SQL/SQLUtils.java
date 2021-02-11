@@ -42,13 +42,17 @@ public class SQLUtils {
         try {
             musSQL = new MusSQL(applicationContext);
             database = musSQL.getWritableDatabase();
+            database.beginTransaction();
             String json = JSONArray.toJSONString(music);
             database.execSQL("insert into favmus(musicid,music)values('" + music.getId() + music.getSource() + "','"+json+"');");
+            database.setTransactionSuccessful();
             database.close();
             flag = true;
         } catch (Exception e) {
             e.printStackTrace();
             flag = false;
+            database = musSQL.getWritableDatabase();
+            database.endTransaction();
         }
         return flag;
     }
@@ -61,15 +65,19 @@ public class SQLUtils {
         try {
             musSQL = new MusSQL(applicationContext);
             database = musSQL.getReadableDatabase();
+            database.beginTransaction();
             musicList = new ArrayList<>();
             cursor = database.rawQuery("select * from favmus order by date", new String[]{});
             while (cursor.moveToNext()) {
                 int nameColumnIndex = cursor.getColumnIndex("music");
                 musicList.add(JSONObject.parseObject(cursor.getString(nameColumnIndex), Music.class));
             }
+            database.setTransactionSuccessful();
             database.close();
         } catch (Exception e) {
             e.printStackTrace();
+            database = musSQL.getReadableDatabase();
+            database.endTransaction();
         }
         return musicList;
     }
@@ -84,13 +92,17 @@ public class SQLUtils {
         try {
             musSQL = new MusSQL(applicationContext);
             database = musSQL.getReadableDatabase();
+            database.beginTransaction();
             cursor = database.rawQuery("select * from favmus where musicid = ?", new String[]{musicId});
             if (cursor.moveToNext()){
                 flag = true;
             }
+            database.setTransactionSuccessful();
             database.close();
         } catch (Exception e) {
             flag = false;
+            database = musSQL.getReadableDatabase();
+            database.endTransaction();
         }
         return flag;
     }
@@ -107,11 +119,15 @@ public class SQLUtils {
         try {
             musSQL = new MusSQL(applicationContext);
             database = musSQL.getWritableDatabase();
+            database.beginTransaction();
             database.execSQL("delete from favmus where musicid = ?", new Object[]{musicid});
             flag = true;
+            database.setTransactionSuccessful();
             database.close();
         } catch (Exception e) {
             flag = false;
+            database = musSQL.getWritableDatabase();
+            database.endTransaction();
         }
         return flag;
     }
@@ -129,13 +145,17 @@ public class SQLUtils {
         try {
             musSQL = new MusSQL(applicationContext);
             database = musSQL.getWritableDatabase();
+            database.beginTransaction();
             database.execSQL("insert into favmus(musicid,musicname,location)values('" +
                     music.getMusicid() + "','" + music.getMusicname() + "','"
                     + music.getLocation() + "');");
             database.close();
+            database.setTransactionSuccessful();
             flag = true;
         } catch (Exception e) {
             e.printStackTrace();
+            database = musSQL.getWritableDatabase();
+            database.endTransaction();
             flag = false;
         }
         return flag;
@@ -146,11 +166,15 @@ public class SQLUtils {
         try {
             musSQL = new MusSQL(applicationContext);
             database = musSQL.getWritableDatabase();
+            database.beginTransaction();
             database.execSQL("delete from locmus", new Object[]{});
             flag = true;
+            database.setTransactionSuccessful();
             database.close();
         } catch (Exception e) {
             flag = false;
+            database = musSQL.getWritableDatabase();
+            database.endTransaction();
         }
         return flag;
     }
@@ -159,6 +183,7 @@ public class SQLUtils {
         try {
             musSQL = new MusSQL(applicationContext);
             database = musSQL.getReadableDatabase();
+            database.beginTransaction();
             cursor = database.rawQuery("select * from locmus", new String[]{});
             locMus = new LocMus();
             while (cursor.moveToNext()) {
@@ -167,9 +192,12 @@ public class SQLUtils {
                 locMus.setLocation(cursor.getString(3));
                 locMusList.add(locMus);
             }
+            database.setTransactionSuccessful();
             database.close();
         } catch (Exception e) {
             e.printStackTrace();
+            database = musSQL.getWritableDatabase();
+            database.endTransaction();
         }
         return locMusList;
     }

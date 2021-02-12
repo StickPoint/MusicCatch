@@ -26,11 +26,18 @@ import com.sm.music.Fragment.indexFragment;
 import com.sm.music.Fragment.likeFragment;
 import com.sm.music.Fragment.moreFragment;
 import com.xuexiang.xupdate.XUpdate;
+import com.xuexiang.xupdate.entity.UpdateError;
+import com.xuexiang.xupdate.listener.OnUpdateFailureListener;
+import com.xuexiang.xupdate.service.OnFileDownloadListener;
 
+import java.io.File;
 import java.util.ArrayList;
+
+import static com.xuexiang.xupdate.entity.UpdateError.ERROR.CHECK_NO_NEW_VERSION;
 
 public class MainActivity extends AppCompatActivity {
 
+    private static final String UPDATE_INFO_URL = "https://download.micronnetwork.com/ddmusic/ddmusicUpdata.json";
     //globe class
     GlobalApplication globalApplication = null;
     //main page
@@ -71,6 +78,9 @@ public class MainActivity extends AppCompatActivity {
 
         globalApplication = (GlobalApplication) getApplication();
 
+        XUpdate.newBuild(MainActivity.this)
+                .updateUrl(UPDATE_INFO_URL)
+                .update();
 
         mainPage = findViewById(R.id.mainPage);
         nav = findViewById(R.id.nav);

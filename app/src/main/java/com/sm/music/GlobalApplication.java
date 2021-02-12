@@ -92,11 +92,6 @@ public class GlobalApplication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
-        XUpdate.newBuild(getApplicationContext())
-                .updateUrl(UPDATE_INFO_URL)
-                .isAutoMode(true)
-                .supportBackgroundUpdate(true)
-                .update();
         
         conn = new GetMusic();
         musicList = RecentPlay.getRecentPlayMusic(getApplicationContext());

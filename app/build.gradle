@@ -6,7 +6,7 @@ android {
     buildToolsVersion "29.0.3"
     defaultConfig {
         applicationId "com.sm.music"
-        minSdkVersion 17
+        minSdkVersion 24
         targetSdkVersion 29
         versionCode 1
         versionName "1.0.0"
@@ -20,6 +20,10 @@ android {
             zipAlignEnabled true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
+    }
+    compileOptions{
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
     }
 }
 
@@ -46,9 +50,9 @@ dependencies {
     implementation 'org.json:json:20200518'
 //    implementation 'com.github.xuexiangjys:XUpdate:2.0.6'
 //    implementation 'com.github.xuexiangjys:XUpdate:2.0.7'
-//    implementation 'com.github.xuexiangjys.XUpdateAPI:xupdate-easy:1.0.0'
+    implementation 'com.github.xuexiangjys.XUpdateAPI:xupdate-easy:1.0.0'
 //    如果需要使用断点续传下载功能的话添加该依赖（可选）
-//    implementation 'com.github.xuexiangjys.XUpdateAPI:xupdate-downloader-aria:1.0.0'
+    implementation 'com.github.xuexiangjys.XUpdateAPI:xupdate-downloader-aria:1.0.0'
 //    implementation 'com.github.xuexiangjys:XUpdate:1.1.6'
     implementation 'com.github.xuexiangjys:XUpdate:2.0.7'
 }

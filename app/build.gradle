@@ -70,13 +70,8 @@ dependencies {
     implementation 'com.scwang.smart:refresh-header-classics:2.0.3'
     implementation 'com.scwang.smart:refresh-header-material:2.0.3'
     implementation 'com.scwang.smart:refresh-footer-classics:2.0.3'
-    //noinspection DuplicatePlatformClasses
-    implementation 'org.json:json:20200518'
-//    implementation 'com.github.xuexiangjys:XUpdate:2.0.6'
-//    implementation 'com.github.xuexiangjys:XUpdate:2.0.7'
+    implementation 'org.json:json:20201115'
     implementation 'com.github.xuexiangjys.XUpdateAPI:xupdate-easy:1.0.0'
-//    如果需要使用断点续传下载功能的话添加该依赖（可选）
     implementation 'com.github.xuexiangjys.XUpdateAPI:xupdate-downloader-aria:1.0.0'
-//    implementation 'com.github.xuexiangjys:XUpdate:1.1.6'
     implementation 'com.github.xuexiangjys:XUpdate:2.0.7'
 }

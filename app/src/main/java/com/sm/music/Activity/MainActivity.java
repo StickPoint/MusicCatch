@@ -25,6 +25,7 @@ import com.sm.music.Fragment.downloadFragment;
 import com.sm.music.Fragment.indexFragment;
 import com.sm.music.Fragment.likeFragment;
 import com.sm.music.Fragment.moreFragment;
+import com.xuexiang.xupdate.XUpdate;
 
 import java.util.ArrayList;
 

@@ -14,9 +14,7 @@ import android.os.Build;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
-import android.view.MotionEvent;
 import android.view.View;
-import android.widget.HorizontalScrollView;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.SeekBar;
@@ -31,6 +29,7 @@ import com.sm.music.MusicUtils.GetMusic;
 import com.sm.music.MusicUtils.RecentPlay;
 import com.sm.music.Override.UnclickableHorizontalScrollView;
 import com.sm.music.Server.MusicPlayer;
+import com.xuexiang.xupdate.XUpdate;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -41,9 +40,9 @@ import java.util.Map;
 import java.util.Random;
 
 
-
 public class GlobalApplication extends Application {
 
+    private static final String UPDATE_INFO_URL = "https://download.micronnetwork.com/ddmusic/ddmusicUpdata.json";
 
     private static final int REQUEST_MUSIC_PIC = 159;
     private static final int REQUEST_MUSIC_PIC_DEFAULT = 160;
@@ -83,7 +82,7 @@ public class GlobalApplication extends Application {
         @Override
         public void handleMessage(@NonNull Message msg) {
             super.handleMessage(msg);
-            updataPlayer();
+            updateplayer();
         }
     };
 
@@ -93,24 +92,12 @@ public class GlobalApplication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
-//        XUpdate.get()
-//                .debug(true)
-//                .isWifiOnly(true)                                               //默认设置只在wifi下检查版本更新
-//                .isGet(true)                                                    //默认设置使用get请求检查版本
-//                .isAutoMode(false)                                              //默认设置非自动模式，可根据具体使用配置
-//                .param("versionCode", UpdateUtils.getVersionCode(this))         //设置默认公共请求参数
-//                .param("appKey", getPackageName())
-//                .setOnUpdateFailureListener(new OnUpdateFailureListener() {     //设置版本更新出错的监听
-//                    @Override
-//                    public void onFailure(UpdateError error) {
-//                        if (error.getCode() != CHECK_NO_NEW_VERSION) {          //对不同错误进行处理
-//                            ToastUtils.toast(error.toString());
-//                        }
-//                    }
-//                })
-//                .supportSilentInstall(true)                                     //设置是否支持静默安装，默认是true
-//                .setIUpdateHttpService(new OKHttpUpdateHttpService())           //这个必须设置！实现网络请求功能。
-//                .init(this);
+        XUpdate.newBuild(getApplicationContext())
+                .updateUrl(UPDATE_INFO_URL)
+                .isAutoMode(true)
+                .supportBackgroundUpdate(true)
+                .update();
+        
         conn = new GetMusic();
         musicList = RecentPlay.getRecentPlayMusic(getApplicationContext());
         Intent musicIntent = new Intent(getApplicationContext(), MusicPlayer.class);
@@ -204,7 +191,7 @@ public class GlobalApplication extends Application {
     }
 
     private void musicPlay(){
-        updataPlayer();
+        updateplayer();
         int currentDuration = player.getDuration() / 1000;
         currentMusicDuration = ((currentDuration / 60) >= 10 ? String.valueOf(currentDuration / 60) : ("0" + (currentDuration / 60))) +
                 ":" + ((currentDuration % 60)  >= 10 ? String.valueOf(currentDuration % 60) : ("0" + (currentDuration % 60)));
@@ -220,7 +207,7 @@ public class GlobalApplication extends Application {
         }
         if (player.isPlaying())
             player.pause();
-        updataPlayer();
+        updateplayer();
     }
 
     private void initPlayerOnMusic(){
@@ -319,12 +306,12 @@ public class GlobalApplication extends Application {
         }
     }
 
-    private void updataPlayer(){
-        updataMinMusicPlayer();
-        updataMusicPlayer();
+    private void updateplayer(){
+        updateMinMusicPlayer();
+        updateMusicPlayer();
     }
 
-    private void updataMinMusicPlayer(){
+    private void updateMinMusicPlayer(){
         for (Map.Entry<Integer,View> i : minMusicPlayerList.entrySet()) {
             View view = i.getValue();
 
@@ -354,7 +341,7 @@ public class GlobalApplication extends Application {
         }
     }
 
-    private void updataMusicPlayer(){
+    private void updateMusicPlayer(){
         if (musicPlayerPageView != null){
             SeekBar music_seekBar = musicPlayerPageView.findViewById(R.id.music_seekBar);
             if (player.getDuration() != 0){
@@ -485,7 +472,7 @@ public class GlobalApplication extends Application {
                                         int currentDuration = player.getDuration() / 1000;
                                         currentMusicDuration = ((currentDuration / 60) >= 10 ? String.valueOf(currentDuration / 60) : ("0" + (currentDuration / 60))) +
                                                 ":" + ((currentDuration % 60)  >= 10 ? String.valueOf(currentDuration % 60) : ("0" + (currentDuration % 60)));
-                                        updataPlayer();
+                                        updateplayer();
                                     }
                                 }
                             });

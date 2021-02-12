@@ -1,5 +1,6 @@
 package com.sm.music;
 
+import android.Manifest;
 import android.app.Activity;
 import android.app.Application;
 import android.content.ComponentName;
@@ -7,6 +8,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.media.MediaPlayer;
@@ -14,6 +16,7 @@ import android.os.Build;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
+import android.telephony.TelephonyManager;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
@@ -39,6 +42,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
+import java.util.UUID;
 
 
 public class GlobalApplication extends Application {
@@ -72,14 +76,14 @@ public class GlobalApplication extends Application {
     //index search music list
     private List<Music> musicList = new ArrayList<Music>();
     //min music player list
-    private static Map<Integer,View> minMusicPlayerList = new HashMap<>();
+    private static Map<Integer, View> minMusicPlayerList = new HashMap<>();
     private static View musicPlayerPageView = null;
     //MediaPlayer control
     private static MediaPlayer player = null;
     //updata thread
     private static Thread updataThread = null;
     //updata thread handler
-    private Handler updata_thread_handler = new Handler(){
+    private Handler updata_thread_handler = new Handler() {
         @Override
         public void handleMessage(@NonNull Message msg) {
             super.handleMessage(msg);
@@ -93,7 +97,7 @@ public class GlobalApplication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
-        
+
         conn = new GetMusic();
         musicList = RecentPlay.getRecentPlayMusic(getApplicationContext());
         Intent musicIntent = new Intent(getApplicationContext(), MusicPlayer.class);
@@ -105,10 +109,19 @@ public class GlobalApplication extends Application {
         }
         bindService(musicIntent, musicPlayerConnection, BIND_AUTO_CREATE);
 
-        SharedPreferences pref = getSharedPreferences("data",MODE_PRIVATE);
+        SharedPreferences pref = getSharedPreferences("data", MODE_PRIVATE);
         Boolean isFirstLanuch = pref.getBoolean("isFirstLanuch", true);
-        if (isFirstLanuch){
-            SendIMEI.send();
+
+        String imei = null;
+        TelephonyManager telephonyManager = (TelephonyManager) getApplicationContext().getSystemService(context.TELEPHONY_SERVICE);
+        if (checkSelfPermission(Manifest.permission.READ_PHONE_STATE) != PackageManager.PERMISSION_GRANTED) {
+            imei = UUID.randomUUID().toString();
+        }else {
+            imei = telephonyManager.getDeviceId();
+        }
+
+        if (isFirstLanuch && imei != null){
+            SendIMEI.send(imei);
             SharedPreferences.Editor editor = getSharedPreferences("data",MODE_PRIVATE).edit();
             editor.putBoolean("isFirstLanuch",false);
             editor.commit();

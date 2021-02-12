@@ -1,5 +1,7 @@
 package com.sm.music.MusicUtils;
 
+import android.util.Log;
+
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -14,13 +16,14 @@ import java.net.URL;
 public class SendIMEI {
 
 
-    private static final String SEND_URL = "https://www.micronnetwork.com/";
+    private static final String SEND_URL = "https://micronnetwork.com/ddmusic/CUsers?iemi={{iemi}}";
 
-    public static void send(){
+    public static void send(String IEMI){
         new Thread(() -> {
             HttpURLConnection con = null;
             try {
-                URL url = new URL(SEND_URL);
+                URL url = new URL(SEND_URL.replace("{{iemi}}", IEMI));
+                Log.e("Sendiemi", SEND_URL.replace("{{iemi}}", IEMI));
                 con = (HttpURLConnection) url.openConnection();
                 con.setRequestMethod("GET");
                 con.setRequestProperty("Accept","*/*");
@@ -46,7 +49,6 @@ public class SendIMEI {
                     con.disconnect();
                 }
             }
-
         }).start();
     }
 

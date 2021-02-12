@@ -417,7 +417,7 @@ public class GlobalApplication extends Application {
 
     public void prev(){
         if (musicList != null){
-            int next = (currentMusicIndexInMusicList - 1) % musicList.size();
+            int next = (currentMusicIndexInMusicList + musicList.size() - 1) % musicList.size();
             switch (music_loop_method){
                 case MUSIC_LOOP_CONTROL_REANDOM:
                     setCurrentMusic(musicList.get((new Random().nextInt(musicList.size()))),false, true);

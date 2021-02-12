@@ -59,7 +59,7 @@
             android:id="@+id/index_list_item_music_name"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="24dp"
+            android:layout_marginStart="12dp"
             android:layout_marginEnd="16dp"
             android:lines="1"
             android:maxLines="1"
@@ -69,7 +69,7 @@
             android:textColor="@color/textBlack"
             android:textSize="@dimen/normal"
             app:layout_constraintEnd_toStartOf="@+id/index_list_item_music_more"
-            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/before_name"
             app:layout_constraintTop_toTopOf="parent" />
 
         <ImageView
@@ -81,6 +81,18 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:srcCompat="@drawable/ic_more_vertical" />
+
+        <FrameLayout
+            android:id="@+id/before_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="12dp"
+            android:layout_marginBottom="8dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+        </FrameLayout>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

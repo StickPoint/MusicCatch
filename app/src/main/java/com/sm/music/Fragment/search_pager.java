@@ -13,6 +13,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.FrameLayout;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -225,6 +227,13 @@ public class search_pager extends Fragment {
         }
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (searchList_list != null && searchList_list.getAdapter() != null)
+            ((BaseAdapter) searchList_list.getAdapter()).notifyDataSetChanged();
+    }
+
     class searchListAdapter extends BaseAdapter {
 
         @Override
@@ -271,6 +280,7 @@ public class search_pager extends Fragment {
                 public void onClick(View v) {
                     ((TextView) v.findViewById(R.id.index_list_item_music_name)).setTextColor(getActivity().getResources().getColor(R.color.textHint));
                     globalApplication.setCurrentMusic(music);
+                    ((BaseAdapter) searchList_list.getAdapter()).notifyDataSetChanged();
                 }
             });
             view.setOnLongClickListener(new View.OnLongClickListener() {
@@ -280,6 +290,12 @@ public class search_pager extends Fragment {
                     return true;
                 }
             });
+            FrameLayout before_name = view.findViewById(R.id.before_name);
+            if (globalApplication.getCurrentMusic().getId().equals(music.getId())){
+                ImageView imageView = new ImageView(getContext());
+                imageView.setImageResource(R.drawable.ic_playing);
+                before_name.addView(imageView);
+            }
             return view;
         }
     }

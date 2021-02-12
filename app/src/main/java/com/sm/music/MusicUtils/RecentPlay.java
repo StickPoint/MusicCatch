@@ -5,6 +5,7 @@ import android.content.Context;
 import android.nfc.cardemulation.OffHostApduService;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.BaseAdapter;
 import android.widget.FrameLayout;
@@ -134,6 +135,12 @@ public class RecentPlay {
                             ((BaseAdapter)recent_play_list.getAdapter()).notifyDataSetChanged();
                         }
                     });
+                    FrameLayout before_name = view.findViewById(R.id.before_name);
+                    if (globalApplication.getCurrentMusic().getId().equals(music.getId())){
+                        ImageView imageView = new ImageView(context);
+                        imageView.setImageResource(R.drawable.ic_playing);
+                        before_name.addView(imageView);
+                    }
 
                 }
                 return view;
@@ -148,7 +155,23 @@ public class RecentPlay {
     public void hide(){
         if (isRecentShow){
             isRecentShow = false;
-            root.removeView(recent);
+            LinearLayout recent_play_container = recent.findViewById(R.id.recent_play_container);
+            Animation animation = AnimationUtils.loadAnimation(context, R.anim.transfrom_buttom_out);
+            animation.setAnimationListener(new Animation.AnimationListener() {
+                @Override
+                public void onAnimationStart(Animation animation) {
+                }
+
+                @Override
+                public void onAnimationEnd(Animation animation) {
+                    root.removeView(recent);
+                }
+
+                @Override
+                public void onAnimationRepeat(Animation animation) {
+                }
+            });
+            recent_play_container.startAnimation(animation);
         }
 
     }

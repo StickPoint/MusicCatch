@@ -290,6 +290,12 @@ public class ListActivity extends AppCompatActivity {
         moreWindows.show(music);
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (list_container != null && list_container.getAdapter() != null)
+            ((BaseAdapter) list_container.getAdapter()).notifyDataSetChanged();
+    }
 
     class listPageAdapter extends BaseAdapter {
 
@@ -345,6 +351,7 @@ public class ListActivity extends AppCompatActivity {
                 public void onClick(View v) {
                     ((TextView) v.findViewById(R.id.index_list_item_music_name)).setTextColor(ListActivity.this.getResources().getColor(R.color.textHint));
                     globalApplication.setCurrentMusic(music);
+                    ((BaseAdapter) list_container.getAdapter()).notifyDataSetChanged();
                 }
             });
             view.setOnLongClickListener(new View.OnLongClickListener() {
@@ -354,6 +361,13 @@ public class ListActivity extends AppCompatActivity {
                     return true;
                 }
             });
+            FrameLayout before_name = view.findViewById(R.id.before_name);
+            if (globalApplication.getCurrentMusic().getId().equals(music.getId())){
+                ImageView imageView = new ImageView(ListActivity.this);
+                imageView.setImageResource(R.drawable.ic_playing);
+                before_name.removeView(view.findViewById(R.id.index_list_rank));
+                before_name.addView(imageView);
+            }
             return view;
         }
     }

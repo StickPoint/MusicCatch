@@ -40,13 +40,13 @@ public class ListActivity extends AppCompatActivity {
 
     private static final int NETWORK_SEARCH_TAG = 448;
 
-    final static private int NETWORK_REFRESH_TAG = 202;
+    private static final int NETWORK_REFRESH_TAG = 202;
 
-    final static private int NETWORK_ONLOAD_TAG = 201;
+    private static final int NETWORK_ONLOAD_TAG = 201;
 
     private static final int NOT_HAVE_MORE = 502;
 
-    final static private int REQUEST_MUSIC_LIST = 204;
+    private static final int REQUEST_MUSIC_LIST = 204;
 
     private static final int SHOW_MUSIC_LIST = 592;
 

@@ -2,6 +2,20 @@
 apply plugin: 'com.android.application'
 
 android {
+    signingConfigs {
+        release {
+            storeFile file('D:\\ddmusic_app_key\\dd.jks')
+            storePassword 'legendyc&fntp123456'
+            keyAlias = 'ddmusic'
+            keyPassword 'legendyc&fntp123456'
+        }
+        debug {
+            storeFile file('D:\\ddmusic_app_key\\dd.jks')
+            storePassword 'legendyc&fntp123456'
+            keyPassword 'legendyc&fntp123456'
+            keyAlias = 'ddmusic'
+        }
+    }
     compileSdkVersion 29
     buildToolsVersion "29.0.3"
     defaultConfig {
@@ -12,6 +26,7 @@ android {
         versionName "1.0.0"
         ndk.abiFilters 'armeabi-v7a','arm64-v8a','x86','x86_64'
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        signingConfig signingConfigs.release
         android.defaultConfig.vectorDrawables.useSupportLibrary = true
     }
     buildTypes {
@@ -19,6 +34,15 @@ android {
             minifyEnabled true
             zipAlignEnabled true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            debuggable = true
+            signingConfig signingConfigs.release
+        }
+        debug {
+            minifyEnabled false
+            zipAlignEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            debuggable = true
+            signingConfig signingConfigs.debug
         }
     }
     compileOptions{

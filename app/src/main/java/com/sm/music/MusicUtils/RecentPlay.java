@@ -146,7 +146,10 @@ public class RecentPlay {
     }
 
     public void hide(){
-        root.removeView(recent);
+        if (isRecentShow){
+            isRecentShow = false;
+            root.removeView(recent);
+        }
 
     }
 
@@ -168,7 +171,7 @@ public class RecentPlay {
                 break;
             }
         }
-        if (isHas == 0){
+        if (music.getId().equals(application.getCurrentMusic().getId())){
             if ((old.size() - 1) != 0){
                 application.next();
             }else {

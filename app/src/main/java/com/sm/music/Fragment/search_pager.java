@@ -291,7 +291,7 @@ public class search_pager extends Fragment {
                 }
             });
             FrameLayout before_name = view.findViewById(R.id.before_name);
-            if (globalApplication.getCurrentMusic().getId().equals(music.getId())){
+            if (globalApplication.getCurrentMusic() != null && globalApplication.getCurrentMusic().getId().equals(music.getId())){
                 ImageView imageView = new ImageView(getContext());
                 imageView.setImageResource(R.drawable.ic_playing);
                 before_name.addView(imageView);

@@ -10,6 +10,7 @@ import androidx.fragment.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.webkit.WebView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -23,6 +24,8 @@ import com.sm.music.UIUtils.Util;
 public class moreFragment extends Fragment {
 
     private ConstraintLayout top = null;
+
+    private WebView aboutUs_Web = null;
 
     public moreFragment() {
         // Required empty public constructor
@@ -44,14 +47,16 @@ public class moreFragment extends Fragment {
             }
         });
 
-        TextView about_us_button = view.findViewById(R.id.about_us_button);
-        about_us_button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startActivity(new Intent(getActivity(), AboutActivity.class));
-                getActivity().overridePendingTransition(R.anim.transfrom_buttom_in,R.anim.no_transfrom);
-            }
-        });
+//        TextView about_us_button = view.findViewById(R.id.about_us_button);
+//        about_us_button.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                startActivity(new Intent(getActivity(), AboutActivity.class));
+//                getActivity().overridePendingTransition(R.anim.transfrom_buttom_in,R.anim.no_transfrom);
+//            }
+//        });
+        aboutUs_Web = view.findViewById(R.id.aboutUs_Web);
+        aboutUs_Web.loadUrl("file:///android_asset/web/index.html");
 
         return view;
     }

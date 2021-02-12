@@ -362,7 +362,7 @@ public class ListActivity extends AppCompatActivity {
                 }
             });
             FrameLayout before_name = view.findViewById(R.id.before_name);
-            if (globalApplication.getCurrentMusic().getId().equals(music.getId())){
+            if (globalApplication.getCurrentMusic() != null && globalApplication.getCurrentMusic().getId().equals(music.getId())){
                 ImageView imageView = new ImageView(ListActivity.this);
                 imageView.setImageResource(R.drawable.ic_playing);
                 before_name.removeView(view.findViewById(R.id.index_list_rank));

@@ -48,6 +48,7 @@
     <string name="remove_like">Remove from liking</string>
     <string name="remove_all">Remove All</string>
     <string name="back">Back</string>
+    <string name="download_not_open">This feature is not available, but it does not affect the Download function, the Download directory is /Sdcard/Download/ folder</string>
 
     <!-- TODO: Remove or change this placeholder text -->
 

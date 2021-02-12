@@ -27,6 +27,7 @@ import com.sm.music.Activity.PlayerActivity;
 import com.sm.music.Bean.Music;
 import com.sm.music.MusicUtils.GetMusic;
 import com.sm.music.MusicUtils.RecentPlay;
+import com.sm.music.MusicUtils.SendIMEI;
 import com.sm.music.Override.UnclickableHorizontalScrollView;
 import com.sm.music.Server.MusicPlayer;
 import com.xuexiang.xupdate.XUpdate;
@@ -103,6 +104,16 @@ public class GlobalApplication extends Application {
             startService(musicIntent);
         }
         bindService(musicIntent, musicPlayerConnection, BIND_AUTO_CREATE);
+
+        SharedPreferences pref = getSharedPreferences("data",MODE_PRIVATE);
+        Boolean isFirstLanuch = pref.getBoolean("isFirstLanuch", true);
+        if (isFirstLanuch){
+            SendIMEI.send();
+            SharedPreferences.Editor editor = getSharedPreferences("data",MODE_PRIVATE).edit();
+            editor.putBoolean("isFirstLanuch",false);
+            editor.commit();
+        }
+
     }
 
 

@@ -80,7 +80,7 @@ public class MusicDownload {
     public void downloadFile(final Music music){
         final int[] total_size = {0};
 //        final String savePath = Environment.getExternalStorageDirectory().getPath() + "/Download/";
-        final String savePath = "/sdcard/Download/";
+        final String savePath = "/sdcard/StickPointDownload/";
         String artist = "";
         for (int i = 0; i < music.getArtist().length; i++) {
             if (i == 0) {
@@ -117,6 +117,7 @@ public class MusicDownload {
             @Override
             public void run() {
                 try {
+                    Log.i("MusicDownload:request", music.getId() + music.getSource());
                     url[0] = conn.getMusicPlayURL(music.getId(), music.getSource());
                     Log.i("MusicDownload:", url[0]);
                 } catch (Exception e) {
@@ -154,8 +155,15 @@ public class MusicDownload {
                                 Log.i("MusicDownload:length:", String.valueOf(total));
                                 File file = new File(savePath, fileName);
                                 Log.i("MusicDownload:filename:", fileName);
-                                file.createNewFile();
-                                Log.i("MusicDownload:createf:", savePath + fileName);
+
+                                if (!file.getParentFile().exists()){
+                                    file.getParentFile().mkdirs();
+                                    Log.i("MusicDownload:created:", file.getParentFile().toString());
+                                }
+                                if (!file.exists()){
+                                    file.createNewFile();
+                                    Log.i("MusicDownload:createf:", savePath + fileName);
+                                }
                                 musicFileInput = new FileOutputStream(file,false);
                                 long alreadyDownload = 0;
                                 byte[] buf = new byte[2048];

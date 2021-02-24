@@ -29,6 +29,7 @@ import com.sm.music.Fragment.search_pager;
 import com.sm.music.GlobalApplication;
 import com.sm.music.MusicUtils.ConvertBean;
 import com.sm.music.MusicUtils.GetMusic;
+import com.sm.music.MusicUtils.MoreWindowDialog;
 import com.sm.music.MusicUtils.RecentPlay;
 import com.sm.music.R;
 import com.sm.music.MusicUtils.MoreWindows;
@@ -358,6 +359,8 @@ public class ListActivity extends AppCompatActivity {
                 @Override
                 public boolean onLongClick(View v) {
                     showMore(music);
+//                    MoreWindowDialog moreWindowDialog = new MoreWindowDialog();
+//                    moreWindowDialog.show(getSupportFragmentManager(), music.getId(), music);
                     return true;
                 }
             });

@@ -11,6 +11,7 @@ import android.util.DisplayMetrics;
 import android.view.KeyCharacterMap;
 import android.view.KeyEvent;
 import android.view.ViewConfiguration;
+import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
 
@@ -27,6 +28,8 @@ import com.sm.music.R;
 import static android.view.View.*;
 
 public class Util {
+
+    private static final String NAVIGATION= "navigationBarBackground";
 
     static public void setActivityFullScreen(Activity activity) {
         activity.requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -80,14 +83,29 @@ public class Util {
         return (int) (pxValue / scale + 0.5f);
     }
 
-    static public boolean checkDeviceHasNavigationBar(Context activity) {
-        boolean hasMenuKey = ViewConfiguration.get(activity).hasPermanentMenuKey();
-        boolean hasBackKey = KeyCharacterMap.deviceHasKey(KeyEvent.KEYCODE_BACK);
-        if (!hasMenuKey && !hasBackKey) {
-            return true;
+//    static public boolean checkDeviceHasNavigationBar(Context context) {
+//        boolean hasMenuKey = ViewConfiguration.get(context).hasPermanentMenuKey();
+//        boolean hasBackKey = KeyCharacterMap.deviceHasKey(KeyEvent.KEYCODE_BACK);
+//        if (!hasMenuKey && !hasBackKey) {
+//            return true;
+//        }
+//        return false;
+//    }
+
+
+    public static  boolean checkDeviceHasNavigationBar(Activity activity){
+        ViewGroup vp = (ViewGroup) activity.getWindow().getDecorView();
+        if (vp != null) {
+            for (int i = 0; i < vp.getChildCount(); i++) {
+                vp.getChildAt(i).getContext().getPackageName();
+                if (vp.getChildAt(i).getId()!= NO_ID && NAVIGATION.equals(activity.getResources().getResourceEntryName(vp.getChildAt(i).getId()))) {
+                    return true;
+                }
+            }
         }
         return false;
     }
+
     static public boolean isLightColor(@ColorInt int color) {
         return ColorUtils.calculateLuminance(color) >= 0.5;
     }

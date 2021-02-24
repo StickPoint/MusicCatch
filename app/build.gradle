@@ -6,8 +6,8 @@ android {
         release {
             storeFile file('D:\\ddmusic_app_key\\dd.jks')
             storePassword 'legendyc&fntp123456'
-            keyAlias = 'ddmusic'
             keyPassword 'legendyc&fntp123456'
+            keyAlias = 'ddmusic'
         }
         debug {
             storeFile file('D:\\ddmusic_app_key\\dd.jks')
@@ -22,9 +22,9 @@ android {
         applicationId "com.sm.music"
         minSdkVersion 24
         targetSdkVersion 29
-        versionCode 1
-        versionName "1.0.0"
-        ndk.abiFilters 'armeabi-v7a','arm64-v8a','x86','x86_64'
+        versionCode 2
+        versionName "1.1.1"
+        ndk.abiFilters 'armeabi-v7a', 'arm64-v8a', 'x86', 'x86_64'
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         signingConfig signingConfigs.release
         android.defaultConfig.vectorDrawables.useSupportLibrary = true
@@ -33,19 +33,19 @@ android {
         release {
             minifyEnabled false
             zipAlignEnabled true
-            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
-            debuggable = false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            debuggable false
             signingConfig signingConfigs.release
         }
         debug {
             minifyEnabled false
             zipAlignEnabled true
-            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
-            debuggable = true
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            debuggable true
             signingConfig signingConfigs.debug
         }
     }
-    compileOptions{
+    compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }

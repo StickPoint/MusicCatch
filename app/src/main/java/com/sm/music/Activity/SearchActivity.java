@@ -213,7 +213,7 @@ public class SearchActivity extends AppCompatActivity {
             @Override
             public void onCheckedChanged(RadioGroup group, int checkedId) {
                 currentType = getCurrentType(checkedId);
-                if (search_text != null && !search_text.equals("")){
+//                if (search_text != null && !search_text.equals("")){
                     switch (currentType){
                         case GetMusic.MUSIC_SOURCE_KUGOU:
                             search_wapper.setCurrentItem(0,true);
@@ -228,7 +228,7 @@ public class SearchActivity extends AppCompatActivity {
                             search_wapper.setCurrentItem(0,true);
                             break;
                     }
-                }
+//                }
             }
         });
 

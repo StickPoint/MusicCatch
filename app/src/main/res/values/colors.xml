@@ -11,4 +11,5 @@
     <color name="transparent">#00000000</color>
     <color name="tipBg">#88000000</color>
     <color name="player_bg">#FFFFFF</color>
+    <color name="divider">#DEDEDE</color>
 </resources>

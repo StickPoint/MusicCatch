@@ -2,26 +2,50 @@
 apply plugin: 'com.android.application'
 
 android {
+    signingConfigs {
+        release {
+            storeFile file('D:\\ddmusic_app_key\\dd.jks')
+            storePassword 'legendyc&fntp123456'
+            keyPassword 'legendyc&fntp123456'
+            keyAlias = 'ddmusic'
+        }
+        debug {
+            storeFile file('D:\\ddmusic_app_key\\dd.jks')
+            storePassword 'legendyc&fntp123456'
+            keyPassword 'legendyc&fntp123456'
+            keyAlias = 'ddmusic'
+        }
+    }
     compileSdkVersion 29
     buildToolsVersion "29.0.3"
     defaultConfig {
         applicationId "com.sm.music"
         minSdkVersion 24
         targetSdkVersion 29
-        versionCode 1
-        versionName "1.0.0"
-        ndk.abiFilters 'armeabi-v7a','arm64-v8a','x86','x86_64'
+        versionCode 2
+        versionName "1.1.1"
+        ndk.abiFilters 'armeabi-v7a', 'arm64-v8a', 'x86', 'x86_64'
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        signingConfig signingConfigs.release
         android.defaultConfig.vectorDrawables.useSupportLibrary = true
     }
     buildTypes {
         release {
-            minifyEnabled true
+            minifyEnabled false
             zipAlignEnabled true
-            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            debuggable false
+            signingConfig signingConfigs.release
+        }
+        debug {
+            minifyEnabled false
+            zipAlignEnabled true
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            debuggable true
+            signingConfig signingConfigs.debug
         }
     }
-    compileOptions{
+    compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
@@ -46,13 +70,8 @@ dependencies {
     implementation 'com.scwang.smart:refresh-header-classics:2.0.3'
     implementation 'com.scwang.smart:refresh-header-material:2.0.3'
     implementation 'com.scwang.smart:refresh-footer-classics:2.0.3'
-    //noinspection DuplicatePlatformClasses
-    implementation 'org.json:json:20200518'
-//    implementation 'com.github.xuexiangjys:XUpdate:2.0.6'
-//    implementation 'com.github.xuexiangjys:XUpdate:2.0.7'
+    implementation 'org.json:json:20201115'
     implementation 'com.github.xuexiangjys.XUpdateAPI:xupdate-easy:1.0.0'
-//    如果需要使用断点续传下载功能的话添加该依赖（可选）
     implementation 'com.github.xuexiangjys.XUpdateAPI:xupdate-downloader-aria:1.0.0'
-//    implementation 'com.github.xuexiangjys:XUpdate:1.1.6'
     implementation 'com.github.xuexiangjys:XUpdate:2.0.7'
 }

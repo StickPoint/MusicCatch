@@ -97,7 +97,9 @@ public class GlobalApplication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
+    }
 
+    public void init(){
         conn = new GetMusic();
         musicList = RecentPlay.getRecentPlayMusic(getApplicationContext());
         Intent musicIntent = new Intent(getApplicationContext(), MusicPlayer.class);
@@ -108,27 +110,7 @@ public class GlobalApplication extends Application {
             startService(musicIntent);
         }
         bindService(musicIntent, musicPlayerConnection, BIND_AUTO_CREATE);
-
-        SharedPreferences pref = getSharedPreferences("data", MODE_PRIVATE);
-        Boolean isFirstLanuch = pref.getBoolean("isFirstLanuch", true);
-
-        String imei = null;
-        TelephonyManager telephonyManager = (TelephonyManager) getApplicationContext().getSystemService(context.TELEPHONY_SERVICE);
-        if (checkSelfPermission(Manifest.permission.READ_PHONE_STATE) != PackageManager.PERMISSION_GRANTED) {
-            imei = UUID.randomUUID().toString();
-        }else {
-            imei = telephonyManager.getDeviceId();
-        }
-
-        if (isFirstLanuch && imei != null){
-            SendIMEI.send(imei);
-            SharedPreferences.Editor editor = getSharedPreferences("data",MODE_PRIVATE).edit();
-            editor.putBoolean("isFirstLanuch",false);
-            editor.commit();
-        }
-
     }
-
 
     public Music getCurrentMusic() {
         return currentMusic;

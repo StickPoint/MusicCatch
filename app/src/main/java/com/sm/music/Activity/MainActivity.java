@@ -7,8 +7,13 @@ import androidx.fragment.app.FragmentPagerAdapter;
 import androidx.viewpager.widget.PagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 
+import android.Manifest;
 import android.annotation.SuppressLint;
+import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.telephony.TelephonyManager;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
@@ -19,6 +24,7 @@ import android.widget.RadioButton;
 import com.sm.music.Bean.Music;
 import com.sm.music.GlobalApplication;
 import com.sm.music.MusicUtils.MoreWindows;
+import com.sm.music.MusicUtils.SendIMEI;
 import com.sm.music.R;
 import com.sm.music.UIUtils.Util;
 import com.sm.music.Fragment.downloadFragment;
@@ -32,6 +38,7 @@ import com.xuexiang.xupdate.service.OnFileDownloadListener;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.UUID;
 
 import static com.xuexiang.xupdate.entity.UpdateError.ERROR.CHECK_NO_NEW_VERSION;
 
@@ -77,6 +84,27 @@ public class MainActivity extends AppCompatActivity {
         final Boolean HasNavigationBar = !Util.checkDeviceHasNavigationBar(this);
 
         globalApplication = (GlobalApplication) getApplication();
+
+
+        SharedPreferences pref = getSharedPreferences("data", MODE_PRIVATE);
+        Boolean isFirstLanuch = pref.getBoolean("isFirstLanuch", true);
+
+        String imei = null;
+        TelephonyManager telephonyManager = (TelephonyManager) getApplicationContext().getSystemService(TELEPHONY_SERVICE);
+        if (checkSelfPermission(Manifest.permission.READ_PHONE_STATE) != PackageManager.PERMISSION_GRANTED) {
+            imei = UUID.randomUUID().toString();
+        }else {
+            imei = UUID.randomUUID().toString();
+//            imei = telephonyManager.getDeviceId();
+        }
+
+        if (isFirstLanuch && imei != null){
+            Log.i("IMEI:is:", imei);
+//            SendIMEI.send(imei);
+//            SharedPreferences.Editor editor = getSharedPreferences("data",MODE_PRIVATE).edit();
+//            editor.putBoolean("isFirstLanuch",false);
+//            editor.commit();
+        }
 
         XUpdate.newBuild(MainActivity.this)
                 .updateUrl(UPDATE_INFO_URL)

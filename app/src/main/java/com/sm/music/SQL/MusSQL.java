@@ -28,7 +28,7 @@ public class MusSQL extends SQLiteOpenHelper {
                 "musname varchar(50)," +
                 "musarti varchar(30),mussize int(100))");
     }
-
+    //修改
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
 

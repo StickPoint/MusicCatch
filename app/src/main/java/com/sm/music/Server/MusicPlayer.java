@@ -9,10 +9,21 @@ import android.content.Intent;
 import android.media.MediaPlayer;
 import android.os.Binder;
 import android.os.IBinder;
+import android.os.SystemClock;
+import android.widget.RemoteViews;
+
+import com.sm.music.GlobalApplication;
+import com.sm.music.R;
 
 import java.io.IOException;
 
 public class MusicPlayer extends Service {
+
+    private static final String CHANNEL_NAME = "Music Notification Player";
+
+    private static final String CHANNEL_ID = "com.sm.music.Player";
+
+    private GlobalApplication globalApplication = null;
 
     private MediaPlayer player = null;
 
@@ -27,14 +38,19 @@ public class MusicPlayer extends Service {
     @Override
     public void onCreate() {
         super.onCreate();
-        NotificationChannel channel = null;
+        globalApplication = (GlobalApplication) getApplication();
+        NotificationManager manager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+        Notification.Builder builder = new Notification.Builder(getApplicationContext())
+//                .setCustomContentView(new RemoteViews(getPackageName(), R.layout.notification_layout))
+                .setWhen(SystemClock.currentThreadTimeMillis())
+                .setSmallIcon(R.mipmap.ic_launcher_round)
+                .setOngoing(true);
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
-            channel = new NotificationChannel("1","1", NotificationManager.IMPORTANCE_HIGH);
-            NotificationManager manager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+            NotificationChannel channel = new NotificationChannel(CHANNEL_ID,CHANNEL_NAME, NotificationManager.IMPORTANCE_DEFAULT);
             manager.createNotificationChannel(channel);
-            Notification notification = new Notification.Builder(getApplicationContext(),"1").build();
-            startForeground(1, notification);
+            builder.setChannelId(CHANNEL_ID);
         }
+        startForeground(1, builder.build());
         player = new MediaPlayer();
     }
 

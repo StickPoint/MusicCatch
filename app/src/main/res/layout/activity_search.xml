@@ -137,7 +137,7 @@
                     android:gravity="center"
                     android:paddingLeft="10dp"
                     android:paddingRight="10dp"
-                    android:text="@string/tencent"
+                    android:text="@string/migu"
                     android:textColor="@color/search_bar_nav_btn_text_check"
                     android:textSize="@dimen/small" />
             </RadioGroup>

@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
 
 import android.content.Intent;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -33,7 +34,6 @@ import com.sm.music.MusicUtils.GetMusic;
 import com.sm.music.MusicUtils.MoreWindowDialog;
 import com.sm.music.MusicUtils.RecentPlay;
 import com.sm.music.R;
-import com.sm.music.MusicUtils.MoreWindows;
 import com.sm.music.UIUtils.Util;
 
 import java.util.List;
@@ -77,7 +77,6 @@ public class ListActivity extends AppCompatActivity {
     private ListView list_container = null;
     private FrameLayout list_buttom = null;
     private ConstraintLayout listLoading = null;
-    MoreWindows moreWindows = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -99,7 +98,6 @@ public class ListActivity extends AppCompatActivity {
         listLoading = findViewById(R.id.listLoading);
 
 
-        moreWindows = new MoreWindows(ListActivity.this,(FrameLayout)findViewById(R.id.list_page));
 
         list_buttom.addView(globalApplication.createMinMusicPlayer(ListActivity.this, ACTIVITY_TAG));
 
@@ -175,14 +173,6 @@ public class ListActivity extends AppCompatActivity {
     }
 
 
-    public void onBackPressed() {
-        if (moreWindows.isMoreShow()){
-            moreWindows.removeMore();
-        }else {
-            super.onBackPressed();
-        }
-
-    }
 
 
     public void init_music_list_data(){
@@ -286,10 +276,6 @@ public class ListActivity extends AppCompatActivity {
                 listLoading.setVisibility(View.INVISIBLE);
                 break;
         }
-    }
-
-    public void showMore(Music music){
-        moreWindows.show(music);
     }
 
     @Override

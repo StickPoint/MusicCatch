@@ -52,6 +52,7 @@ public class likeFragment extends Fragment {
 
     private List<Music> like_list = null;
 
+    MoreWindowDialog moreWindowDialog;
 
     public likeFragment() {
         // Required empty public constructor
@@ -65,6 +66,8 @@ public class likeFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        moreWindowDialog = new MoreWindowDialog();
+
         View view = inflater.inflate(R.layout.fragment_like, container, false);
         final int statusBarHeight = Util.getStatusBarHeight(getActivity());
         globalApplication = (GlobalApplication) getActivity().getApplication();
@@ -94,7 +97,7 @@ public class likeFragment extends Fragment {
                 refreshlayout.finishRefresh(updataList());
             }
         });
-        ((MainActivity) getActivity()).getMoreWindowsObject().setOnChangeFavStatusListener(new OnChangeFavStatusListener() {
+        moreWindowDialog.setOnChangeFavStatusListener(new OnChangeFavStatusListener() {
             @Override
             public void OnChange() {
                 updataList();
@@ -132,8 +135,8 @@ public class likeFragment extends Fragment {
             if (likeList_list.getAdapter() == null){
                 likeList_list.setAdapter(new listPageAdapter());
             }else {
-//                ((listPageAdapter) likeList_list.getAdapter()).notifyDataSetChanged();
-                likeList_list.setAdapter(new listPageAdapter());
+                ((listPageAdapter) likeList_list.getAdapter()).notifyDataSetChanged();
+//                likeList_list.setAdapter(new listPageAdapter());
             }
             return true;
         }else {
@@ -177,7 +180,6 @@ public class likeFragment extends Fragment {
             view.findViewById(R.id.index_list_item_music_more).setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    MoreWindowDialog moreWindowDialog = new MoreWindowDialog();
                     moreWindowDialog.show(getActivity().getSupportFragmentManager(), music.getId(), music);
                 }
             });
@@ -191,7 +193,6 @@ public class likeFragment extends Fragment {
             view.setOnLongClickListener(new View.OnLongClickListener() {
                 @Override
                 public boolean onLongClick(View v) {
-                    MoreWindowDialog moreWindowDialog = new MoreWindowDialog();
                     moreWindowDialog.show(getActivity().getSupportFragmentManager(), music.getId(), music);
                     return true;
                 }

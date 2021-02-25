@@ -23,7 +23,6 @@ import android.widget.RadioButton;
 
 import com.sm.music.Bean.Music;
 import com.sm.music.GlobalApplication;
-import com.sm.music.MusicUtils.MoreWindows;
 import com.sm.music.MusicUtils.SendIMEI;
 import com.sm.music.R;
 import com.sm.music.UIUtils.Util;
@@ -63,8 +62,6 @@ public class MainActivity extends AppCompatActivity {
     private static ArrayList<Fragment> FragmentList = new ArrayList<Fragment>();
     //tag
     private static final int ACTICITY_TAG = 410;
-
-    private MoreWindows moreWindows = null;
 
     //add child page view to FragmentList
     static {
@@ -115,7 +112,6 @@ public class MainActivity extends AppCompatActivity {
 
         navBar_layout = View.inflate(this, R.layout.nav_bar,null);
 
-        moreWindows = new MoreWindows(MainActivity.this,mainPage);
 
         nav.post(new Runnable() {
             @Override
@@ -225,25 +221,9 @@ public class MainActivity extends AppCompatActivity {
         //TODO: Other code
     }
 
-    public void onBackPressed() {
-        if (moreWindows.isMoreShow()){
-            moreWindows.removeMore();
-        }else {
-            super.onBackPressed();
-        }
-
-    }
     @Override
     protected void onDestroy() {
         super.onDestroy();
         globalApplication.destroyMinMusicPlayer(ACTICITY_TAG);
-    }
-
-    public void showMore(Music music){
-        moreWindows.show(music);
-    }
-
-    public MoreWindows getMoreWindowsObject(){
-        return moreWindows;
     }
 }

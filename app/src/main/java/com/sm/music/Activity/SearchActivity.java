@@ -24,7 +24,6 @@ import com.sm.music.Bean.Music;
 import com.sm.music.GlobalApplication;
 import com.sm.music.MusicUtils.GetMusic;
 import com.sm.music.R;
-import com.sm.music.MusicUtils.MoreWindows;
 import com.sm.music.UIUtils.Util;
 import com.sm.music.Fragment.search_pager;
 
@@ -35,7 +34,7 @@ public class SearchActivity extends AppCompatActivity {
 
     private static final int ACTIVITY_TAG = 547;
 
-    final static private int TYPES[] = {GetMusic.MUSIC_SOURCE_KUGOU, GetMusic.MUSIC_SOURCE_NETEASE, GetMusic.MUSIC_SOURCE_TENCENT};
+    final static private int TYPES[] = {GetMusic.MUSIC_SOURCE_KUGOU, GetMusic.MUSIC_SOURCE_NETEASE, GetMusic.MUSIC_SOURCE_MIGU};
 
 
     private GlobalApplication globalApplication = null;
@@ -61,8 +60,6 @@ public class SearchActivity extends AppCompatActivity {
     private ArrayList<search_pager> search_pager = new ArrayList<>();
     private FragmentManager search_pager_manager = null;
 
-    MoreWindows moreWindows = null;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -83,7 +80,6 @@ public class SearchActivity extends AppCompatActivity {
         search_cancel = findViewById(R.id.search_cancel);
         search = findViewById(R.id.search);
         search.requestFocus();
-        moreWindows = new MoreWindows(SearchActivity.this,(FrameLayout)findViewById(R.id.searchPage));
         for (int i : TYPES){
             search_pager.add(new search_pager(i));
         }
@@ -221,7 +217,7 @@ public class SearchActivity extends AppCompatActivity {
                         case GetMusic.MUSIC_SOURCE_NETEASE:
                             search_wapper.setCurrentItem(1,true);
                             break;
-                        case GetMusic.MUSIC_SOURCE_TENCENT:
+                        case GetMusic.MUSIC_SOURCE_MIGU:
                             search_wapper.setCurrentItem(2,true);
                             break;
                         default:
@@ -244,14 +240,6 @@ public class SearchActivity extends AppCompatActivity {
         return search_text;
     }
 
-    public void onBackPressed() {
-        if (moreWindows.isMoreShow()){
-            moreWindows.removeMore();
-        }else {
-            super.onBackPressed();
-        }
-
-    }
 
     private int getCurrentType(int currentId){
         if (currentId == kugou.getId()){
@@ -259,31 +247,12 @@ public class SearchActivity extends AppCompatActivity {
         }else if (currentId == netease.getId()){
             return GetMusic.MUSIC_SOURCE_NETEASE;
         }else if (currentId == tencent.getId()){
-            return GetMusic.MUSIC_SOURCE_TENCENT;
+            return GetMusic.MUSIC_SOURCE_MIGU;
         }else {
             return GetMusic.MUSIC_SOURCE_KUGOU;
         }
     }
 
-//    private void showContainer(int container){
-//        switch (container){
-//            case SHOW_SEARCH_MUSIC_LIST:
-//                ((View) searchList_list).setVisibility(View.VISIBLE);
-//                searchLoading.setVisibility(View.INVISIBLE);
-//                break;
-//            case SHOW_SEARCH_LOADING:
-//                ((View) searchList_list).setVisibility(View.INVISIBLE);
-//                searchLoading.setVisibility(View.VISIBLE);
-//                break;
-//            default:
-//                ((View) searchList_list).setVisibility(View.VISIBLE);
-//                searchLoading.setVisibility(View.INVISIBLE);
-//                break;
-//        }
-//    }
-    public void showMore(Music music){
-        moreWindows.show(music);
-    }
 
 
 

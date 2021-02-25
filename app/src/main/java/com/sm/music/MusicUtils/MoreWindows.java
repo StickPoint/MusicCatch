@@ -120,16 +120,16 @@ public class MoreWindows {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 //TODO: to add & remove favoriate music
                 if (isChecked){
-                    forLike.setText(R.string.remove_like);
-                    if (sqlUtils.setFavMus(context, music))
-                        Toast.makeText(context, R.string.fav_failed, Toast.LENGTH_LONG);
-                }else {
                     forLike.setText(R.string.add_like);
                     if (!sqlUtils.delFavMus(context, music.getId() + music.getSource()))
                         Toast.makeText(context, R.string.fav_del_failed, Toast.LENGTH_LONG);
                     if (onChangeFavStatusListener != null){
                         onChangeFavStatusListener.OnChange();
                     }
+                }else {
+                    forLike.setText(R.string.remove_like);
+                    if (sqlUtils.setFavMus(context, music))
+                        Toast.makeText(context, R.string.fav_failed, Toast.LENGTH_LONG);
                 }
             }
         });

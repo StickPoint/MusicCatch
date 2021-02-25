@@ -132,11 +132,11 @@ public class MoreWindowDialog extends DialogFragment {
                 //TODO: to add & remove favoriate music
                 if (isChecked){
                     forLike.setText(R.string.remove_like);
-                    if (sqlUtils.setFavMus(requireActivity(), music))
+                    if (sqlUtils.setFavMus(requireActivity().getApplicationContext(), music))
                         Toast.makeText(requireActivity(), R.string.fav_failed, Toast.LENGTH_LONG);
                 }else {
                     forLike.setText(R.string.add_like);
-                    if (!sqlUtils.delFavMus(requireActivity(), music.getId() + music.getSource()))
+                    if (!sqlUtils.delFavMus(requireActivity().getApplicationContext(), music.getId() + music.getSource()))
                         Toast.makeText(requireActivity(), R.string.fav_del_failed, Toast.LENGTH_LONG);
                     if (onChangeFavStatusListener != null){
                         onChangeFavStatusListener.OnChange();

@@ -320,14 +320,13 @@ public class ListActivity extends AppCompatActivity {
             View view = View.inflate(ListActivity.this, R.layout.ranking_list_item_layout, null);
             final Music music = music_list.get(position);
             if (RecentPlay.isPlayedRecently(ListActivity.this,music.getId()) != -1){
-                ((TextView) view.findViewById(R.id.index_list_item_music_name)).setTextColor(ListActivity.this.getResources().getColor(R.color.textHint));
+                ((TextView) view.findViewById(R.id.index_list_item_music_name)).setTextColor(getResources().getColor(R.color.textHint));
             }
 
+            ((TextView) view.findViewById(R.id.index_list_rank)).setText(String.valueOf(position + 1));
             if (position < 3){
-                ((TextView) view.findViewById(R.id.index_list_rank)).setText(String.valueOf(position + 1));
                 ((TextView) view.findViewById(R.id.index_list_rank)).setTextColor(getResources().getColor(R.color.colorPrimary));
             }else {
-                ((TextView) view.findViewById(R.id.index_list_rank)).setText(String.valueOf(position + 1));
                 ((TextView) view.findViewById(R.id.index_list_rank)).setTextColor(getResources().getColor(R.color.textHint));
             }
             ((TextView) view.findViewById(R.id.index_list_item_music_name)).setText(music.getName());
@@ -344,13 +343,14 @@ public class ListActivity extends AppCompatActivity {
             view.findViewById(R.id.index_list_item_music_more).setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    showMore(music);
+                    MoreWindowDialog moreWindowDialog = new MoreWindowDialog();
+                    moreWindowDialog.show(getSupportFragmentManager(), music.getId(), music);
                 }
             });
             view.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    ((TextView) v.findViewById(R.id.index_list_item_music_name)).setTextColor(ListActivity.this.getResources().getColor(R.color.textHint));
+                    ((TextView) v.findViewById(R.id.index_list_item_music_name)).setTextColor(getResources().getColor(R.color.textHint));
                     globalApplication.setCurrentMusic(music);
                     ((BaseAdapter) list_container.getAdapter()).notifyDataSetChanged();
                 }
@@ -358,9 +358,9 @@ public class ListActivity extends AppCompatActivity {
             view.setOnLongClickListener(new View.OnLongClickListener() {
                 @Override
                 public boolean onLongClick(View v) {
-                    showMore(music);
-//                    MoreWindowDialog moreWindowDialog = new MoreWindowDialog();
-//                    moreWindowDialog.show(getSupportFragmentManager(), music.getId(), music);
+//                    showMore(music);
+                    MoreWindowDialog moreWindowDialog = new MoreWindowDialog();
+                    moreWindowDialog.show(getSupportFragmentManager(), music.getId(), music);
                     return true;
                 }
             });

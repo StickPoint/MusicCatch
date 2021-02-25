@@ -24,10 +24,11 @@ import com.scwang.smart.refresh.header.MaterialHeader;
 import com.scwang.smart.refresh.layout.api.RefreshLayout;
 import com.scwang.smart.refresh.layout.listener.OnLoadMoreListener;
 import com.scwang.smart.refresh.layout.listener.OnRefreshListener;
-import com.sm.music.Activity.ListActivity;
 import com.sm.music.Bean.Music;
 import com.sm.music.GlobalApplication;
+import com.sm.music.Listener.OnMusicChange;
 import com.sm.music.MusicUtils.GetMusic;
+import com.sm.music.MusicUtils.MoreWindowDialog;
 import com.sm.music.MusicUtils.RecentPlay;
 import com.sm.music.R;
 import com.sm.music.Activity.SearchActivity;
@@ -253,7 +254,7 @@ public class search_pager extends Fragment {
 
         @Override
         public View getView(final int position, View convertView, ViewGroup parent) {
-            View view = View.inflate(getActivity(), R.layout.index_list_ltem_layout, null);
+            View view = View.inflate(getActivity(), R.layout.list_ltem_layout, null);
             final Music music = searchList.get(position);
             if (RecentPlay.isPlayedRecently(getContext(),music.getId()) != -1){
                 ((TextView) view.findViewById(R.id.index_list_item_music_name)).setTextColor(getContext().getResources().getColor(R.color.textHint));
@@ -272,21 +273,35 @@ public class search_pager extends Fragment {
             view.findViewById(R.id.index_list_item_music_more).setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    ((SearchActivity) getActivity()).showMore(music);
+                    MoreWindowDialog moreWindowDialog = new MoreWindowDialog();
+                    moreWindowDialog.show(getActivity().getSupportFragmentManager(), music.getId(), music);
                 }
             });
             view.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     ((TextView) v.findViewById(R.id.index_list_item_music_name)).setTextColor(getActivity().getResources().getColor(R.color.textHint));
+
+                    globalApplication.setOnMusicChange(new OnMusicChange() {
+                        @Override
+                        public void OnComplete() {
+                            ((BaseAdapter) searchList_list.getAdapter()).notifyDataSetChanged();
+                        }
+
+                        @Override
+                        public void OnFail() {
+                            Toast.makeText(getContext(), R.string.play_fail, Toast.LENGTH_SHORT).show();
+                            ((BaseAdapter) searchList_list.getAdapter()).notifyDataSetChanged();
+                        }
+                    });
                     globalApplication.setCurrentMusic(music);
-                    ((BaseAdapter) searchList_list.getAdapter()).notifyDataSetChanged();
                 }
             });
             view.setOnLongClickListener(new View.OnLongClickListener() {
                 @Override
                 public boolean onLongClick(View v) {
-                    ((SearchActivity) getActivity()).showMore(music);
+                    MoreWindowDialog moreWindowDialog = new MoreWindowDialog();
+                    moreWindowDialog.show(getActivity().getSupportFragmentManager(), music.getId(), music);
                     return true;
                 }
             });

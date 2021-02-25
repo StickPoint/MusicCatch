@@ -23,6 +23,7 @@ import com.sm.music.Activity.MainActivity;
 import com.sm.music.Bean.Music;
 import com.sm.music.GlobalApplication;
 import com.sm.music.Listener.OnChangeFavStatusListener;
+import com.sm.music.MusicUtils.MoreWindowDialog;
 import com.sm.music.R;
 import com.sm.music.SQL.SQLUtils;
 import com.sm.music.UIUtils.Util;
@@ -160,7 +161,7 @@ public class likeFragment extends Fragment {
 
         @Override
         public View getView(final int position, View convertView, ViewGroup parent) {
-            View view = View.inflate(getContext(), R.layout.index_list_ltem_layout, null);
+            View view = View.inflate(getContext(), R.layout.list_ltem_layout, null);
             final Music music = like_list.get(position);
             ((TextView) view.findViewById(R.id.index_list_item_music_name)).setText(music.getName());
             String temp = "";
@@ -176,7 +177,8 @@ public class likeFragment extends Fragment {
             view.findViewById(R.id.index_list_item_music_more).setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    ((MainActivity) getActivity()).showMore(music);
+                    MoreWindowDialog moreWindowDialog = new MoreWindowDialog();
+                    moreWindowDialog.show(getActivity().getSupportFragmentManager(), music.getId(), music);
                 }
             });
             view.setOnClickListener(new View.OnClickListener() {
@@ -189,7 +191,8 @@ public class likeFragment extends Fragment {
             view.setOnLongClickListener(new View.OnLongClickListener() {
                 @Override
                 public boolean onLongClick(View v) {
-                    ((MainActivity) getActivity()).showMore(music);
+                    MoreWindowDialog moreWindowDialog = new MoreWindowDialog();
+                    moreWindowDialog.show(getActivity().getSupportFragmentManager(), music.getId(), music);
                     return true;
                 }
             });

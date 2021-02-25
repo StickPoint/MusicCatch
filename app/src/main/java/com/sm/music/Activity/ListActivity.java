@@ -27,6 +27,7 @@ import com.sm.music.Bean.Music;
 import com.sm.music.Bean.RecMusic;
 import com.sm.music.Fragment.search_pager;
 import com.sm.music.GlobalApplication;
+import com.sm.music.Listener.OnMusicChange;
 import com.sm.music.MusicUtils.ConvertBean;
 import com.sm.music.MusicUtils.GetMusic;
 import com.sm.music.MusicUtils.MoreWindowDialog;
@@ -351,8 +352,19 @@ public class ListActivity extends AppCompatActivity {
                 @Override
                 public void onClick(View v) {
                     ((TextView) v.findViewById(R.id.index_list_item_music_name)).setTextColor(getResources().getColor(R.color.textHint));
+                    globalApplication.setOnMusicChange(new OnMusicChange() {
+                        @Override
+                        public void OnComplete() {
+                            ((BaseAdapter) list_container.getAdapter()).notifyDataSetChanged();
+                        }
+
+                        @Override
+                        public void OnFail() {
+                            Toast.makeText(ListActivity.this, R.string.play_fail, Toast.LENGTH_SHORT).show();
+                            ((BaseAdapter) list_container.getAdapter()).notifyDataSetChanged();
+                        }
+                    });
                     globalApplication.setCurrentMusic(music);
-                    ((BaseAdapter) list_container.getAdapter()).notifyDataSetChanged();
                 }
             });
             view.setOnLongClickListener(new View.OnLongClickListener() {

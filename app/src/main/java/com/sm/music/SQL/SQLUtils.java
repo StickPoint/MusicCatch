@@ -46,6 +46,9 @@ public class SQLUtils {
             database.beginTransaction();
             String json = JSONArray.toJSONString(music);
             database.execSQL("insert into favmus(musicid,music)values('" + music.getId() + music.getSource() + "','"+json+"');");
+            boolean flag1 = database.inTransaction();
+            Log.e("sql:del", "add_success:" + flag1);
+            database.setTransactionSuccessful();
             Log.e("sql:del", "add_success:" + music.getName());
             database.endTransaction();
             database.close();

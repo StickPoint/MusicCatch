@@ -1,6 +1,5 @@
 package com.sm.music;
 
-import android.Manifest;
 import android.app.Activity;
 import android.app.Application;
 import android.content.ComponentName;
@@ -8,7 +7,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
-import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.media.MediaPlayer;
@@ -16,7 +14,6 @@ import android.os.Build;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
-import android.telephony.TelephonyManager;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
@@ -28,12 +25,11 @@ import androidx.annotation.NonNull;
 
 import com.sm.music.Activity.PlayerActivity;
 import com.sm.music.Bean.Music;
+import com.sm.music.Listener.OnMusicChange;
 import com.sm.music.MusicUtils.GetMusic;
 import com.sm.music.MusicUtils.RecentPlay;
-import com.sm.music.MusicUtils.SendIMEI;
 import com.sm.music.Override.UnclickableHorizontalScrollView;
 import com.sm.music.Server.MusicPlayer;
-import com.xuexiang.xupdate.XUpdate;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -42,7 +38,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
-import java.util.UUID;
 
 
 public class GlobalApplication extends Application {
@@ -93,6 +88,8 @@ public class GlobalApplication extends Application {
 
 
     private GetMusic conn = null;
+
+    private OnMusicChange onMusicChange = null;
 
     @Override
     public void onCreate() {
@@ -459,23 +456,29 @@ public class GlobalApplication extends Application {
                             player.reset();
                             player.setDataSource((String) msg.obj);
                             player.prepareAsync();
-                            player.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
-                                @Override
-                                public void onPrepared(MediaPlayer mediaPlayer) {
-                                    initPlayerOnMusic();
-                                    if (updataRecentList){
-                                        musicList = RecentPlay.addRecentPlayMusic(getApplicationContext(),music);
-                                    }
-                                    currentMusicIndexInMusicList = RecentPlay.isPlayedRecently(getApplicationContext(), music.getId());
-                                    if (autoPlay)
-                                        musicPlay();
-                                    else {
-                                        int currentDuration = player.getDuration() / 1000;
-                                        currentMusicDuration = ((currentDuration / 60) >= 10 ? String.valueOf(currentDuration / 60) : ("0" + (currentDuration / 60))) +
-                                                ":" + ((currentDuration % 60)  >= 10 ? String.valueOf(currentDuration % 60) : ("0" + (currentDuration % 60)));
-                                        updateplayer();
-                                    }
+                            player.setOnPreparedListener(mediaPlayer -> {
+                                initPlayerOnMusic();
+                                if (updataRecentList){
+                                    musicList = RecentPlay.addRecentPlayMusic(getApplicationContext(),music);
                                 }
+                                currentMusicIndexInMusicList = RecentPlay.isPlayedRecently(getApplicationContext(), music.getId());
+                                if (autoPlay)
+                                    musicPlay();
+                                else {
+                                    int currentDuration = player.getDuration() / 1000;
+                                    currentMusicDuration = ((currentDuration / 60) >= 10 ? String.valueOf(currentDuration / 60) : ("0" + (currentDuration / 60))) +
+                                            ":" + ((currentDuration % 60)  >= 10 ? String.valueOf(currentDuration % 60) : ("0" + (currentDuration % 60)));
+                                    updateplayer();
+                                }
+                                if (onMusicChange != null){
+                                    onMusicChange.OnComplete();
+                                }
+                            });
+                            player.setOnErrorListener((mp, what, extra) -> {
+                                if (onMusicChange != null){
+                                    onMusicChange.OnFail();
+                                }
+                                return true;
                             });
                         } catch (IOException e) {
                             e.printStackTrace();
@@ -551,6 +554,10 @@ public class GlobalApplication extends Application {
             }).start();
         }
     }
+
+    public void setOnMusicChange(OnMusicChange onMusicChange){
+        this.onMusicChange = onMusicChange;
+    };
 
     public void setMusicPlayerPageView(View view){
         ImageView StartAndStop = view.findViewById(R.id.StartAndStop);

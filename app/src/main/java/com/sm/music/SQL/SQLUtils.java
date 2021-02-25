@@ -47,9 +47,9 @@ public class SQLUtils {
             String json = JSONArray.toJSONString(music);
             database.execSQL("insert into favmus(musicid,music)values('" + music.getId() + music.getSource() + "','"+json+"');");
             boolean flag1 = database.inTransaction();
-            Log.e("sql:del", "add_success:" + flag1);
+            Log.e("sql:set", "add_success:" + flag1);
             database.setTransactionSuccessful();
-            Log.e("sql:del", "add_success:" + music.getName());
+            Log.e("sql:set", "add_success:" + music.getName());
             database.endTransaction();
             database.close();
             flag = true;
@@ -135,6 +135,9 @@ public class SQLUtils {
             database = musSQL.getWritableDatabase();
             database.beginTransaction();
             database.execSQL("delete from favmus where musicid = ?", new Object[]{musicid});
+            boolean flag1 = database.inTransaction();
+            Log.e("sql:del", "del_success ? :"+flag1);
+            database.setTransactionSuccessful();
             flag = true;
             database.endTransaction();
             Log.e("sql:del", "del_success");
@@ -215,7 +218,6 @@ public class SQLUtils {
                 locMus.setLocation(cursor.getString(3));
                 locMusList.add(locMus);
             }
-            database.setTransactionSuccessful();
             database.endTransaction();
             database.close();
         } catch (Exception e) {

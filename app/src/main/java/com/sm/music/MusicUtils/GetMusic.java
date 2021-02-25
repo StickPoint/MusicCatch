@@ -37,6 +37,8 @@ public class GetMusic {
 
 	public static final int MUSIC_SOURCE_KUGOU = 2;
 
+	public static final int MUSIC_SOURCE_MIGU = 3;
+
 	public static final String REQUEST_URL_URL = "https://api.zhuolin.wang/api.php?types=url";
 
 	public static final String REQUEST_URL_SEARCH = "https://api.zhuolin.wang/api.php?types=search";
@@ -329,6 +331,8 @@ public class GetMusic {
 				return  "tencent";
 			case 2:
 				return  "kugou";
+			case 3:
+				return  "migu";
 			default:
 				return  "kugou";
 		}

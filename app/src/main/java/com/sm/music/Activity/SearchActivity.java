@@ -34,7 +34,7 @@ public class SearchActivity extends AppCompatActivity {
 
     private static final int ACTIVITY_TAG = 547;
 
-    final static private int TYPES[] = {GetMusic.MUSIC_SOURCE_KUGOU, GetMusic.MUSIC_SOURCE_NETEASE, GetMusic.MUSIC_SOURCE_MIGU};
+    final static private int TYPES[] = {GetMusic.MUSIC_SOURCE_KUGOU, GetMusic.MUSIC_SOURCE_NETEASE, GetMusic.MUSIC_SOURCE_TENCENT, GetMusic.MUSIC_SOURCE_MIGU};
 
 
     private GlobalApplication globalApplication = null;
@@ -44,6 +44,7 @@ public class SearchActivity extends AppCompatActivity {
     private RadioButton kugou = null;
     private RadioButton netease = null;
     private RadioButton tencent = null;
+    private RadioButton migu = null;
 
     private ConstraintLayout searchBar = null;
     private FrameLayout searchPlayer = null;
@@ -73,6 +74,7 @@ public class SearchActivity extends AppCompatActivity {
         kugou = findViewById(R.id.kugou);
         netease = findViewById(R.id.netease);
         tencent = findViewById(R.id.tencent);
+        migu = findViewById(R.id.migu);
         search_wapper = findViewById(R.id.search_wapper);
         searchBar = findViewById(R.id.searchBar);
         searchPlayer = findViewById(R.id.searchPlayer);
@@ -150,6 +152,10 @@ public class SearchActivity extends AppCompatActivity {
                         Util.setActivityBarAlpha(SearchActivity.this, false);
                         tencent.setChecked(true);
                         break;
+                    case 3:
+                        Util.setActivityBarAlpha(SearchActivity.this, false);
+                        migu.setChecked(true);
+                        break;
                     default:
                         Util.setActivityBarAlpha(SearchActivity.this, false);
                         kugou.setChecked(true);
@@ -217,8 +223,11 @@ public class SearchActivity extends AppCompatActivity {
                         case GetMusic.MUSIC_SOURCE_NETEASE:
                             search_wapper.setCurrentItem(1,true);
                             break;
-                        case GetMusic.MUSIC_SOURCE_MIGU:
+                        case GetMusic.MUSIC_SOURCE_TENCENT:
                             search_wapper.setCurrentItem(2,true);
+                            break;
+                        case GetMusic.MUSIC_SOURCE_MIGU:
+                            search_wapper.setCurrentItem(3,true);
                             break;
                         default:
                             search_wapper.setCurrentItem(0,true);
@@ -246,7 +255,9 @@ public class SearchActivity extends AppCompatActivity {
             return GetMusic.MUSIC_SOURCE_KUGOU;
         }else if (currentId == netease.getId()){
             return GetMusic.MUSIC_SOURCE_NETEASE;
-        }else if (currentId == tencent.getId()){
+        }else if (currentId == tencent.getId()) {
+            return GetMusic.MUSIC_SOURCE_TENCENT;
+        }else if(currentId == migu.getId()){
             return GetMusic.MUSIC_SOURCE_MIGU;
         }else {
             return GetMusic.MUSIC_SOURCE_KUGOU;

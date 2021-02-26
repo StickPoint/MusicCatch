@@ -22,6 +22,7 @@
             android:layout_marginEnd="16dp"
             android:background="@drawable/search_radius"
             android:ems="10"
+            android:fontFamily="@font/fang_zheng_shu_song"
             android:gravity="center_vertical"
             android:hint="@string/search_hint"
             android:inputType="text"
@@ -47,13 +48,32 @@
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
+    <TextView
+        android:id="@+id/textView8"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/foreground"
+        android:fontFamily="@font/fang_zheng_shu_song"
+        android:gravity="center"
+        android:paddingTop="10dp"
+        android:paddingBottom="20dp"
+        android:text="@string/playlist_recommended"
+        android:textColor="@color/colorPrimary"
+        android:textSize="@dimen/large" />
+
     <GridView
         android:id="@+id/index_list"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@color/foreground"
         android:gravity="center"
+        android:horizontalSpacing="10dp"
+        android:listSelector="@color/transparent"
         android:numColumns="3"
-        android:overScrollMode="never" />
+        android:overScrollMode="never"
+        android:paddingStart="15dp"
+        android:paddingEnd="15dp"
+        android:stretchMode="columnWidth"
+        android:verticalSpacing="10dp" />
 
 </LinearLayout>

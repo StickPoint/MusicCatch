@@ -346,7 +346,6 @@ public class ListActivity extends AppCompatActivity {
 
                         @Override
                         public void OnFail() {
-                            Toast.makeText(ListActivity.this, R.string.play_fail, Toast.LENGTH_SHORT).show();
                             ((BaseAdapter) list_container.getAdapter()).notifyDataSetChanged();
                         }
                     });

@@ -2,6 +2,7 @@ package com.sm.music.Fragment;
 
 
 import android.content.Intent;
+import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 
 import androidx.annotation.Nullable;
@@ -16,14 +17,10 @@ import android.widget.BaseAdapter;
 import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.ListView;
 import android.widget.TextView;
 
-import com.scwang.smart.refresh.footer.ClassicsFooter;
-import com.scwang.smart.refresh.header.MaterialHeader;
-import com.scwang.smart.refresh.layout.api.RefreshLayout;
-import com.scwang.smart.refresh.layout.listener.OnLoadMoreListener;
-import com.scwang.smart.refresh.layout.listener.OnRefreshListener;
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
 import com.sm.music.Activity.ListActivity;
 import com.sm.music.MusicUtils.GetMusic;
 import com.sm.music.GlobalApplication;
@@ -37,9 +34,9 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import static android.view.View.inflate;
+import static com.bumptech.glide.request.RequestOptions.bitmapTransform;
 
 public class indexFragment extends Fragment {
 
@@ -53,21 +50,21 @@ public class indexFragment extends Fragment {
     static {
         musicIdList = new JSONArray();
         try {
-            musicIdList.put(0,new JSONObject().put("layout_resource",R.mipmap.rege).put("name","云音乐热歌榜").put("id",3778678L));
-            musicIdList.put(1,new JSONObject().put("layout_resource",R.mipmap.xinge).put("name","云音乐新歌榜").put("id",3779629L));
-            musicIdList.put(2,new JSONObject().put("layout_resource",R.mipmap.biaosheng).put("name","云音乐飙升榜").put("id",19723756L));
-            musicIdList.put(3,new JSONObject().put("layout_resource",R.mipmap.gufeng).put("name","云音乐古风榜").put("id",5059642708L));
-            musicIdList.put(4,new JSONObject().put("layout_resource",R.mipmap.yaogun).put("name","云音乐摇滚榜").put("id",5059633707L));
-            musicIdList.put(5,new JSONObject().put("layout_resource",R.mipmap.minyao).put("name","云音乐民谣榜").put("id",5059661515L));
-            musicIdList.put(6,new JSONObject().put("layout_resource",R.mipmap.shuochang).put("name","云音乐说唱榜").put("id",991319590L));
+            musicIdList.put(0,new JSONObject().put("layout_resource",R.mipmap.rege).put("name","热歌榜").put("id",3778678L));
+            musicIdList.put(1,new JSONObject().put("layout_resource",R.mipmap.xinge).put("name","新歌榜").put("id",3779629L));
+            musicIdList.put(2,new JSONObject().put("layout_resource",R.mipmap.biaosheng).put("name","飙升榜").put("id",19723756L));
+            musicIdList.put(3,new JSONObject().put("layout_resource",R.mipmap.gufeng).put("name","古风榜").put("id",5059642708L));
+            musicIdList.put(4,new JSONObject().put("layout_resource",R.mipmap.yaogun).put("name","摇滚榜").put("id",5059633707L));
+            musicIdList.put(5,new JSONObject().put("layout_resource",R.mipmap.minyao).put("name","民谣榜").put("id",5059661515L));
+            musicIdList.put(6,new JSONObject().put("layout_resource",R.mipmap.shuochang).put("name","说唱榜").put("id",991319590L));
             musicIdList.put(7,new JSONObject().put("layout_resource",R.mipmap.jinqu).put("name","华语金曲榜").put("id",4395559L));
             musicIdList.put(8,new JSONObject().put("layout_resource",R.mipmap.neidi).put("name","TOP（内地榜）").put("id",64016L));
             musicIdList.put(9,new JSONObject().put("layout_resource",R.mipmap.gangtai).put("name","TOP（港台榜）").put("id",112504L));
             musicIdList.put(10,new JSONObject().put("layout_resource",R.mipmap.yuanchuang).put("name","网易原创歌曲榜").put("id",2884035L));
-            musicIdList.put(11,new JSONObject().put("layout_resource",R.mipmap.oumeire).put("name","云音乐欧美热歌榜").put("id",2809513713L));
-            musicIdList.put(12,new JSONObject().put("layout_resource",R.mipmap.oumeixin).put("name","云音乐欧美新歌榜").put("id",2809577409L));
-            musicIdList.put(13,new JSONObject().put("layout_resource",R.mipmap.riyu).put("name","云音乐日语榜").put("id",5059644681L));
-            musicIdList.put(14,new JSONObject().put("layout_resource",R.mipmap.hanyu).put("name","云音乐韩语榜").put("id",745956260L));
+            musicIdList.put(11,new JSONObject().put("layout_resource",R.mipmap.oumeire).put("name","欧美热歌榜").put("id",2809513713L));
+            musicIdList.put(12,new JSONObject().put("layout_resource",R.mipmap.oumeixin).put("name","欧美新歌榜").put("id",2809577409L));
+            musicIdList.put(13,new JSONObject().put("layout_resource",R.mipmap.riyu).put("name","日语榜").put("id",5059644681L));
+            musicIdList.put(14,new JSONObject().put("layout_resource",R.mipmap.hanyu).put("name","韩语榜").put("id",745956260L));
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -146,34 +143,20 @@ public class indexFragment extends Fragment {
 
             @Override
             public View getView(int position, View convertView, ViewGroup parent) {
-                ViewHolder viewHolder = null;
-                if (convertView == null) {
-                    convertView = inflate(getActivity(),R.layout.index_music_list_item, null);
-                    viewHolder = new ViewHolder();
-                    viewHolder.item_pic = (ImageView) convertView.findViewById(R.id.item_pic);
-                    viewHolder.item_name = convertView.findViewById(R.id.item_text);
-                    convertView.setTag(viewHolder);
-
-                } else {
-                    viewHolder = (ViewHolder) convertView.getTag();
-                }
+                View view = inflate(getActivity(),R.layout.index_list_item, null);
+                ImageView item_pic = (ImageView) view.findViewById(R.id.item_pic);
+                TextView item_name = (TextView) view.findViewById(R.id.item_text);
                 try {
-                    viewHolder.item_pic.setImageResource(musicIdList.getJSONObject(position).getInt("layout_resource"));
-                    viewHolder.item_name.setText(musicIdList.getJSONObject(position).getString("name"));
+                    int ImgRes = musicIdList.getJSONObject(position).getInt("layout_resource");
+                    Glide.with(view)
+                        .load(getResources().getDrawable(ImgRes, null))
+                        .apply(bitmapTransform(new RoundedCorners(100)))
+                        .into(item_pic);
+                    item_name.setText(musicIdList.getJSONObject(position).getString("name"));
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
-                return convertView;
-//                View v = inflate(getActivity(), R.layout.index_music_list_item, null);
-//
-//                try {
-//                    ((ImageView) v.findViewById(R.id.item_pic)).setImageResource(musicIdList.getJSONObject(position).getInt("layout_resource"));
-//                    ((TextView)v.findViewById(R.id.item_text)).setText(musicIdList.getJSONObject(position).getString("name"));
-//                } catch (JSONException e) {
-//                    e.printStackTrace();
-//                }
-//
-//                return v;
+                return view;
             }
         });
         index_list.setOnItemClickListener(new AdapterView.OnItemClickListener() {

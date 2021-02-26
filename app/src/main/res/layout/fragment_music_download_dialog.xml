@@ -14,6 +14,7 @@
         android:id="@+id/download_title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:fontFamily="@font/fang_zheng_shu_song"
         android:text="@string/downloading"
         android:textColor="@color/textBlack"
         android:textSize="@dimen/normal" />
@@ -22,6 +23,7 @@
         android:id="@+id/download_musicName"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:fontFamily="@font/fang_zheng_shu_song"
         android:text="@string/musicName"
         android:textColor="@color/textHint"
         android:textSize="@dimen/small" />
@@ -39,6 +41,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="10dp"
+        android:fontFamily="@font/fang_zheng_shu_song"
         android:gravity="center|center_horizontal|center_vertical"
         android:text="@string/zero_size"
         android:textColor="@color/textHint"

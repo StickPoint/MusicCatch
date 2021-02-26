@@ -18,7 +18,9 @@
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/list_top"
             android:layout_width="match_parent"
-            android:layout_height="60dp">
+            android:layout_height="60dp"
+            android:background="@color/foreground"
+            android:elevation="@dimen/shadow">
 
             <ImageView
                 android:id="@+id/list_cancel"
@@ -35,11 +37,13 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
+                android:layout_marginTop="8dp"
                 android:layout_marginEnd="8dp"
+                android:fontFamily="@font/fang_zheng_shu_song"
                 android:gravity="center"
                 android:text="TextView"
                 android:textColor="@color/textBlack"
-                android:textSize="@dimen/normal"
+                android:textSize="@dimen/large"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"

@@ -43,7 +43,7 @@ import static com.xuexiang.xupdate.entity.UpdateError.ERROR.CHECK_NO_NEW_VERSION
 
 public class MainActivity extends AppCompatActivity {
 
-    private static final String UPDATE_INFO_URL = "https://download.micronnetwork.com/ddmusic/ddmusicUpdata.json";
+    public static final String UPDATE_INFO_URL = "https://download.micronnetwork.com/ddmusic/ddmusicUpdata.json";
     //globe class
     GlobalApplication globalApplication = null;
     //main page

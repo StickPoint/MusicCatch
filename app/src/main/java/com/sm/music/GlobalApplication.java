@@ -14,7 +14,9 @@ import android.os.Build;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
+import android.util.Log;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.SeekBar;
@@ -22,6 +24,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.viewpager.widget.PagerAdapter;
+import androidx.viewpager.widget.ViewPager;
 
 import com.sm.music.Activity.PlayerActivity;
 import com.sm.music.Bean.Music;
@@ -39,6 +43,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
+import me.wcy.lrcview.LrcView;
+
 
 public class GlobalApplication extends Application {
 
@@ -48,6 +54,9 @@ public class GlobalApplication extends Application {
     private static final int REQUEST_MUSIC_PIC_DEFAULT = 160;
 
     final static private int REQUEST_MUSIC_URL = 203;
+
+    private static final int REQUEST_MUSIC_LYRIC = 927;
+
     //updata frequency ms
     final static private int UPDATA_FREQUENCY = 1000;
     //smooth frequency ms
@@ -59,12 +68,17 @@ public class GlobalApplication extends Application {
 
 
     private Bitmap music_pic = null;
+    private String music_lrc = null;
+
 
     private Context context = null;
 
     private String currentMusicDuration;
 
     //This is current music id
+    private int last_can_play_music_postion = 0;
+    private String last_can_play_music_url = null;
+    private Music last_can_play_music = null;
     private Music currentMusic = null;
 
     private int music_loop_method = MUSIC_LOOP_CONTROL_LOOP;
@@ -88,10 +102,11 @@ public class GlobalApplication extends Application {
         }
     };
 
-
     private GetMusic conn = null;
 
-    private OnMusicChange onMusicChange = null;
+    private static OnMusicChange onMusicChange = null;
+
+    private static List<View> player_content_view = new ArrayList<>();
 
     //Application
 
@@ -111,6 +126,8 @@ public class GlobalApplication extends Application {
             startService(musicIntent);
         }
         bindService(musicIntent, musicPlayerConnection, BIND_AUTO_CREATE);
+
+
     }
 
     public void appEnd(){
@@ -147,7 +164,9 @@ public class GlobalApplication extends Application {
         for (Map.Entry<Integer,View> i : minMusicPlayerList.entrySet()) {
             initMinPlayerOnMusic(i.getValue());
         }
-        initPagePlayerOnMusic();
+        if (musicPlayerPageView != null){
+            initPagePlayerOnMusic();
+        }
     }
 
     private void initMinPlayerOnMusic(View view){
@@ -192,11 +211,6 @@ public class GlobalApplication extends Application {
                 StartAndStop.setImageResource(R.drawable.ic_play);
             }
 
-            if (music_pic != null){
-                ImageView musicPic = musicPlayerPageView.findViewById(R.id.music_pic);
-                musicPic.setImageBitmap(music_pic);
-            }
-
             TextView player_musicName = musicPlayerPageView.findViewById(R.id.player_musicName);
             player_musicName.setText(currentMusic.getName());
 
@@ -236,6 +250,12 @@ public class GlobalApplication extends Application {
             SeekBar music_seekBar = musicPlayerPageView.findViewById(R.id.music_seekBar);
             music_seekBar.setMax(100);
             music_seekBar.setProgress(0);
+
+            ImageView music_pic_view = player_content_view.get(0).findViewById(R.id.music_pic);
+            if (music_pic != null){
+                music_pic_view.setImageBitmap(music_pic);
+            }
+
         }
     }
 
@@ -293,6 +313,9 @@ public class GlobalApplication extends Application {
             int ic = player.getCurrentPosition() / 1000;
             postion.setText((ic / 60 >= 10 ? String.valueOf(ic / 60) : "0" + ic / 60) + ":" +
                     (ic % 60 >= 10 ? String.valueOf(ic % 60) : "0" + ic % 60));
+
+            LrcView music_lrc_view = player_content_view.get(1).findViewById(R.id.music_lrc);
+            music_lrc_view.updateTime(player.getCurrentPosition());
 
         }
     }
@@ -373,6 +396,109 @@ public class GlobalApplication extends Application {
 
     }
 
+    //player util
+
+    private int getMusicSourceInt(String source){
+        switch (source){
+            case "netease":
+                return  0;
+            case "tencent":
+                return  1;
+            case "kugou":
+                return  2;
+            default:
+                return  0;
+        }
+    }
+
+    private class MusicPlayerConnection implements ServiceConnection {
+        @Override
+        public void onServiceConnected(ComponentName name, IBinder service) {
+            player = ((MusicPlayer.musicBinder) service).getPlayer();
+            if (musicList.size() != 0)
+                setCurrentMusic(musicList.get(0), false, false);
+            SharedPreferences pref = getSharedPreferences("data",MODE_PRIVATE);
+            setPlayerLoopControl(pref.getInt("music_loop_method", MUSIC_LOOP_CONTROL_LOOP));
+            player.setOnErrorListener(new MediaPlayer.OnErrorListener() {
+                @Override
+                public boolean onError(MediaPlayer mp, int what, int extra) {
+                    return true;
+                }
+            });
+        }
+        @Override
+        public void onServiceDisconnected(ComponentName name) {
+        }
+    }
+
+    private class UpdataThread extends Thread{
+        @Override
+        public void run() {
+            while (!isInterrupted()){
+                updata_thread_handler.sendMessage(Message.obtain());
+                try {
+                    sleep(UPDATA_FREQUENCY);
+                } catch (InterruptedException e) {
+                    break;
+                }
+
+            }
+        }
+    }
+
+    private class MusicPlayerPagerAdapter extends PagerAdapter{
+
+        MusicPlayerPagerAdapter(Context context){
+            player_content_view.add(View.inflate(context, R.layout.player_pic_content, null));
+            player_content_view.add(View.inflate(context, R.layout.player_lrc_content, null));
+        }
+
+        @Override
+        public int getCount() {
+            return player_content_view.size();
+        }
+
+        @Override
+        public boolean isViewFromObject(@NonNull View view, @NonNull Object object) {
+            return view == object;
+        }
+
+        @NonNull
+        @Override
+        public Object instantiateItem(@NonNull ViewGroup container, int position) {
+            View v = player_content_view.get(position);
+            if (position == 0){
+                if (music_pic != null){
+                    ImageView music_pic_view = v.findViewById(R.id.music_pic);
+                    music_pic_view.setImageBitmap(music_pic);
+                }
+            }else if (position == 1){
+                if (music_lrc != null){
+                    LrcView music_lrc_view = v.findViewById(R.id.music_lrc);
+                    Log.e("AdapterMusicLyric:", music_lrc);
+                    music_lrc_view.loadLrc(music_lrc);
+                    music_lrc_view.setDraggable(true, new LrcView.OnPlayClickListener() {
+                        @Override
+                        public boolean onPlayClick(LrcView view, long time) {
+                            player.seekTo((int) time);
+                            musicPlay();
+//                            updateplayer();
+                            return false;
+                        }
+                    });
+                }
+            }
+            container.addView(v);
+            return v;
+        }
+
+        @Override
+        public void destroyItem(@NonNull ViewGroup container, int position, @NonNull Object object) {
+            container.removeView((View) object);
+        }
+
+    }
+
     //user
 
     public Music getCurrentMusic() {
@@ -391,7 +517,7 @@ public class GlobalApplication extends Application {
         return musicList.isEmpty();
     }
 
-    public void setDefaultMusicPlayer(){
+    public void resetAllPlayer(){
         player.reset();
         if (updataThread != null){
             updataThread.interrupt();
@@ -452,18 +578,26 @@ public class GlobalApplication extends Application {
     }
 
     public void setCurrentMusic(final Music music, final Boolean updataRecentList, final Boolean autoPlay){
+        setCurrentMusic(music, updataRecentList, autoPlay, 0);
+    }
+
+    public void setCurrentMusic(final Music music, final Boolean updataRecentList, final Boolean autoPlay, int msec){
         final Handler handler = new Handler(){
             @Override
             public void handleMessage(@NonNull Message msg) {
                 super.handleMessage(msg);
                 if (msg.arg1 == GetMusic.RESPOND_SUCCESS ){
-
                     if (msg.what == REQUEST_MUSIC_URL){
+                        currentMusic = music;
                         try {
                             player.reset();
                             player.setDataSource((String) msg.obj);
                             player.prepareAsync();
                             player.setOnPreparedListener(mediaPlayer -> {
+                                last_can_play_music = music;
+//                                last_can_play_music_url = (String) msg.obj;
+                                getMoreInformationOfMusic(currentMusic);
+                                player.seekTo(msec);
                                 initPlayerOnMusic();
                                 if (updataRecentList){
                                     musicList = RecentPlay.addRecentPlayMusic(getApplicationContext(),music);
@@ -482,6 +616,10 @@ public class GlobalApplication extends Application {
                                 }
                             });
                             player.setOnErrorListener((mp, what, extra) -> {
+                                Toast.makeText(getApplicationContext(), R.string.play_fail, Toast.LENGTH_SHORT).show();
+                                if (last_can_play_music != null){
+                                    setCurrentMusic(last_can_play_music, false, false, last_can_play_music_postion);
+                                }
                                 if (onMusicChange != null){
                                     onMusicChange.OnFail();
                                 }
@@ -490,9 +628,6 @@ public class GlobalApplication extends Application {
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
-                    }else if (msg.what == REQUEST_MUSIC_PIC){
-                        music_pic = (Bitmap) msg.obj;
-                        initPlayerOnMusic();
                     }
 
                 }else{
@@ -503,8 +638,8 @@ public class GlobalApplication extends Application {
         if (currentMusic != null && currentMusic.equals(music)){
             musicPlay();
         }else {
-            currentMusic = music;
             musicPause();
+            last_can_play_music_postion = player.getCurrentPosition();
             new Thread(new Runnable() {
                 @Override
                 public void run() {
@@ -512,7 +647,7 @@ public class GlobalApplication extends Application {
                     try {
                         String id = music.getId();
                         String url = conn.getMusicPlayURL(id, music.getSource());
-                        if (id.equals(currentMusic.getId())){
+                        if (currentMusic == null || !id.equals(currentMusic.getId())){
                             if (url != null){
                                 msg.what = REQUEST_MUSIC_URL;
                                 msg.arg1 = GetMusic.RESPOND_SUCCESS;
@@ -528,38 +663,86 @@ public class GlobalApplication extends Application {
                     handler.sendMessage(msg);
                 }
             }).start();
-            new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    Message msg = Message.obtain();
-                    try {
-                        String id = music.getId();
-                        if (id != null){
-                            InputStream inputStream = conn.getMusicPlayPicUrl(id, music.getPic_id(), getMusicSourceInt(music.getSource()));
-                            if (music.getId().equals(currentMusic.getId())){
-                                if (inputStream != null){
-                                    msg.what = REQUEST_MUSIC_PIC;
-                                    msg.arg1 = GetMusic.RESPOND_SUCCESS;
-                                    msg.obj = BitmapFactory.decodeStream(inputStream);
-                                }else {
-                                    msg.what = REQUEST_MUSIC_PIC;
-                                    msg.arg1 = GetMusic.RESPOND_SUCCESS;
-                                    msg.obj = BitmapFactory.decodeResource(getResources(), R.mipmap.default_music_pic);
-                                }
-                            }
+        }
+    }
+
+    private void getMoreInformationOfMusic(final Music music){
+        final Handler handler = new Handler(){
+            @Override
+            public void handleMessage(@NonNull Message msg) {
+                super.handleMessage(msg);
+                if (msg.arg1 == GetMusic.RESPOND_SUCCESS ){
+                    if (msg.what == REQUEST_MUSIC_PIC){
+                        music_pic = (Bitmap) msg.obj;
+                        initPlayerOnMusic();
+                    }else if (msg.what == REQUEST_MUSIC_LYRIC){
+                        music_lrc = (String) msg.obj;
+                        initPlayerOnMusic();
+                    }
+                }else{
+//                    Toast.makeText(getApplicationContext(),R.string.network_wrong,Toast.LENGTH_SHORT).show();
+                }
+            }
+        };
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                Message msg = Message.obtain();
+                try {
+                    String id = music.getId();
+                    if (id != null){
+                        InputStream inputStream = conn.getMusicPlayPicUrl(id, music.getPic_id(), getMusicSourceInt(music.getSource()));
+                        if (inputStream != null){
+                            msg.what = REQUEST_MUSIC_PIC;
+                            msg.arg1 = GetMusic.RESPOND_SUCCESS;
+                            msg.obj = BitmapFactory.decodeStream(inputStream);
                         }else {
-                            msg.what = REQUEST_MUSIC_PIC_DEFAULT;
+                            msg.what = REQUEST_MUSIC_PIC;
                             msg.arg1 = GetMusic.RESPOND_SUCCESS;
                             msg.obj = BitmapFactory.decodeResource(getResources(), R.mipmap.default_music_pic);
                         }
-                    } catch (Exception e) {
-                        msg.what = GetMusic.RESPOND_TIMEOUT;
-                        e.printStackTrace();
-                    };
-                    handler.sendMessage(msg);
-                }
-            }).start();
-        }
+                    }else {
+                        msg.what = REQUEST_MUSIC_PIC_DEFAULT;
+                        msg.arg1 = GetMusic.RESPOND_SUCCESS;
+                        msg.obj = BitmapFactory.decodeResource(getResources(), R.mipmap.default_music_pic);
+                    }
+                } catch (Exception e) {
+                    msg.what = GetMusic.RESPOND_TIMEOUT;
+                    e.printStackTrace();
+                };
+                handler.sendMessage(msg);
+            }
+        }).start();
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                Message msg = Message.obtain();
+                try {
+                    String id = music.getId();
+                    if (id != null){
+                        String lyric = conn.getMusicLyric(id, getMusicSourceInt(music.getSource()));
+                        if (lyric != null){
+                            msg.what = REQUEST_MUSIC_LYRIC;
+                            msg.arg1 = GetMusic.RESPOND_SUCCESS;
+                            msg.obj = lyric;
+                        }else {
+                            msg.what = REQUEST_MUSIC_LYRIC;
+                            msg.arg1 = GetMusic.RESPOND_SUCCESS;
+                            msg.obj = null;
+                        }
+                    }else {
+                        msg.what = REQUEST_MUSIC_PIC_DEFAULT;
+                        msg.arg1 = GetMusic.RESPOND_SUCCESS;
+                        msg.obj = BitmapFactory.decodeResource(getResources(), R.mipmap.default_music_pic);
+                    }
+                } catch (Exception e) {
+                    msg.what = GetMusic.RESPOND_TIMEOUT;
+                    e.printStackTrace();
+                };
+                handler.sendMessage(msg);
+            }
+        }).start();
+
     }
 
     public void setOnMusicChange(OnMusicChange onMusicChange){
@@ -637,6 +820,8 @@ public class GlobalApplication extends Application {
             }
         });
 
+        ViewPager player_content = view.findViewById(R.id.player_content);
+        player_content.setAdapter(new MusicPlayerPagerAdapter(getApplicationContext()));
 
         musicPlayerPageView = view;
         initPagePlayerOnMusic();
@@ -684,53 +869,6 @@ public class GlobalApplication extends Application {
         minMusicPlayerList.remove(Integer.valueOf(tag));
     }
 
-    private int getMusicSourceInt(String source){
-        switch (source){
-            case "netease":
-                return  0;
-            case "tencent":
-                return  1;
-            case "kugou":
-                return  2;
-            default:
-                return  0;
-        }
-    }
-
-    private class MusicPlayerConnection implements ServiceConnection {
-        @Override
-        public void onServiceConnected(ComponentName name, IBinder service) {
-            player = ((MusicPlayer.musicBinder) service).getPlayer();
-            if (musicList.size() != 0)
-                setCurrentMusic(musicList.get(0), false, false);
-            SharedPreferences pref = getSharedPreferences("data",MODE_PRIVATE);
-            setPlayerLoopControl(pref.getInt("music_loop_method", MUSIC_LOOP_CONTROL_LOOP));
-            player.setOnErrorListener(new MediaPlayer.OnErrorListener() {
-                @Override
-                public boolean onError(MediaPlayer mp, int what, int extra) {
-                    return true;
-                }
-            });
-        }
-        @Override
-        public void onServiceDisconnected(ComponentName name) {
-        }
-    }
-
-    private class UpdataThread extends Thread{
-        @Override
-        public void run() {
-            while (!isInterrupted()){
-                updata_thread_handler.sendMessage(Message.obtain());
-                try {
-                    sleep(UPDATA_FREQUENCY);
-                } catch (InterruptedException e) {
-                    break;
-                }
-
-            }
-        }
-    }
 
 
 }

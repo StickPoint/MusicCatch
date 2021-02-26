@@ -12,4 +12,5 @@
     <color name="tipBg">#88000000</color>
     <color name="player_bg">#FFFFFF</color>
     <color name="divider">#DEDEDE</color>
+    <color name="normal">#88888888</color>
 </resources>

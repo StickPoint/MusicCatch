@@ -28,6 +28,7 @@ import com.sm.music.R;
 import com.sm.music.SQL.SQLUtils;
 import com.sm.music.UIUtils.Util;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**

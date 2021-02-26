@@ -55,4 +55,7 @@
     <string name="download_cancel">下载取消</string>
     <string name="migu">咪咕音乐</string>
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="check_update">检查更新</string>
+    <string name="playlist_recommended">歌单推荐</string>
+    <string name="no_lyric">暂无歌词</string>
 </resources>

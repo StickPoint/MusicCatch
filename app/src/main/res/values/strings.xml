@@ -58,6 +58,9 @@
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="download_cancel">Download cancel</string>
     <string name="migu">MiGu Music</string>
+    <string name="check_update">Check Update</string>
+    <string name="playlist_recommended">Playlist Recommended</string>
+    <string name="no_lyric">No lyrics</string>
 
     <!-- TODO: Remove or change this placeholder text -->
 

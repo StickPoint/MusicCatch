@@ -1,8 +1,6 @@
 package com.sm.music.MusicUtils;
 
-import android.app.Activity;
 import android.content.Context;
-import android.nfc.cardemulation.OffHostApduService;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
@@ -17,6 +15,7 @@ import android.widget.TextView;
 import com.alibaba.fastjson.*;
 import com.sm.music.Bean.Music;
 import com.sm.music.GlobalApplication;
+import com.sm.music.Listener.OnMusicChange;
 import com.sm.music.Listener.OnRemoveAllRecentMusicListener;
 import com.sm.music.R;
 
@@ -71,7 +70,7 @@ public class RecentPlay {
             public void onClick(View v) {
                 clearRecentPlayMusic(context,globalApplication);
                 ((BaseAdapter)recent_play_list.getAdapter()).notifyDataSetChanged();
-                globalApplication.setDefaultMusicPlayer();
+                globalApplication.resetAllPlayer();
                 if (onRemoveAllRecentMusicListener != null){
                     onRemoveAllRecentMusicListener.onRemoveAll();
                 }
@@ -124,8 +123,18 @@ public class RecentPlay {
                         @Override
                         public void onClick(View v) {
                             globalApplication.setCurrentMusic(music);
-                            globalApplication.setMusicList(addRecentPlayMusic(context,music));
-                            ((BaseAdapter) recent_play_list.getAdapter()).notifyDataSetChanged();
+//                            globalApplication.setMusicList(addRecentPlayMusic(context,music));
+                            globalApplication.setOnMusicChange(new OnMusicChange() {
+                                @Override
+                                public void OnComplete() {
+                                    ((BaseAdapter) recent_play_list.getAdapter()).notifyDataSetChanged();
+                                }
+
+                                @Override
+                                public void OnFail() {
+                                    ((BaseAdapter) recent_play_list.getAdapter()).notifyDataSetChanged();
+                                }
+                            });
                         }
                     });
                     ((ImageView) view.findViewById(R.id.remove_music)).setOnClickListener(new View.OnClickListener() {
@@ -200,7 +209,7 @@ public class RecentPlay {
             }else {
                 clearRecentPlayMusic(context,globalApplication);
                 ((BaseAdapter)recent_play_list.getAdapter()).notifyDataSetChanged();
-                globalApplication.setDefaultMusicPlayer();
+                globalApplication.resetAllPlayer();
                 if (onRemoveAllRecentMusicListener != null){
                     onRemoveAllRecentMusicListener.onRemoveAll();
                 }

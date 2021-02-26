@@ -38,7 +38,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="64dp"
-                android:layout_marginTop="8dp"
+                android:layout_marginTop="16dp"
                 android:layout_marginEnd="60dp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -53,6 +53,9 @@
                         android:id="@+id/player_musicName"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:fontFamily="@font/fang_zheng_shu_song"
+                        android:maxEms="20"
+                        android:maxLines="1"
                         android:text="@string/musicName"
                         android:textColor="@color/textWhite"
                         android:textSize="@dimen/normal" />
@@ -78,6 +81,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginEnd="16dp"
                         android:layout_marginRight="16dp"
+                        android:fontFamily="@font/fang_zheng_shu_song"
                         android:text="@string/singer"
                         android:textColor="@color/textWhite"
                         android:textSize="@dimen/small" />
@@ -86,6 +90,7 @@
                         android:id="@+id/player_musicInfo_album"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:fontFamily="@font/fang_zheng_shu_song"
                         android:text="@string/album"
                         android:textColor="@color/textWhite"
                         android:textSize="@dimen/small" />
@@ -95,27 +100,13 @@
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
-        <androidx.constraintlayout.widget.ConstraintLayout
+        <androidx.viewpager.widget.ViewPager
             android:id="@+id/player_content"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight="1">
-
-            <ImageView
-                android:id="@+id/music_pic"
-                android:layout_width="0dp"
-                android:layout_height="0dp"
-                android:layout_marginStart="80dp"
-                android:layout_marginLeft="80dp"
-                android:layout_marginEnd="80dp"
-                android:layout_marginRight="80dp"
-                android:contentDescription="@string/no_picture"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:srcCompat="@mipmap/default_music_pic" />
-        </androidx.constraintlayout.widget.ConstraintLayout>
+            android:layout_weight="1"
+            android:paddingTop="20dp"
+            android:paddingBottom="20dp" />
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/player_control"
@@ -186,13 +177,15 @@
                 android:textColor="@color/textHint"
                 android:textSize="@dimen/small"
                 app:layout_constraintBaseline_toBaselineOf="@+id/duration"
-                app:layout_constraintStart_toStartOf="parent" />
+                app:layout_constraintStart_toStartOf="parent"
+                android:fontFamily="@font/fang_zheng_shu_song" />
 
             <TextView
                 android:id="@+id/duration"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="16dp"
+                android:fontFamily="@font/fang_zheng_shu_song"
                 android:text="@string/zero_time"
                 android:textColor="@color/textHint"
                 android:textSize="@dimen/small"

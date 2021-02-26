@@ -1,10 +1,14 @@
 package com.sm.music.Activity;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.viewpager.widget.PagerAdapter;
+import androidx.viewpager.widget.ViewPager;
 
 import android.os.Bundle;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -14,6 +18,9 @@ import com.sm.music.Listener.OnRemoveAllRecentMusicListener;
 import com.sm.music.MusicUtils.RecentPlay;
 import com.sm.music.R;
 import com.sm.music.UIUtils.Util;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class PlayerActivity extends AppCompatActivity {
 
@@ -25,7 +32,10 @@ public class PlayerActivity extends AppCompatActivity {
     private ImageView playerTop_close = null;
     private ImageView recent_button = null;
 
+    private ViewPager player_content = null;
+
     private RecentPlay recentPlay = null;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,7 +43,6 @@ public class PlayerActivity extends AppCompatActivity {
         Util.setActivityBarAlpha(this, true);
         setContentView(R.layout.activity_player);
         globalApplication = (GlobalApplication)getApplication();
-        globalApplication.setMusicPlayerPageView(findViewById(R.id.playerPage));
         final int statusBarHeight = Util.getStatusBarHeight(PlayerActivity.this);
         final int NavigationBarHeight = Util.getNavigationBarHeight(PlayerActivity.this);
         final Boolean HasNavigationBar = !Util.checkDeviceHasNavigationBar(this);
@@ -86,6 +95,7 @@ public class PlayerActivity extends AppCompatActivity {
                 overridePendingTransition(0,R.anim.transfrom_buttom_out);
             }
         });
+        globalApplication.setMusicPlayerPageView(findViewById(R.id.playerPage));
 
     }
 

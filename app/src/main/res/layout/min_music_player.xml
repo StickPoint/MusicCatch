@@ -45,6 +45,7 @@
                 android:id="@+id/current_music_name"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:fontFamily="@font/fang_zheng_shu_song"
                 android:lines="1"
                 android:maxLines="1"
                 android:minLines="1"
@@ -59,6 +60,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
                 android:layout_marginEnd="8dp"
+                android:fontFamily="@font/fang_zheng_shu_song"
                 android:text="@string/singer"
                 android:textColor="@color/textHint"
                 android:textSize="@dimen/normal" />

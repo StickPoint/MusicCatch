@@ -231,6 +231,11 @@ public class search_pager extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
+//        String temp = ((SearchActivity) getActivity()).getSearchText();
+//        if (temp != null && search_text != null && !search_text.equals(temp)){
+//            search_text = temp;
+//            search_music_list_data(search_text);
+//        }
         if (searchList_list != null && searchList_list.getAdapter() != null)
             ((BaseAdapter) searchList_list.getAdapter()).notifyDataSetChanged();
     }
@@ -290,7 +295,6 @@ public class search_pager extends Fragment {
 
                         @Override
                         public void OnFail() {
-                            Toast.makeText(getContext(), R.string.play_fail, Toast.LENGTH_SHORT).show();
                             ((BaseAdapter) searchList_list.getAdapter()).notifyDataSetChanged();
                         }
                     });

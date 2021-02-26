@@ -1,20 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/searchPage"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical"
-    tools:context=".Activity.SearchActivity">
 
-
-    <LinearLayout
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
         android:id="@+id/search_container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@color/foreground"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        tools:context=".Activity.SearchActivity">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/searchBar"
@@ -40,6 +34,7 @@
                 android:layout_marginEnd="8dp"
                 android:background="@drawable/search_radius"
                 android:ems="10"
+                android:fontFamily="@font/fang_zheng_shu_song"
                 android:hint="@string/search_hint"
                 android:inputType="text"
                 android:paddingLeft="40dp"
@@ -68,6 +63,7 @@
                 android:layout_height="36dp"
                 android:layout_marginEnd="16dp"
                 android:background="@drawable/search_button_radius"
+                android:fontFamily="@font/fang_zheng_shu_song"
                 android:gravity="center"
                 android:paddingLeft="18dp"
                 android:paddingRight="18dp"
@@ -104,6 +100,7 @@
                     android:layout_marginRight="5dp"
                     android:background="@drawable/search_bar_btn_nav_check"
                     android:button="@null"
+                    android:fontFamily="@font/fang_zheng_shu_song"
                     android:gravity="center"
                     android:paddingLeft="10dp"
                     android:paddingRight="10dp"
@@ -119,6 +116,7 @@
                     android:layout_marginRight="5dp"
                     android:background="@drawable/search_bar_btn_nav_check"
                     android:button="@null"
+                    android:fontFamily="@font/fang_zheng_shu_song"
                     android:gravity="center"
                     android:paddingLeft="10dp"
                     android:paddingRight="10dp"
@@ -134,6 +132,24 @@
                     android:layout_marginRight="5dp"
                     android:background="@drawable/search_bar_btn_nav_check"
                     android:button="@null"
+                    android:fontFamily="@font/fang_zheng_shu_song"
+                    android:gravity="center"
+                    android:paddingLeft="10dp"
+                    android:paddingRight="10dp"
+                    android:text="@string/tencent"
+                    android:textColor="@color/search_bar_nav_btn_text_check"
+                    android:textSize="@dimen/small" />
+
+                <RadioButton
+                    android:id="@+id/migu"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_marginLeft="5dp"
+                    android:layout_marginRight="5dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/search_bar_btn_nav_check"
+                    android:button="@null"
+                    android:fontFamily="@font/fang_zheng_shu_song"
                     android:gravity="center"
                     android:paddingLeft="10dp"
                     android:paddingRight="10dp"
@@ -157,7 +173,4 @@
             android:layout_height="60dp"
             android:background="@color/foreground" />
 
-    </LinearLayout>
-
-
-</FrameLayout>
+</LinearLayout>

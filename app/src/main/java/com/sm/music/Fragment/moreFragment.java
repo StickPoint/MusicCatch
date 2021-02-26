@@ -1,7 +1,6 @@
 package com.sm.music.Fragment;
 
 
-import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.constraintlayout.widget.ConstraintLayout;
@@ -14,9 +13,10 @@ import android.webkit.WebView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.sm.music.Activity.AboutActivity;
+import com.sm.music.Activity.MainActivity;
 import com.sm.music.R;
 import com.sm.music.UIUtils.Util;
+import com.xuexiang.xupdate.XUpdate;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -24,6 +24,8 @@ import com.sm.music.UIUtils.Util;
 public class moreFragment extends Fragment {
 
     private ConstraintLayout top = null;
+
+    private TextView check_update = null;
 
     private WebView aboutUs_Web = null;
 
@@ -55,6 +57,16 @@ public class moreFragment extends Fragment {
 //                getActivity().overridePendingTransition(R.anim.transfrom_buttom_in,R.anim.no_transfrom);
 //            }
 //        });
+        check_update = view.findViewById(R.id.check_update);
+        check_update.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                XUpdate.newBuild(getActivity())
+                        .updateUrl(MainActivity.UPDATE_INFO_URL)
+                        .update();
+            }
+        });
+
         aboutUs_Web = view.findViewById(R.id.aboutUs_Web);
         aboutUs_Web.loadUrl("file:///android_asset/web/index.html");
 

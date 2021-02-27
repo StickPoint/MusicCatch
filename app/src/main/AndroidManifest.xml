@@ -30,7 +30,7 @@
         <activity android:name=".Activity.SearchActivity" />
 
         <service
-            android:name=".Server.MusicPlayer"
+            android:name=".Server.MusicPlayerBackup"
             android:enabled="true"
             android:exported="true" >
             <intent-filter>

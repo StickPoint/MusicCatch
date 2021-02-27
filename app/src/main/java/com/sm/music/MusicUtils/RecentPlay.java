@@ -76,7 +76,7 @@ public class RecentPlay {
                 }
             }
         });
-        globalApplication.setMusicList(getRecentPlayMusic(context));
+        globalApplication.setMusicListBackup(getRecentPlayMusic(context));
         recent_play_page.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -88,8 +88,8 @@ public class RecentPlay {
         recent_play_list.setAdapter(new BaseAdapter() {
             @Override
             public int getCount() {
-                if (globalApplication.getMusicList() != null)
-                    return globalApplication.getMusicList().size();
+                if (globalApplication.getMusicListBackup() != null)
+                    return globalApplication.getMusicListBackup().size();
                 else
                     return 0;
             }
@@ -107,8 +107,8 @@ public class RecentPlay {
             @Override
             public View getView(int position, View convertView, ViewGroup parent) {
                 View view = View.inflate(context,R.layout.recent_list_ltem_layout, null);
-                if (globalApplication.getMusicList() != null){
-                    final Music music = globalApplication.getMusicList().get(position);
+                if (globalApplication.getMusicListBackup() != null){
+                    final Music music = globalApplication.getMusicListBackup().get(position);
                     ((TextView) view.findViewById(R.id.index_list_item_music_name)).setText(music.getName());
                     String temp = "";
                     for (int i = 0; i < music.getArtist().length; i++) {
@@ -123,7 +123,7 @@ public class RecentPlay {
                         @Override
                         public void onClick(View v) {
                             globalApplication.setCurrentMusic(music);
-//                            globalApplication.setMusicList(addRecentPlayMusic(context,music));
+//                            globalApplication.setMusicListBackup(addRecentPlayMusic(context,music));
                             globalApplication.setOnMusicChange(new OnMusicChange() {
                                 @Override
                                 public void OnComplete() {
@@ -187,7 +187,7 @@ public class RecentPlay {
 
     public static List<Music> clearRecentPlayMusic(Context context, GlobalApplication globalApplication){
         save(context, new JSONArray());
-        globalApplication.setMusicList(null);
+        globalApplication.setMusicListBackup(null);
         return getRecentPlayMusic(context);
     }
 
@@ -222,7 +222,7 @@ public class RecentPlay {
             last.add(old.getJSONObject(i));
         }
         save(context, last);
-        application.setMusicList(last.toJavaList(Music.class));
+        application.setMusicListBackup(last.toJavaList(Music.class));
         return last.toJavaList(Music.class);
     }
 

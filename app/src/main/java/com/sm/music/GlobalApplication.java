@@ -18,6 +18,7 @@ import android.os.Build;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
+import android.support.v4.media.MediaBrowserCompat;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
@@ -40,6 +41,7 @@ import com.sm.music.MusicUtils.GetMusic;
 import com.sm.music.MusicUtils.RecentPlay;
 import com.sm.music.Override.UnclickableHorizontalScrollView;
 import com.sm.music.Server.MusicPlayer;
+import com.sm.music.Server.MusicPlayerBackup;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -55,6 +57,8 @@ import me.wcy.lrcview.LrcView;
 public class GlobalApplication extends Application {
 
     private static final String UPDATE_INFO_URL = "https://download.micronnetwork.com/ddmusic/ddmusicUpdata.json";
+
+    private static final Boolean IS_USE_MEDIASESSION_FRAMEWORK = false;
 
     private static final int REQUEST_MUSIC_PIC = 159;
     private static final int REQUEST_MUSIC_PIC_DEFAULT = 160;
@@ -97,7 +101,7 @@ public class GlobalApplication extends Application {
 
     private int currentMusicIndexInMusicList = 0;
     //index search music list
-    private List<Music> musicList = new ArrayList<Music>();
+    private List<Music> musicListBackup = new ArrayList<Music>();
     //min music player list
     private static Map<Integer, View> minMusicPlayerList = new HashMap<>();
     private static View musicPlayerPageView = null;
@@ -128,24 +132,59 @@ public class GlobalApplication extends Application {
 
     private static Notification playerNotification = null;
 
+
+    private MediaBrowserCompat MusicPlayerBrowser = null;
+
+    private List<Music> musicList = new ArrayList<>();
+
+
     //Application
 
     @Override
     public void onCreate() {
         super.onCreate();
+        if (IS_USE_MEDIASESSION_FRAMEWORK){
+            conn = new GetMusic();
+            MusicPlayerBrowser = new MediaBrowserCompat(
+                    this,
+                    new ComponentName(this, MusicPlayer.class),
+                    new MediaBrowserCompat.ConnectionCallback(){
+                        @Override
+                        public void onConnected() {
+                            super.onConnected();
+                            if (MusicPlayerBrowser.isConnected()) {
+                                String mediaId = MusicPlayerBrowser.getRoot();
+                                MusicPlayerBrowser.unsubscribe(mediaId);
+                                MusicPlayerBrowser.subscribe(mediaId, new MediaBrowserCompat.SubscriptionCallback() {
+                                    @Override
+                                    public void onChildrenLoaded(@NonNull String parentId, @NonNull List<MediaBrowserCompat.MediaItem> children) {
+                                        super.onChildrenLoaded(parentId, children);
+                                        for (MediaBrowserCompat.MediaItem i : children){
+//                                        musicList.add(i);
+                                        }
+                                    }
+                                });
+                            }
+                        }
+                    },
+                    null);
+            MusicPlayerBrowser.connect();
+        }
     }
 
     public void init(){
-        conn = new GetMusic();
-        musicList = RecentPlay.getRecentPlayMusic(getApplicationContext());
-        Intent musicIntent = new Intent(getApplicationContext(), MusicPlayer.class);
-        GlobalApplication.MusicPlayerConnection musicPlayerConnection = new GlobalApplication.MusicPlayerConnection();
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            startForegroundService(musicIntent);
-        } else {
-            startService(musicIntent);
+        if (!IS_USE_MEDIASESSION_FRAMEWORK){
+            conn = new GetMusic();
+            musicListBackup = RecentPlay.getRecentPlayMusic(getApplicationContext());
+            Intent musicIntent = new Intent(getApplicationContext(), MusicPlayerBackup.class);
+            GlobalApplication.MusicPlayerConnection musicPlayerConnection = new GlobalApplication.MusicPlayerConnection();
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                startForegroundService(musicIntent);
+            } else {
+                startService(musicIntent);
+            }
+            bindService(musicIntent, musicPlayerConnection, BIND_AUTO_CREATE);
         }
-        bindService(musicIntent, musicPlayerConnection, BIND_AUTO_CREATE);
     }
 
     public void appEnd(){
@@ -380,7 +419,7 @@ public class GlobalApplication extends Application {
                     @Override
                     public void onCompletion(MediaPlayer mp) {
                         mp.reset();
-                        setCurrentMusic(musicList.get((new Random().nextInt(musicList.size()))),false, true);
+                        setCurrentMusic(musicListBackup.get((new Random().nextInt(musicListBackup.size()))),false, true);
                     }
                 });
                 break;
@@ -390,11 +429,11 @@ public class GlobalApplication extends Application {
                     public void onCompletion(MediaPlayer mp) {
                         mp.reset();
                         int next = 0;
-                        if (musicList.size() > 1){
-                            next = (currentMusicIndexInMusicList + 1) % musicList.size();
+                        if (musicListBackup.size() > 1){
+                            next = (currentMusicIndexInMusicList + 1) % musicListBackup.size();
                         }
-                        if (!musicList.isEmpty()){
-                            setCurrentMusic(musicList.get(next),false, true);
+                        if (!musicListBackup.isEmpty()){
+                            setCurrentMusic(musicListBackup.get(next),false, true);
                         }
 
                     }
@@ -413,17 +452,17 @@ public class GlobalApplication extends Application {
     }
 
     public void next(){
-        if (musicList != null){
-            int next = (currentMusicIndexInMusicList + 1) % musicList.size();
+        if (musicListBackup != null){
+            int next = (currentMusicIndexInMusicList + 1) % musicListBackup.size();
             switch (music_loop_method){
                 case MUSIC_LOOP_CONTROL_REANDOM:
-                    setCurrentMusic(musicList.get((new Random().nextInt(musicList.size()))),false, true);
+                    setCurrentMusic(musicListBackup.get((new Random().nextInt(musicListBackup.size()))),false, true);
                     break;
                 case MUSIC_LOOP_CONTROL_LOOP:
-                    setCurrentMusic(musicList.get(next),false, true);
+                    setCurrentMusic(musicListBackup.get(next),false, true);
                     break;
                 case MUSIC_LOOP_CONTROL_SINGLE:
-                    setCurrentMusic(musicList.get(next),false, true);
+                    setCurrentMusic(musicListBackup.get(next),false, true);
                     break;
             }
         }
@@ -431,17 +470,17 @@ public class GlobalApplication extends Application {
     }
 
     public void prev(){
-        if (musicList != null){
-            int next = (currentMusicIndexInMusicList + musicList.size() - 1) % musicList.size();
+        if (musicListBackup != null){
+            int next = (currentMusicIndexInMusicList + musicListBackup.size() - 1) % musicListBackup.size();
             switch (music_loop_method){
                 case MUSIC_LOOP_CONTROL_REANDOM:
-                    setCurrentMusic(musicList.get((new Random().nextInt(musicList.size()))),false, true);
+                    setCurrentMusic(musicListBackup.get((new Random().nextInt(musicListBackup.size()))),false, true);
                     break;
                 case MUSIC_LOOP_CONTROL_LOOP:
-                    setCurrentMusic(musicList.get(next),false, true);
+                    setCurrentMusic(musicListBackup.get(next),false, true);
                     break;
                 case MUSIC_LOOP_CONTROL_SINGLE:
-                    setCurrentMusic(musicList.get(next),false, true);
+                    setCurrentMusic(musicListBackup.get(next),false, true);
                     break;
             }
         }
@@ -466,7 +505,7 @@ public class GlobalApplication extends Application {
     private class MusicPlayerConnection implements ServiceConnection {
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
-            player = ((MusicPlayer.musicBinder) service).getPlayer();
+            player = ((MusicPlayerBackup.musicBinder) service).getPlayer();
             notificationPlayerView = new RemoteViews(getApplicationContext().getPackageName(), R.layout.notification_layout);
             playerNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
             if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
@@ -483,9 +522,9 @@ public class GlobalApplication extends Application {
                     .setDefaults(Notification.FLAG_ONGOING_EVENT)
                     .build();
             notificationPlayerView.setImageViewBitmap(R.id.notice_pic, BitmapFactory.decodeResource(getResources(), R.mipmap.default_music_pic));
-            ((MusicPlayer.musicBinder) service).getServer().startForeground(NOTICFY_ID, playerNotification);
-            if (musicList.size() != 0)
-                setCurrentMusic(musicList.get(0), false, false);
+            ((MusicPlayerBackup.musicBinder) service).getServer().startForeground(NOTICFY_ID, playerNotification);
+            if (musicListBackup.size() != 0)
+                setCurrentMusic(musicListBackup.get(0), false, false);
             SharedPreferences pref = getSharedPreferences("data",MODE_PRIVATE);
             setPlayerLoopControl(pref.getInt("music_loop_method", MUSIC_LOOP_CONTROL_LOOP));
         }
@@ -568,16 +607,16 @@ public class GlobalApplication extends Application {
         return currentMusic;
     }
 
-    public void setMusicList(List<Music> musicList) {
-        this.musicList = musicList;
+    public void setMusicListBackup(List<Music> musicListBackup) {
+        this.musicListBackup = musicListBackup;
     }
 
-    public List<Music> getMusicList() {
-        return musicList;
+    public List<Music> getMusicListBackup() {
+        return musicListBackup;
     }
 
     public Boolean isMusicListEmpty(){
-        return musicList.isEmpty();
+        return musicListBackup.isEmpty();
     }
 
     public void resetAllPlayer(){
@@ -589,7 +628,7 @@ public class GlobalApplication extends Application {
         music_pic = null;
         music_lrc = null;
         currentMusicIndexInMusicList = 0;
-        musicList = null;
+        musicListBackup = null;
         for (Map.Entry<Integer,View> i : minMusicPlayerList.entrySet()) {
             View view = i.getValue();
 
@@ -676,7 +715,7 @@ public class GlobalApplication extends Application {
                                 player.seekTo(msec);
                                 initPlayerOnMusic();
                                 if (updataRecentList){
-                                    musicList = RecentPlay.addRecentPlayMusic(getApplicationContext(),music);
+                                    musicListBackup = RecentPlay.addRecentPlayMusic(getApplicationContext(),music);
                                 }
                                 currentMusicIndexInMusicList = RecentPlay.isPlayedRecently(getApplicationContext(), music.getId());
                                 if (autoPlay)

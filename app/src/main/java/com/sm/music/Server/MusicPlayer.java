@@ -1,69 +1,82 @@
 package com.sm.music.Server;
 
-import android.app.Notification;
-import android.app.NotificationChannel;
-import android.app.NotificationManager;
-import android.app.PendingIntent;
-import android.app.Service;
-import android.content.Context;
-import android.content.Intent;
 import android.media.MediaPlayer;
-import android.media.session.MediaSession;
-import android.os.Binder;
-import android.os.IBinder;
-import android.os.SystemClock;
-import android.widget.RemoteViews;
+import android.os.Bundle;
+import android.support.v4.media.MediaBrowserCompat;
+import android.support.v4.media.session.MediaSessionCompat;
+import android.support.v4.media.session.PlaybackStateCompat;
+import android.text.TextUtils;
 
-import androidx.core.app.NotificationCompat;
-import androidx.media.app.NotificationCompat.DecoratedMediaCustomViewStyle;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.media.MediaBrowserServiceCompat;
 
-import com.sm.music.Activity.MainActivity;
-import com.sm.music.Activity.PlayerActivity;
-import com.sm.music.GlobalApplication;
-import com.sm.music.R;
+import java.util.ArrayList;
+import java.util.List;
 
-import java.io.IOException;
+public class MusicPlayer extends MediaBrowserServiceCompat {
 
-public class MusicPlayer extends Service {
+    private static final String MEDIA_ROOT_ID = "StickPointMediaID";
+    private static final String MY_EMPTY_MEDIA_ROOT_ID = "empty_root_id";
+    private static final String LOG_TAG = "MusicPlayerService:";
 
-    private static final String CHANNEL_NAME = "Music Notification Player";
-
-    public static final String CHANNEL_ID = "com.sm.music.Player";
-
-    public static final int NOTICFY_ID = 639;
-
-    private GlobalApplication globalApplication = null;
+    private MediaSessionCompat mediaSession;
+    private PlaybackStateCompat playerState;
 
     private MediaPlayer player = null;
-
-    public MusicPlayer() {
-    }
-
-    @Override
-    public IBinder onBind(Intent intent) {
-        return new musicBinder();
-    }
 
     @Override
     public void onCreate() {
         super.onCreate();
-        globalApplication = (GlobalApplication) getApplication();
-        player = new MediaPlayer();
+        playerState = new PlaybackStateCompat.Builder().setState(PlaybackStateCompat.STATE_PAUSED,0,1.0f).build();
+        mediaSession = new MediaSessionCompat(getApplicationContext(), LOG_TAG);
+        mediaSession.setFlags(MediaSessionCompat.FLAG_HANDLES_TRANSPORT_CONTROLS);
+        mediaSession.setPlaybackState(playerState);
+        mediaSession.setCallback(new MediaSessionCompat.Callback() {
+            @Override
+            public void onPlay() {
+                super.onPlay();
+                if(playerState.getState() == PlaybackStateCompat.STATE_PAUSED){
+                    player.start();
+                    playerState = new PlaybackStateCompat.Builder().setState(PlaybackStateCompat.STATE_PLAYING,0,1.0f).build();
+                    mediaSession.setPlaybackState(playerState);
+                }
+            }
+
+            @Override
+            public void onPause() {
+                super.onPause();
+                if(playerState.getState() == PlaybackStateCompat.STATE_PLAYING){
+                    player.pause();
+                    playerState = new PlaybackStateCompat.Builder().setState(PlaybackStateCompat.STATE_PAUSED,0,1.0f).build();
+                    mediaSession.setPlaybackState(playerState);
+                }
+            }
+        });
+        setSessionToken(mediaSession.getSessionToken());
+
+    }
+
+    @Nullable
+    @Override
+    public BrowserRoot onGetRoot(@NonNull String clientPackageName, int clientUid, @Nullable Bundle rootHints) {
+        return new BrowserRoot(MEDIA_ROOT_ID, null);
     }
 
     @Override
-    public void onDestroy() {
-        super.onDestroy();
-        player.release();
-    }
-
-    public class musicBinder extends Binder {
-        public MediaPlayer getPlayer(){
-            return player;
+    public void onLoadChildren(@NonNull String parentId, @NonNull Result<List<MediaBrowserCompat.MediaItem>> result) {
+        if (TextUtils.equals(MY_EMPTY_MEDIA_ROOT_ID, parentId)) {
+            result.sendResult(null);
+            return;
         }
-
-        public MusicPlayer getServer(){return MusicPlayer.this;}
+        List<MediaBrowserCompat.MediaItem> mediaItems = new ArrayList<>();
+        if (MEDIA_ROOT_ID.equals(parentId)) {
+            // Build the MediaItem objects for the top level,
+            // and put them in the mediaItems list...
+        } else {
+            // Examine the passed parentMediaId to see which submenu we're at,
+            // and put the children of that menu in the mediaItems list...
+        }
+        result.sendResult(mediaItems);
     }
-
-
 }

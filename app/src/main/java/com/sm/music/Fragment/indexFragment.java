@@ -150,7 +150,7 @@ public class indexFragment extends Fragment {
                     int ImgRes = musicIdList.getJSONObject(position).getInt("layout_resource");
                     Glide.with(view)
                         .load(getResources().getDrawable(ImgRes, null))
-                        .apply(bitmapTransform(new RoundedCorners(100)))
+                        .apply(bitmapTransform(new RoundedCorners(40)))
                         .into(item_pic);
                     item_name.setText(musicIdList.getJSONObject(position).getString("name"));
                 } catch (JSONException e) {

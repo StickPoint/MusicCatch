@@ -108,4 +108,10 @@ public class PlayerActivity extends AppCompatActivity {
         }
 
     }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        globalApplication.destoryMusicPlayerPageView();
+    }
 }

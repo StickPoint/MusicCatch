@@ -254,70 +254,77 @@ public class GlobalApplication extends Application {
             ImageView music_pic_view = player_content_view.get(0).findViewById(R.id.music_pic);
             if (music_pic != null){
                 music_pic_view.setImageBitmap(music_pic);
+            }else {
+                music_pic_view.setImageResource(R.mipmap.default_music_pic);
+            }
+
+
+            LrcView music_lrc_view = player_content_view.get(1).findViewById(R.id.music_lrc);
+            if (music_lrc !=  null){
+                music_lrc_view.loadLrc(music_lrc);
             }
 
         }
     }
 
     private void updateplayer(){
-        updateMinMusicPlayer();
-        updateMusicPlayer();
+        for (Map.Entry<Integer,View> i : minMusicPlayerList.entrySet()) {
+            updateMinMusicPlayer(i.getValue());
+        }
+        if (musicPlayerPageView != null) {
+            updateMusicPlayer();
+        }
     }
 
-    private void updateMinMusicPlayer(){
-        for (Map.Entry<Integer,View> i : minMusicPlayerList.entrySet()) {
-            View view = i.getValue();
+    private void updateMinMusicPlayer(View v){
+        View view = v;
 
-            ImageView min_music_control = view.findViewById(R.id.min_music_control);
-            if (isPlaying()){
-                min_music_control.setImageResource(R.drawable.ic_stop);
-            }else {
-                min_music_control.setImageResource(R.drawable.ic_play);
+        ImageView min_music_control = view.findViewById(R.id.min_music_control);
+        if (isPlaying()){
+            min_music_control.setImageResource(R.drawable.ic_stop);
+        }else {
+            min_music_control.setImageResource(R.drawable.ic_play);
+        }
+
+        UnclickableHorizontalScrollView minPlayer_title = view.findViewById(R.id.minPlayer_title);
+        int innerWidth = minPlayer_title.findViewById(R.id.minPlayer_title_container).getWidth();
+        int scrollViewWidth =  minPlayer_title.getWidth();
+        if (scrollViewWidth < innerWidth){
+            minPlayer_title.smoothScrollBy(SMOOTH_FREQUENCY,0);
+            if ((innerWidth - scrollViewWidth) <= minPlayer_title.getScrollX()){
+                minPlayer_title.fullScroll(View.SCROLLBAR_POSITION_LEFT);
             }
+        }
 
-            UnclickableHorizontalScrollView minPlayer_title = view.findViewById(R.id.minPlayer_title);
-            int innerWidth = minPlayer_title.findViewById(R.id.minPlayer_title_container).getWidth();
-            int scrollViewWidth =  minPlayer_title.getWidth();
-            if (scrollViewWidth < innerWidth){
-                minPlayer_title.smoothScrollBy(SMOOTH_FREQUENCY,0);
-                if ((innerWidth - scrollViewWidth) <= minPlayer_title.getScrollX()){
-                    minPlayer_title.fullScroll(View.SCROLLBAR_POSITION_LEFT);
-                }
-            }
+        ProgressBar minPlayerProgress = view.findViewById(R.id.minPlayerProgress);
+        if (player.getDuration() != 0){
+            minPlayerProgress.setMax(player.getDuration());
+            minPlayerProgress.setProgress(player.getCurrentPosition());
 
-            ProgressBar minPlayerProgress = view.findViewById(R.id.minPlayerProgress);
-            if (player.getDuration() != 0){
-                minPlayerProgress.setMax(player.getDuration());
-                minPlayerProgress.setProgress(player.getCurrentPosition());
-
-            }
         }
     }
 
     private void updateMusicPlayer(){
-        if (musicPlayerPageView != null){
-            SeekBar music_seekBar = musicPlayerPageView.findViewById(R.id.music_seekBar);
-            if (player.getDuration() != 0){
-                music_seekBar.setMax(player.getDuration());
-                music_seekBar.setProgress(player.getCurrentPosition());
-            }
-
-            ImageView StartAndStop = musicPlayerPageView.findViewById(R.id.StartAndStop);
-            if (isPlaying()){
-                StartAndStop.setImageResource(R.drawable.ic_stop);
-            }else {
-                StartAndStop.setImageResource(R.drawable.ic_play);
-            }
-
-            TextView postion = musicPlayerPageView.findViewById(R.id.postion);
-            int ic = player.getCurrentPosition() / 1000;
-            postion.setText((ic / 60 >= 10 ? String.valueOf(ic / 60) : "0" + ic / 60) + ":" +
-                    (ic % 60 >= 10 ? String.valueOf(ic % 60) : "0" + ic % 60));
-
-            LrcView music_lrc_view = player_content_view.get(1).findViewById(R.id.music_lrc);
-            music_lrc_view.updateTime(player.getCurrentPosition());
-
+        SeekBar music_seekBar = musicPlayerPageView.findViewById(R.id.music_seekBar);
+        if (player.getDuration() != 0){
+            music_seekBar.setMax(player.getDuration());
+            music_seekBar.setProgress(player.getCurrentPosition());
         }
+
+        ImageView StartAndStop = musicPlayerPageView.findViewById(R.id.StartAndStop);
+        if (isPlaying()){
+            StartAndStop.setImageResource(R.drawable.ic_stop);
+        }else {
+            StartAndStop.setImageResource(R.drawable.ic_play);
+        }
+
+        TextView postion = musicPlayerPageView.findViewById(R.id.postion);
+        int ic = player.getCurrentPosition() / 1000;
+        postion.setText((ic / 60 >= 10 ? String.valueOf(ic / 60) : "0" + ic / 60) + ":" +
+                (ic % 60 >= 10 ? String.valueOf(ic % 60) : "0" + ic % 60));
+
+        LrcView music_lrc_view = player_content_view.get(1).findViewById(R.id.music_lrc);
+        music_lrc_view.updateTime(player.getCurrentPosition());
     }
 
     private void setPlayerLoopControl(int tag){
@@ -494,7 +501,7 @@ public class GlobalApplication extends Application {
 
         @Override
         public void destroyItem(@NonNull ViewGroup container, int position, @NonNull Object object) {
-            container.removeView((View) object);
+            container.removeView(player_content_view.get(position));
         }
 
     }
@@ -524,6 +531,7 @@ public class GlobalApplication extends Application {
         }
         currentMusic = null;
         music_pic = null;
+        music_lrc = null;
         currentMusicIndexInMusicList = 0;
         musicList = null;
         for (Map.Entry<Integer,View> i : minMusicPlayerList.entrySet()) {
@@ -550,8 +558,20 @@ public class GlobalApplication extends Application {
             ImageView StartAndStop = musicPlayerPageView.findViewById(R.id.StartAndStop);
             StartAndStop.setImageResource(R.drawable.ic_play);
 
-            ImageView musicPic = musicPlayerPageView.findViewById(R.id.music_pic);
-            musicPic.setImageResource(R.mipmap.default_music_pic);
+
+            ImageView music_pic_view = player_content_view.get(0).findViewById(R.id.music_pic);
+            if (music_pic != null){
+                music_pic_view.setImageBitmap(music_pic);
+            }else {
+                music_pic_view.setImageResource(R.mipmap.default_music_pic);
+            }
+
+            LrcView music_lrc_view = player_content_view.get(1).findViewById(R.id.music_lrc);
+            if (music_lrc != null){
+                music_lrc_view.loadLrc(music_lrc);
+            }else {
+                music_lrc_view.loadLrc("");
+            }
 
             TextView player_musicName = musicPlayerPageView.findViewById(R.id.player_musicName);
             player_musicName.setText(R.string.no_music_to_play);
@@ -827,6 +847,10 @@ public class GlobalApplication extends Application {
         initPagePlayerOnMusic();
     }
 
+    public void destoryMusicPlayerPageView(){
+        this.musicPlayerPageView = null;
+    }
+
     public View createMinMusicPlayer(final Activity activity, int tag){
         View view = View.inflate(activity, R.layout.min_music_player,null);
         final ImageView min_music_control = view.findViewById(R.id.min_music_control);
@@ -860,8 +884,8 @@ public class GlobalApplication extends Application {
             }
         });
         UnclickableHorizontalScrollView minPlayer_title = view.findViewById(R.id.minPlayer_title);
-        initMinPlayerOnMusic(view);
         minMusicPlayerList.put(Integer.valueOf(tag), view);
+        initMinPlayerOnMusic(view);
         return view;
     }
 

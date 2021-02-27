@@ -111,19 +111,18 @@
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/player_control"
             android:layout_width="match_parent"
-            android:layout_height="200dp">
+            android:layout_height="150dp">
 
             <LinearLayout
                 android:id="@+id/playerCon_container"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="24dp"
+                android:layout_marginBottom="16dp"
                 android:gravity="center"
                 android:orientation="horizontal"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent">
+                app:layout_constraintStart_toStartOf="parent">
 
                 <ImageView
                     android:id="@+id/music_prev"
@@ -137,8 +136,10 @@
 
                 <ImageView
                     android:id="@+id/StartAndStop"
-                    android:layout_width="80dp"
-                    android:layout_height="80dp"
+                    android:layout_width="70dp"
+                    android:layout_height="70dp"
+                    android:layout_marginStart="15dp"
+                    android:layout_marginEnd="15dp"
                     android:layout_weight="1"
                     android:contentDescription="@string/play"
                     app:srcCompat="@drawable/ic_stop" />
@@ -162,8 +163,8 @@
                 android:layout_marginTop="24dp"
                 android:background="@color/transparent"
                 android:progressDrawable="@drawable/player_page_seek_bar"
-                android:thumb="@drawable/player_page_thumb"
                 android:splitTrack="false"
+                android:thumb="@drawable/player_page_thumb"
                 app:layout_constraintEnd_toStartOf="@+id/duration"
                 app:layout_constraintStart_toEndOf="@+id/postion"
                 app:layout_constraintTop_toTopOf="parent" />
@@ -173,12 +174,12 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
+                android:fontFamily="@font/fang_zheng_shu_song"
                 android:text="@string/zero_time"
                 android:textColor="@color/textHint"
                 android:textSize="@dimen/small"
                 app:layout_constraintBaseline_toBaselineOf="@+id/duration"
-                app:layout_constraintStart_toStartOf="parent"
-                android:fontFamily="@font/fang_zheng_shu_song" />
+                app:layout_constraintStart_toStartOf="parent" />
 
             <TextView
                 android:id="@+id/duration"

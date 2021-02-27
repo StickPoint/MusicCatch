@@ -2,6 +2,10 @@ package com.sm.music;
 
 import android.app.Activity;
 import android.app.Application;
+import android.app.Notification;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -19,11 +23,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
+import android.widget.RemoteViews;
 import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.core.app.NotificationCompat;
 import androidx.viewpager.widget.PagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 
@@ -67,6 +73,13 @@ public class GlobalApplication extends Application {
     private static final int MUSIC_LOOP_CONTROL_SINGLE = 129;
 
 
+    private static final String CHANNEL_NAME = "Music Notification Player";
+
+    public static final String CHANNEL_ID = "com.sm.music.Player";
+
+    public static final int NOTICFY_ID = 639;
+
+
     private Bitmap music_pic = null;
     private String music_lrc = null;
 
@@ -77,7 +90,6 @@ public class GlobalApplication extends Application {
 
     //This is current music id
     private int last_can_play_music_postion = 0;
-    private String last_can_play_music_url = null;
     private Music last_can_play_music = null;
     private Music currentMusic = null;
 
@@ -108,6 +120,14 @@ public class GlobalApplication extends Application {
 
     private static List<View> player_content_view = new ArrayList<>();
 
+    //Notification
+
+    private static RemoteViews notificationPlayerView = null;
+
+    private static NotificationManager playerNotificationManager = null;
+
+    private static Notification playerNotification = null;
+
     //Application
 
     @Override
@@ -126,8 +146,6 @@ public class GlobalApplication extends Application {
             startService(musicIntent);
         }
         bindService(musicIntent, musicPlayerConnection, BIND_AUTO_CREATE);
-
-
     }
 
     public void appEnd(){
@@ -166,6 +184,9 @@ public class GlobalApplication extends Application {
         }
         if (musicPlayerPageView != null){
             initPagePlayerOnMusic();
+        }
+        if (notificationPlayerView != null && playerNotificationManager != null && playerNotification != null){
+            initNotificationPlayerOnMusic();
         }
     }
 
@@ -267,12 +288,27 @@ public class GlobalApplication extends Application {
         }
     }
 
+    private void initNotificationPlayerOnMusic(){
+        if (music_pic != null)
+            notificationPlayerView.setImageViewBitmap(R.id.notice_pic, music_pic);
+        else
+            notificationPlayerView.setImageViewBitmap(R.id.notice_pic, BitmapFactory.decodeResource(getResources(), R.mipmap.default_music_pic));
+        if (currentMusic != null){
+            notificationPlayerView.setTextViewText(R.id.notice_music_name, currentMusic.getName());
+        }
+//        notificationPlayerView.setOnClickPendingIntent(R.id.notice_music_start_and_stop, new Intent());
+        playerNotificationManager.notify(NOTICFY_ID, playerNotification);
+    }
+
     private void updateplayer(){
         for (Map.Entry<Integer,View> i : minMusicPlayerList.entrySet()) {
             updateMinMusicPlayer(i.getValue());
         }
         if (musicPlayerPageView != null) {
             updateMusicPlayer();
+        }
+        if (notificationPlayerView != null && playerNotificationManager != null && playerNotification != null){
+            updateNotificationPlayerOnMusic();
         }
     }
 
@@ -325,6 +361,15 @@ public class GlobalApplication extends Application {
 
         LrcView music_lrc_view = player_content_view.get(1).findViewById(R.id.music_lrc);
         music_lrc_view.updateTime(player.getCurrentPosition());
+    }
+
+    private void updateNotificationPlayerOnMusic(){
+        if (isPlaying()){
+            notificationPlayerView.setImageViewResource(R.id.notice_music_start_and_stop, R.drawable.ic_stop);
+        }else {
+            notificationPlayerView.setImageViewResource(R.id.notice_music_start_and_stop, R.drawable.ic_play);
+        }
+        playerNotificationManager.notify(NOTICFY_ID, playerNotification);
     }
 
     private void setPlayerLoopControl(int tag){
@@ -422,16 +467,27 @@ public class GlobalApplication extends Application {
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
             player = ((MusicPlayer.musicBinder) service).getPlayer();
+            notificationPlayerView = new RemoteViews(getApplicationContext().getPackageName(), R.layout.notification_layout);
+            playerNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+                NotificationChannel channel = new NotificationChannel(CHANNEL_ID, CHANNEL_NAME, NotificationManager.IMPORTANCE_LOW);
+                playerNotificationManager.createNotificationChannel(channel);
+            }
+            playerNotification = new NotificationCompat.Builder(getApplicationContext(), CHANNEL_ID)
+//                .setStyle(new NotificationCompat.DecoratedCustomViewStyle())
+                    .setSmallIcon(R.mipmap.ic_launcher_round)
+                    .setPriority(Notification.PRIORITY_MAX)
+                    .setCustomBigContentView(notificationPlayerView)
+                    .setContentIntent(PendingIntent.getActivity(getApplicationContext(), 0, new Intent(), PendingIntent.FLAG_NO_CREATE))
+                    .setOngoing(true)
+                    .setDefaults(Notification.FLAG_ONGOING_EVENT)
+                    .build();
+            notificationPlayerView.setImageViewBitmap(R.id.notice_pic, BitmapFactory.decodeResource(getResources(), R.mipmap.default_music_pic));
+            ((MusicPlayer.musicBinder) service).getServer().startForeground(NOTICFY_ID, playerNotification);
             if (musicList.size() != 0)
                 setCurrentMusic(musicList.get(0), false, false);
             SharedPreferences pref = getSharedPreferences("data",MODE_PRIVATE);
             setPlayerLoopControl(pref.getInt("music_loop_method", MUSIC_LOOP_CONTROL_LOOP));
-            player.setOnErrorListener(new MediaPlayer.OnErrorListener() {
-                @Override
-                public boolean onError(MediaPlayer mp, int what, int extra) {
-                    return true;
-                }
-            });
         }
         @Override
         public void onServiceDisconnected(ComponentName name) {

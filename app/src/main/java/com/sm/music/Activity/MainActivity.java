@@ -44,6 +44,11 @@ import static com.xuexiang.xupdate.entity.UpdateError.ERROR.CHECK_NO_NEW_VERSION
 public class MainActivity extends AppCompatActivity {
 
     public static final String UPDATE_INFO_URL = "https://download.micronnetwork.com/ddmusic/ddmusicUpdata.json";
+
+    public static final int SHOW_MIN_PLAY_FLAG = 255;
+
+    public static final int SHOW_NAV_FLAG = 207;
+
     //globe class
     GlobalApplication globalApplication = null;
     //main page
@@ -225,5 +230,14 @@ public class MainActivity extends AppCompatActivity {
     protected void onDestroy() {
         super.onDestroy();
         globalApplication.destroyMinMusicPlayer(ACTICITY_TAG);
+    }
+
+    public void setMainPlayerVisiable(int tag){
+        if (nav != null){
+            if (tag == SHOW_MIN_PLAY_FLAG)
+                nav.setCurrentItem(1, true);
+            else if (tag == SHOW_NAV_FLAG)
+                nav.setCurrentItem(0, true);
+        }
     }
 }

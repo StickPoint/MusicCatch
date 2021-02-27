@@ -12,6 +12,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.FrameLayout;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -23,6 +24,7 @@ import com.sm.music.Activity.MainActivity;
 import com.sm.music.Bean.Music;
 import com.sm.music.GlobalApplication;
 import com.sm.music.Listener.OnChangeFavStatusListener;
+import com.sm.music.Listener.OnMusicChange;
 import com.sm.music.MusicUtils.MoreWindowDialog;
 import com.sm.music.R;
 import com.sm.music.SQL.SQLUtils;
@@ -188,6 +190,18 @@ public class likeFragment extends Fragment {
                 @Override
                 public void onClick(View v) {
                     ((TextView) v.findViewById(R.id.index_list_item_music_name)).setTextColor(getActivity().getResources().getColor(R.color.textHint));
+                    globalApplication.setOnMusicChange(new OnMusicChange() {
+                        @Override
+                        public void OnComplete() {
+                            ((MainActivity) getActivity()).setMainPlayerVisiable(MainActivity.SHOW_MIN_PLAY_FLAG);
+                            ((BaseAdapter) likeList_list.getAdapter()).notifyDataSetChanged();
+                        }
+
+                        @Override
+                        public void OnFail() {
+                            ((BaseAdapter) likeList_list.getAdapter()).notifyDataSetChanged();
+                        }
+                    });
                     globalApplication.setCurrentMusic(music);
                 }
             });
@@ -198,6 +212,12 @@ public class likeFragment extends Fragment {
                     return true;
                 }
             });
+            FrameLayout before_name = view.findViewById(R.id.before_name);
+            if (globalApplication.getCurrentMusic() != null && globalApplication.getCurrentMusic().getId().equals(music.getId())){
+                ImageView imageView = new ImageView(getContext());
+                imageView.setImageResource(R.drawable.ic_playing);
+                before_name.addView(imageView);
+            }
             return view;
         }
     }

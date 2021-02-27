@@ -18,7 +18,11 @@ import android.os.Build;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
+import android.os.RemoteException;
 import android.support.v4.media.MediaBrowserCompat;
+import android.support.v4.media.MediaMetadataCompat;
+import android.support.v4.media.session.MediaControllerCompat;
+import android.support.v4.media.session.PlaybackStateCompat;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
@@ -56,9 +60,11 @@ import me.wcy.lrcview.LrcView;
 
 public class GlobalApplication extends Application {
 
+    private static final String LOG_TAG = "GlobalApplication:";
+
     private static final String UPDATE_INFO_URL = "https://download.micronnetwork.com/ddmusic/ddmusicUpdata.json";
 
-    private static final Boolean IS_USE_MEDIASESSION_FRAMEWORK = false;
+    private static final Boolean IS_USE_MEDIASESSION_FRAMEWORK = true;
 
     private static final int REQUEST_MUSIC_PIC = 159;
     private static final int REQUEST_MUSIC_PIC_DEFAULT = 160;
@@ -132,48 +138,63 @@ public class GlobalApplication extends Application {
 
     private static Notification playerNotification = null;
 
+    //MediaSession Framework
 
-    private MediaBrowserCompat MusicPlayerBrowser = null;
+    private MediaBrowserCompat musicPlayerBrowser = null;
 
     private List<Music> musicList = new ArrayList<>();
 
+    private MediaControllerCompat mediaController = null;
 
     //Application
 
     @Override
     public void onCreate() {
         super.onCreate();
+    }
+
+    public void init(){
         if (IS_USE_MEDIASESSION_FRAMEWORK){
             conn = new GetMusic();
-            MusicPlayerBrowser = new MediaBrowserCompat(
+            musicList = RecentPlay.getRecentPlayMusic(getApplicationContext());
+            musicPlayerBrowser = new MediaBrowserCompat(
                     this,
                     new ComponentName(this, MusicPlayer.class),
                     new MediaBrowserCompat.ConnectionCallback(){
                         @Override
                         public void onConnected() {
                             super.onConnected();
-                            if (MusicPlayerBrowser.isConnected()) {
-                                String mediaId = MusicPlayerBrowser.getRoot();
-                                MusicPlayerBrowser.unsubscribe(mediaId);
-                                MusicPlayerBrowser.subscribe(mediaId, new MediaBrowserCompat.SubscriptionCallback() {
-                                    @Override
-                                    public void onChildrenLoaded(@NonNull String parentId, @NonNull List<MediaBrowserCompat.MediaItem> children) {
-                                        super.onChildrenLoaded(parentId, children);
-                                        for (MediaBrowserCompat.MediaItem i : children){
-//                                        musicList.add(i);
+                            if (musicPlayerBrowser.isConnected()) {
+                                Log.i(LOG_TAG,"musicPlayerBrowser connected successful");
+                                if (musicList.size() != 0){
+//                                    setCurrentMusic(musicListBackup.get(0), false, false);
+                                }
+                                SharedPreferences pref = getSharedPreferences("data",MODE_PRIVATE);
+//                                setPlayerLoopControl(pref.getInt("music_loop_method", MUSIC_LOOP_CONTROL_LOOP));
+                                try {
+                                    mediaController = new MediaControllerCompat(getApplicationContext(), musicPlayerBrowser.getSessionToken());
+                                    mediaController.registerCallback(new MediaControllerCompat.Callback() {
+                                        @Override
+                                        public void onPlaybackStateChanged(PlaybackStateCompat state) {
+                                            super.onPlaybackStateChanged(state);
+                                            updateplayer();
                                         }
-                                    }
-                                });
+                                        @Override
+                                        public void onMetadataChanged(MediaMetadataCompat metadata) {
+                                            super.onMetadataChanged(metadata);
+                                            initPlayerOnMusic();
+                                        }
+                                    });
+                                } catch (RemoteException e) {
+                                    e.printStackTrace();
+                                }
                             }
                         }
                     },
                     null);
-            MusicPlayerBrowser.connect();
-        }
-    }
-
-    public void init(){
-        if (!IS_USE_MEDIASESSION_FRAMEWORK){
+            Log.i(LOG_TAG,"musicPlayerBrowser connecting");
+            musicPlayerBrowser.connect();
+        }else {
             conn = new GetMusic();
             musicListBackup = RecentPlay.getRecentPlayMusic(getApplicationContext());
             Intent musicIntent = new Intent(getApplicationContext(), MusicPlayerBackup.class);
@@ -198,23 +219,35 @@ public class GlobalApplication extends Application {
     }
 
     private void musicPlay(){
-        updateplayer();
-        int currentDuration = player.getDuration() / 1000;
-        currentMusicDuration = ((currentDuration / 60) >= 10 ? String.valueOf(currentDuration / 60) : ("0" + (currentDuration / 60))) +
-                ":" + ((currentDuration % 60)  >= 10 ? String.valueOf(currentDuration % 60) : ("0" + (currentDuration % 60)));
-        player.start();
-        updataThread = new UpdataThread();
-        updataThread.start();
+        if (IS_USE_MEDIASESSION_FRAMEWORK){
+            if (mediaController != null){
+                mediaController.getTransportControls().play();
+            }
+        }else {
+            updateplayer();
+            int currentDuration = player.getDuration() / 1000;
+            currentMusicDuration = ((currentDuration / 60) >= 10 ? String.valueOf(currentDuration / 60) : ("0" + (currentDuration / 60))) +
+                    ":" + ((currentDuration % 60)  >= 10 ? String.valueOf(currentDuration % 60) : ("0" + (currentDuration % 60)));
+            player.start();
+            updataThread = new UpdataThread();
+            updataThread.start();
+        }
     }
 
     private void musicPause(){
-        if (updataThread != null){
-            updataThread.interrupt();
-            updataThread = null;
+        if (IS_USE_MEDIASESSION_FRAMEWORK){
+            if (mediaController != null){
+                mediaController.getTransportControls().pause();
+            }
+        }else {
+            if (updataThread != null) {
+                updataThread.interrupt();
+                updataThread = null;
+            }
+            if (player.isPlaying())
+                player.pause();
+            updateplayer();
         }
-        if (player.isPlaying())
-            player.pause();
-        updateplayer();
     }
 
     private void initPlayerOnMusic(){

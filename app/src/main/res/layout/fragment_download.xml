@@ -12,7 +12,8 @@
         android:id="@+id/downloadBar"
         android:layout_width="match_parent"
         android:layout_height="60dp"
-        android:background="@color/foreground">
+        android:background="@color/foreground"
+        android:elevation="@dimen/shadow">
 
         <LinearLayout
             android:id="@+id/downloadBar_container"

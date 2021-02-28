@@ -420,7 +420,7 @@ public class GlobalApplication extends Application {
         if (currentMusic != null){
             notificationPlayerView.setTextViewText(R.id.notice_music_name, currentMusic.getName());
         }
-        playerNotificationManager.notify(NOTICFY_ID, playerNotification);
+        playerNotificationManager.notify(LOG_TAG, NOTICFY_ID, playerNotification);
     }
 
     private void updateplayer(){

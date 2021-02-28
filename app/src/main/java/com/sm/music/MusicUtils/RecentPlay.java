@@ -16,6 +16,7 @@ import com.alibaba.fastjson.*;
 import com.sm.music.Bean.Music;
 import com.sm.music.GlobalApplication;
 import com.sm.music.Listener.OnMusicChange;
+import com.sm.music.Listener.OnRecentPlayDialogCloseListener;
 import com.sm.music.Listener.OnRemoveAllRecentMusicListener;
 import com.sm.music.R;
 
@@ -44,6 +45,8 @@ public class RecentPlay {
     private ListView recent_play_list = null;
 
     GlobalApplication globalApplication = null;
+
+    private OnRecentPlayDialogCloseListener onRecentPlayDialogCloseListener = null;
 
     public RecentPlay(Context context, GlobalApplication globalApplication, FrameLayout root) {
         this.context = context;
@@ -161,21 +164,26 @@ public class RecentPlay {
         isRecentShow = true;
     }
 
+    public void setOnRecentPlayDialogCloseListener(OnRecentPlayDialogCloseListener onRecentPlayDialogCloseListener){
+        this.onRecentPlayDialogCloseListener = onRecentPlayDialogCloseListener;
+    }
+
     public void hide(){
         if (isRecentShow){
             isRecentShow = false;
             LinearLayout recent_play_container = recent.findViewById(R.id.recent_play_container);
             Animation animation = AnimationUtils.loadAnimation(context, R.anim.transfrom_buttom_out);
+            if (onRecentPlayDialogCloseListener != null){
+                onRecentPlayDialogCloseListener.OnClose();
+            }
             animation.setAnimationListener(new Animation.AnimationListener() {
                 @Override
                 public void onAnimationStart(Animation animation) {
                 }
-
                 @Override
                 public void onAnimationEnd(Animation animation) {
                     root.removeView(recent);
                 }
-
                 @Override
                 public void onAnimationRepeat(Animation animation) {
                 }

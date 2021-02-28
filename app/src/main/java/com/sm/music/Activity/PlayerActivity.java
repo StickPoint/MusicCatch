@@ -22,6 +22,7 @@ import android.widget.Toast;
 import com.sm.music.Bean.Music;
 import com.sm.music.GlobalApplication;
 import com.sm.music.Listener.OnMusicChange;
+import com.sm.music.Listener.OnRecentPlayDialogCloseListener;
 import com.sm.music.Listener.OnRemoveAllRecentMusicListener;
 import com.sm.music.MusicUtils.MusicDownloadDialog;
 import com.sm.music.MusicUtils.RecentPlay;
@@ -107,7 +108,6 @@ public class PlayerActivity extends AppCompatActivity {
                 overridePendingTransition(0,R.anim.transfrom_buttom_out);
             }
         });
-
         CheckBox player_like = findViewById(R.id.player_like);
 
         Music c = globalApplication.getCurrentMusic();
@@ -148,6 +148,34 @@ public class PlayerActivity extends AppCompatActivity {
             }
         });
 
+        recentPlay.setOnRecentPlayDialogCloseListener(new OnRecentPlayDialogCloseListener() {
+            @Override
+            public void OnClose() {
+
+                globalApplication.setOnMusicChange(new OnMusicChange() {
+                    @Override
+                    public void OnComplete() {
+                        Music c = globalApplication.getCurrentMusic();
+                        if (sqlUtils.getFavMus(getApplicationContext(), c.getId() + c.getSource())){
+                            player_like.setChecked(true);
+                        }else {
+                            player_like.setChecked(false);
+                        }
+                        Music currentMusic = globalApplication.getCurrentMusic();
+                        if (sqlUtils.getFavMus(getApplicationContext(), currentMusic.getId() + currentMusic.getSource())){
+                            player_like.setChecked(true);
+                        }else {
+                            player_like.setChecked(false);
+                        }
+                    }
+
+                    @Override
+                    public void OnFail() {
+
+                    }
+                });
+            }
+        });
         ImageView player_down = findViewById(R.id.player_down);
         player_down.setOnClickListener(new View.OnClickListener() {
             @Override

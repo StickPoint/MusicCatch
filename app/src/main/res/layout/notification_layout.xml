@@ -1,35 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/notice_container"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@color/foreground">
-
-    <ImageView
-        android:id="@+id/notice_pic"
-        android:layout_width="90dp"
-        android:layout_height="90dp"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentTop="true"
-        android:layout_marginStart="0dp"
-        android:layout_marginTop="0dp"
-        app:srcCompat="@mipmap/default_music_pic" />
+    android:background="@color/foreground"
+    android:gravity="center_vertical">
 
     <LinearLayout
         android:id="@+id/notice_content"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_alignBottom="@+id/notice_pic"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentEnd="true"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="0dp"
-        android:layout_marginEnd="32dp"
-        android:layout_marginBottom="0dp"
-        android:layout_toEndOf="@+id/notice_pic"
-        android:gravity="center"
+        android:layout_marginStart="0dp"
+        android:layout_marginEnd="8dp"
+        android:layout_weight="1"
+        android:gravity="left|center_vertical"
         android:orientation="vertical">
 
         <TextView
@@ -43,43 +29,50 @@
             android:textColor="@color/textBlack"
             android:textSize="@dimen/normal" />
 
-        <LinearLayout
-            android:id="@+id/notice_music_control"
+        <TextView
+            android:id="@+id/artist"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="12dp"
-            android:gravity="center"
-            android:orientation="horizontal"
-            android:visibility="visible">
+            android:layout_weight="1"
+            android:text="@string/singer" />
 
-            <ImageButton
-                android:id="@+id/notice_music_prev"
-                android:layout_width="25dp"
-                android:layout_height="25dp"
-                android:layout_marginStart="10dp"
-                android:layout_marginEnd="10dp"
-                android:background="@null"
-                android:src="@drawable/ic_prev" />
-
-            <ImageButton
-                android:id="@+id/notice_music_start_and_stop"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="10dp"
-                android:layout_marginEnd="10dp"
-                android:background="@null"
-                android:src="@drawable/ic_play" />
-
-            <ImageButton
-                android:id="@+id/notice_music_next"
-                android:layout_width="25dp"
-                android:layout_height="25dp"
-                android:layout_marginStart="10dp"
-                android:layout_marginEnd="10dp"
-                android:background="@null"
-                android:src="@drawable/ic_next" />
-
-        </LinearLayout>
     </LinearLayout>
 
-</RelativeLayout>
+    <LinearLayout
+        android:id="@+id/notice_music_control"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:orientation="horizontal"
+        android:visibility="visible">
+
+        <ImageButton
+            android:id="@+id/notice_music_prev"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
+            android:layout_marginStart="5dp"
+            android:layout_marginEnd="5dp"
+            android:background="@null"
+            android:src="@drawable/ic_min_prev" />
+
+        <ImageButton
+            android:id="@+id/notice_music_start_and_stop"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="5dp"
+            android:layout_marginEnd="5dp"
+            android:background="@null"
+            android:src="@drawable/ic_min_play" />
+
+        <ImageButton
+            android:id="@+id/notice_music_next"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
+            android:layout_marginStart="5dp"
+            android:layout_marginEnd="5dp"
+            android:background="@null"
+            android:src="@drawable/ic_min_next" />
+
+    </LinearLayout>
+
+</LinearLayout>

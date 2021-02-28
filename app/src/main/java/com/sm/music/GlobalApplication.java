@@ -2,15 +2,11 @@ package com.sm.music;
 
 import android.app.Activity;
 import android.app.Application;
-import android.app.Notification;
-import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
-import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
@@ -23,8 +19,6 @@ import android.os.Message;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.CheckBox;
-import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.RemoteViews;
@@ -87,6 +81,13 @@ public class GlobalApplication extends Application {
     public static final int NOTICFY_ID = 639;
 
 
+    private static String getFileLineInfo(){
+        StackTraceElement[] stacktrace = Thread.currentThread().getStackTrace();
+        StackTraceElement e = stacktrace[2];
+
+        return " (" + e.getFileName() + " at line " + e.getLineNumber() + ")";
+    }
+
     private Bitmap current_music_pic = null;
     private String current_music_lrc = null;
 
@@ -134,7 +135,7 @@ public class GlobalApplication extends Application {
 
     private static NotificationManager playerNotificationManager = null;
 
-    private static Notification playerNotification = null;
+    private static NotificationCompat.Builder playerNotificationBuilder = null;
 
     //Application
 
@@ -146,6 +147,7 @@ public class GlobalApplication extends Application {
     public void init(){
         conn = new GetMusic();
 //        sqlUtils = new SQLUtils();
+        Log.i(LOG_TAG, "get recent music list.");
         musicList = RecentPlay.getRecentPlayMusic(getApplicationContext());
         Intent musicIntent = new Intent(getApplicationContext(), MusicPlayer.class);
         GlobalApplication.MusicPlayerConnection musicPlayerConnection = new GlobalApplication.MusicPlayerConnection();
@@ -155,6 +157,7 @@ public class GlobalApplication extends Application {
             startService(musicIntent);
         }
         bindService(musicIntent, musicPlayerConnection, BIND_AUTO_CREATE);
+        Log.i(LOG_TAG, "starting music service ...");
     }
 
     public void appEnd(){
@@ -168,7 +171,6 @@ public class GlobalApplication extends Application {
     }//
 
     public void musicPlay(){
-        updateplayer();
         int currentDuration = player.getDuration() / 1000;
         currentMusicDuration = ((currentDuration / 60) >= 10 ? String.valueOf(currentDuration / 60) : ("0" + (currentDuration / 60))) +
                 ":" + ((currentDuration % 60)  >= 10 ? String.valueOf(currentDuration % 60) : ("0" + (currentDuration % 60)));
@@ -184,15 +186,15 @@ public class GlobalApplication extends Application {
             ImageView StartAndStop = musicPlayerPageView.findViewById(R.id.StartAndStop);
             StartAndStop.setImageResource(R.drawable.ic_stop);
         }
-        if (notificationPlayerView != null && playerNotificationManager != null && playerNotification != null) {
-            notificationPlayerView.setImageViewResource(R.id.notice_music_start_and_stop, R.drawable.ic_stop);
-            playerNotificationManager.notify(NOTICFY_ID, playerNotification);
+        if (playerNotificationManager != null) {
+            initNotificationPlayerOnMusic();
         }
 
         for (Map.Entry<Integer,View> view : minMusicPlayerList.entrySet()) {
             ImageView min_music_control = view.getValue().findViewById(R.id.min_music_control);
                 min_music_control.setImageResource(R.drawable.ic_stop);
         }
+        Log.i(LOG_TAG, "music " + currentMusic.getName() + " start");
     }//
 
     public void musicPause(){
@@ -202,20 +204,19 @@ public class GlobalApplication extends Application {
         }
         if (player.isPlaying())
             player.pause();
-        updateplayer();
 
         if (musicPlayerPageView != null) {
             ImageView StartAndStop = musicPlayerPageView.findViewById(R.id.StartAndStop);
             StartAndStop.setImageResource(R.drawable.ic_play);
         }
-        if (notificationPlayerView != null && playerNotificationManager != null && playerNotification != null) {
-            notificationPlayerView.setImageViewResource(R.id.notice_music_start_and_stop, R.drawable.ic_play);
-            playerNotificationManager.notify(NOTICFY_ID, playerNotification);
+        if (playerNotificationManager != null) {
+            initNotificationPlayerOnMusic();
         }
         for (Map.Entry<Integer,View> view : minMusicPlayerList.entrySet()) {
             ImageView min_music_control = view.getValue().findViewById(R.id.min_music_control);
                 min_music_control.setImageResource(R.drawable.ic_play);
         }
+        Log.i(LOG_TAG, "music " + ( currentMusic == null ? "" : currentMusic.getName()) + " pause");
     }//
 
     public void next(){
@@ -223,17 +224,20 @@ public class GlobalApplication extends Application {
             int next = (currentMusicIndexInMusicList + 1) % musicList.size();
             switch (music_loop_method){
                 case MUSIC_LOOP_CONTROL_REANDOM:
+                    Log.i(LOG_TAG, "to set next music of shuffle with click");
                     setCurrentMusic(musicList.get((new Random().nextInt(musicList.size()))),false, true);
                     break;
                 case MUSIC_LOOP_CONTROL_LOOP:
+                    Log.i(LOG_TAG, "to set next music of repeat all with click");
                     setCurrentMusic(musicList.get(next),false, true);
                     break;
                 case MUSIC_LOOP_CONTROL_SINGLE:
+                    Log.i(LOG_TAG, "to set next music of repeat single with click");
                     setCurrentMusic(musicList.get(next),false, true);
                     break;
             }
         }
-
+        Log.i(LOG_TAG, "music next");
     }//
 
     public void prev(){
@@ -241,25 +245,31 @@ public class GlobalApplication extends Application {
             int next = (currentMusicIndexInMusicList + musicList.size() - 1) % musicList.size();
             switch (music_loop_method){
                 case MUSIC_LOOP_CONTROL_REANDOM:
+                    Log.i(LOG_TAG, "to set prev music of shuffle with click");
                     setCurrentMusic(musicList.get((new Random().nextInt(musicList.size()))),false, true);
                     break;
                 case MUSIC_LOOP_CONTROL_LOOP:
+                    Log.i(LOG_TAG, "to set prev music of repeat all with click");
                     setCurrentMusic(musicList.get(next),false, true);
                     break;
                 case MUSIC_LOOP_CONTROL_SINGLE:
+                    Log.i(LOG_TAG, "to set prev music of repeat single with click");
                     setCurrentMusic(musicList.get(next),false, true);
                     break;
             }
         }
+        Log.i(LOG_TAG, "music prev");
     }//
 
     private void setPlayerLoopControl(int tag){
+        Log.i(LOG_TAG, "to set music repeat mode");
         music_loop_method = tag;
         switch (tag){
             case MUSIC_LOOP_CONTROL_REANDOM:
                 player.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
                     @Override
                     public void onCompletion(MediaPlayer mp) {
+                        Log.i(LOG_TAG, "to set next music of shuffle with complete playing");
                         if (musicList.size() == 1){
                             mp.seekTo(0);
                             mp.start();
@@ -273,6 +283,7 @@ public class GlobalApplication extends Application {
                 player.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
                     @Override
                     public void onCompletion(MediaPlayer mp) {
+                        Log.i(LOG_TAG, "to set next music of repeat all with complete playing");
                         int next = 0;
                         if (musicList.size() > 1) {
                             next = (currentMusicIndexInMusicList + 1) % musicList.size();
@@ -289,6 +300,7 @@ public class GlobalApplication extends Application {
                 player.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
                     @Override
                     public void onCompletion(MediaPlayer mp) {
+                        Log.i(LOG_TAG, "to set music of repeat single with complete playing");
                         mp.seekTo(0);
                         mp.start();
                     }
@@ -304,7 +316,7 @@ public class GlobalApplication extends Application {
         if (musicPlayerPageView != null){
             initPagePlayerOnMusic();
         }
-        if (notificationPlayerView != null && playerNotificationManager != null && playerNotification != null){
+        if (playerNotificationManager != null){
             initNotificationPlayerOnMusic();
         }
     }
@@ -413,14 +425,28 @@ public class GlobalApplication extends Application {
     }
 
     private void initNotificationPlayerOnMusic(){
-        if (current_music_pic != null)
-            notificationPlayerView.setImageViewBitmap(R.id.notice_pic, current_music_pic);
-        else
-            notificationPlayerView.setImageViewBitmap(R.id.notice_pic, BitmapFactory.decodeResource(getResources(), R.mipmap.default_music_pic));
-        if (currentMusic != null){
-            notificationPlayerView.setTextViewText(R.id.notice_music_name, currentMusic.getName());
+        Bitmap b = null;
+        if (current_music_pic != null){
+            b = current_music_pic;
+        }else {
+            b = BitmapFactory.decodeResource(getResources(), R.mipmap.default_music_pic);
         }
-        playerNotificationManager.notify(NOTICFY_ID, playerNotification);
+        String singer = getResources().getString(R.string.singer);
+        if (currentMusic != null){
+            for (int j = 0; j < currentMusic.getArtist().length; j++) {
+                if (j == 0) {
+                    singer += currentMusic.getArtist()[j];
+                } else {
+                    singer += "/" + currentMusic.getArtist()[j];
+                }
+            }
+        }
+        String name = getResources().getString(R.string.no_music_to_play);
+        if (currentMusic != null){
+            name = currentMusic.getName();
+        }
+        playerNotificationManager.notify(NOTICFY_ID,
+                MusicPlayer.getPlayerNotificationBuilder(getApplicationContext(),b,name,singer, isPlaying()).build());
     }
 
     private void updateplayer(){
@@ -430,7 +456,7 @@ public class GlobalApplication extends Application {
         if (musicPlayerPageView != null) {
             updateMusicPlayer();
         }
-        if (notificationPlayerView != null && playerNotificationManager != null && playerNotification != null){
+        if (notificationPlayerView != null && playerNotificationManager != null && playerNotificationBuilder != null){
             updateNotificationPlayerOnMusic();
         }
     }
@@ -472,7 +498,7 @@ public class GlobalApplication extends Application {
     }
 
     private void updateNotificationPlayerOnMusic(){
-//        playerNotificationManager.notify(NOTICFY_ID, playerNotification);
+//        playerNotificationManager.notify(NOTICFY_ID, playerNotificationBuilder);
     }
 
     //player util
@@ -485,6 +511,8 @@ public class GlobalApplication extends Application {
                 return  1;
             case "kugou":
                 return  2;
+            case "migu":
+                return  3;
             default:
                 return  0;
         }
@@ -493,14 +521,24 @@ public class GlobalApplication extends Application {
     private class MusicPlayerConnection implements ServiceConnection {
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
+            Log.i(LOG_TAG, "started music service successful");
             player = ((MusicPlayer.musicBinder) service).getPlayer();
+            Log.i(LOG_TAG, "make music service notification");
             notificationPlayerView = ((MusicPlayer.musicBinder) service).getNotificationPlayerView();
             playerNotificationManager = ((MusicPlayer.musicBinder) service).getPlayerNotificationManager();
-            playerNotification = ((MusicPlayer.musicBinder) service).getPlayerNotification();
-            if (musicList.size() != 0)
-                setCurrentMusic(musicList.get(0), false, false);
+            playerNotificationBuilder = ((MusicPlayer.musicBinder) service).getPlayerNotification();
+            Log.i(LOG_TAG, "get music repeat mode");
             SharedPreferences pref = getSharedPreferences("data",MODE_PRIVATE);
             setPlayerLoopControl(pref.getInt("music_loop_method", MUSIC_LOOP_CONTROL_LOOP));
+            Log.i(LOG_TAG, "set first music of recent music list");
+            if (musicList.size() != 0)
+                setCurrentMusic(musicList.get(0), false, false);
+            player.setOnErrorListener(new MediaPlayer.OnErrorListener() {
+                @Override
+                public boolean onError(MediaPlayer mp, int what, int extra) {
+                    return true;
+                }
+            });
         }
         @Override
         public void onServiceDisconnected(ComponentName name) {
@@ -663,10 +701,9 @@ public class GlobalApplication extends Application {
             postion.setText(R.string.zero_time);
         }
         if (notificationPlayerView != null && playerNotificationManager != null){
-            notificationPlayerView.setImageViewBitmap(R.id.notice_pic, BitmapFactory.decodeResource(getResources(), R.mipmap.default_music_pic));
-            notificationPlayerView.setTextViewText(R.id.notice_music_name, getResources().getText(R.string.no_music_to_play));
-            notificationPlayerView.setImageViewResource(R.id.notice_music_start_and_stop, R.drawable.ic_play);
-            playerNotificationManager.notify(NOTICFY_ID, playerNotification);
+            playerNotificationBuilder.setLargeIcon(BitmapFactory.decodeResource(getResources(), R.mipmap.default_music_pic));
+            playerNotificationBuilder.setContentTitle(getResources().getString(R.string.no_music_to_play));
+            playerNotificationManager.notify(NOTICFY_ID, playerNotificationBuilder.build());
         }
     }
 
@@ -679,6 +716,7 @@ public class GlobalApplication extends Application {
     }
 
     public void setCurrentMusic(final Music music, final Boolean updataRecentList, final Boolean autoPlay, int msec){
+        Log.i(LOG_TAG, "set " + music.getName() + " to play");
         final Handler handler = new Handler(){
             @Override
             public void handleMessage(@NonNull Message msg) {
@@ -692,17 +730,20 @@ public class GlobalApplication extends Application {
                             player.prepareAsync();
                             player.setOnPreparedListener(mediaPlayer -> {
                                 last_can_play_music = music;
-//                                last_can_play_music_url = (String) msg.obj;
                                 getMoreInformationOfMusic(currentMusic);
                                 initPlayerOnMusic();
                                 if (updataRecentList){
+                                    Log.i(LOG_TAG, "prepared successful, add Music Object to recent list : " + music.getName());
                                     musicList = RecentPlay.addRecentPlayMusic(getApplicationContext(),music);
                                 }
                                 currentMusicIndexInMusicList = RecentPlay.isPlayedRecently(getApplicationContext(), music.getId());
                                 if (autoPlay){
+                                    Log.i(LOG_TAG, "prepared successful, play immediately : " + music.getName());
                                     musicPlay();
-                                    player.seekTo(msec);
+                                    if (msec != 0)
+                                        player.seekTo(msec);
                                 } else {
+                                    Log.i(LOG_TAG, "prepared successful, play later on : " + music.getName());
                                     int currentDuration = player.getDuration() / 1000;
                                     currentMusicDuration = ((currentDuration / 60) >= 10 ? String.valueOf(currentDuration / 60) : ("0" + (currentDuration / 60))) +
                                             ":" + ((currentDuration % 60)  >= 10 ? String.valueOf(currentDuration % 60) : ("0" + (currentDuration % 60)));
@@ -713,6 +754,7 @@ public class GlobalApplication extends Application {
                                 }
                             });
                             player.setOnErrorListener((mp, what, extra) -> {
+                                Log.i(LOG_TAG, "play fail, Consequently set prev music that can enable : " + music.getName());
                                 Toast.makeText(getApplicationContext(), R.string.play_fail, Toast.LENGTH_SHORT).show();
                                 if (last_can_play_music != null){
                                     setCurrentMusic(last_can_play_music, false, true, last_can_play_music_postion);
@@ -733,9 +775,13 @@ public class GlobalApplication extends Application {
             }
         };
         if (currentMusic != null && currentMusic.equals(music)){
-            musicPlay();
+            Log.i(LOG_TAG, "There is no music to play, And select music already play ! : " + music.getName());
+            if (autoPlay)
+                musicPlay();
         }else {
             musicPause();
+            Log.i(LOG_TAG, "storage current music position : " + (currentMusic == null ? "no music" : currentMusic.getName())
+                    + ",position : " + player.getCurrentPosition());
             last_can_play_music_postion = player.getCurrentPosition();
             new Thread(new Runnable() {
                 @Override
@@ -750,10 +796,12 @@ public class GlobalApplication extends Application {
                                 msg.arg1 = GetMusic.RESPOND_SUCCESS;
                                 msg.obj = url;
                             }else {
+                                Log.w(LOG_TAG, "can't got music url because network and url is null or empty : " + music.getName());
                                 msg.what = GetMusic.RESPOND_TIMEOUT;
                             }
                         }
                     } catch (Exception e) {
+                        Log.w(LOG_TAG, "request music url wrong : " + music.getName() + ",Because " + e.getMessage());
                         msg.what = GetMusic.RESPOND_TIMEOUT;
                         e.printStackTrace();
                     };

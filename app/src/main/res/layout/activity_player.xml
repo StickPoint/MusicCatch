@@ -106,12 +106,71 @@
             android:layout_height="0dp"
             android:layout_weight="1"
             android:paddingTop="20dp"
-            android:paddingBottom="20dp" />
+            android:paddingBottom="10dp" />
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/player_control"
             android:layout_width="match_parent"
-            android:layout_height="150dp">
+            android:layout_height="180dp">
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="40dp"
+                android:gravity="center"
+                android:orientation="horizontal"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
+
+                <CheckBox
+                    android:id="@+id/player_like"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginEnd="10dp"
+                    android:background="?android:attr/selectableItemBackground"
+                    android:button="@null"
+                    android:clickable="true"
+                    android:drawableTop="@drawable/more_like_checked"
+                    android:padding="5dp"
+                    android:visibility="visible" />
+
+                <ImageView
+                    android:id="@+id/player_down"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginEnd="10dp"
+                    android:background="?android:attr/selectableItemBackground"
+                    android:clickable="true"
+                    android:padding="5dp"
+                    android:visibility="visible"
+                    app:srcCompat="@drawable/ic_local" />
+
+                <ImageView
+                    android:id="@+id/player_share"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginEnd="10dp"
+                    android:background="?android:attr/selectableItemBackground"
+                    android:clickable="true"
+                    android:padding="5dp"
+                    android:visibility="visible"
+                    app:srcCompat="@drawable/ic_share" />
+
+                <ImageView
+                    android:id="@+id/player_copy"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginEnd="10dp"
+                    android:background="?android:attr/selectableItemBackground"
+                    android:clickable="true"
+                    android:padding="5dp"
+                    android:visibility="visible"
+                    app:srcCompat="@drawable/ic_copy" />
+            </LinearLayout>
 
             <LinearLayout
                 android:id="@+id/playerCon_container"
@@ -160,14 +219,14 @@
                 android:id="@+id/music_seekBar"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="24dp"
+                android:layout_marginBottom="24dp"
                 android:background="@color/transparent"
                 android:progressDrawable="@drawable/player_page_seek_bar"
                 android:splitTrack="false"
                 android:thumb="@drawable/player_page_thumb"
+                app:layout_constraintBottom_toTopOf="@+id/playerCon_container"
                 app:layout_constraintEnd_toStartOf="@+id/duration"
-                app:layout_constraintStart_toEndOf="@+id/postion"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintStart_toEndOf="@+id/postion" />
 
             <TextView
                 android:id="@+id/postion"

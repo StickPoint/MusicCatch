@@ -23,6 +23,8 @@ import android.os.Message;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.RemoteViews;
@@ -41,6 +43,7 @@ import com.sm.music.Listener.OnMusicChange;
 import com.sm.music.MusicUtils.GetMusic;
 import com.sm.music.MusicUtils.RecentPlay;
 import com.sm.music.Override.UnclickableHorizontalScrollView;
+import com.sm.music.SQL.SQLUtils;
 import com.sm.music.Server.MusicPlayer;
 
 import java.io.IOException;
@@ -119,6 +122,7 @@ public class GlobalApplication extends Application {
     };
 
     private GetMusic conn = null;
+    private SQLUtils sqlUtils = null;
 
     private static OnMusicChange onMusicChange = null;
 
@@ -141,6 +145,7 @@ public class GlobalApplication extends Application {
 
     public void init(){
         conn = new GetMusic();
+//        sqlUtils = new SQLUtils();
         musicList = RecentPlay.getRecentPlayMusic(getApplicationContext());
         Intent musicIntent = new Intent(getApplicationContext(), MusicPlayer.class);
         GlobalApplication.MusicPlayerConnection musicPlayerConnection = new GlobalApplication.MusicPlayerConnection();
@@ -158,16 +163,20 @@ public class GlobalApplication extends Application {
 
     //music control
 
-    private Boolean isPlaying(){
+    public Boolean isPlaying(){
         return player.isPlaying();
     }//
 
-    private void musicPlay(){
+    public void musicPlay(){
         updateplayer();
         int currentDuration = player.getDuration() / 1000;
         currentMusicDuration = ((currentDuration / 60) >= 10 ? String.valueOf(currentDuration / 60) : ("0" + (currentDuration / 60))) +
                 ":" + ((currentDuration % 60)  >= 10 ? String.valueOf(currentDuration % 60) : ("0" + (currentDuration % 60)));
         player.start();
+        if (updataThread != null) {
+            updataThread.interrupt();
+            updataThread = null;
+        }
         updataThread = new UpdataThread();
         updataThread.start();
 
@@ -186,7 +195,7 @@ public class GlobalApplication extends Application {
         }
     }//
 
-    private void musicPause(){
+    public void musicPause(){
         if (updataThread != null) {
             updataThread.interrupt();
             updataThread = null;
@@ -251,8 +260,12 @@ public class GlobalApplication extends Application {
                 player.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
                     @Override
                     public void onCompletion(MediaPlayer mp) {
-                        mp.reset();
-                        setCurrentMusic(musicList.get((new Random().nextInt(musicList.size()))),false, true);
+                        if (musicList.size() == 1){
+                            mp.seekTo(0);
+                            mp.start();
+                        }else {
+                            setCurrentMusic(musicList.get((new Random().nextInt(musicList.size()))),false, true);
+                        }
                     }
                 });
                 break;
@@ -260,13 +273,13 @@ public class GlobalApplication extends Application {
                 player.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
                     @Override
                     public void onCompletion(MediaPlayer mp) {
-                        mp.reset();
                         int next = 0;
                         if (musicList.size() > 1) {
                             next = (currentMusicIndexInMusicList + 1) % musicList.size();
-                        }
-                        if (!musicList.isEmpty()) {
                             setCurrentMusic(musicList.get(next), false, true);
+                        }else {
+                            mp.seekTo(0);
+                            mp.start();
                         }
 
                     }
@@ -395,6 +408,7 @@ public class GlobalApplication extends Application {
                 music_lrc_view.loadLrc(current_music_lrc);
             }
 
+
         }
     }
 
@@ -458,7 +472,7 @@ public class GlobalApplication extends Application {
     }
 
     private void updateNotificationPlayerOnMusic(){
-        playerNotificationManager.notify(NOTICFY_ID, playerNotification);
+//        playerNotificationManager.notify(NOTICFY_ID, playerNotification);
     }
 
     //player util
@@ -480,45 +494,9 @@ public class GlobalApplication extends Application {
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
             player = ((MusicPlayer.musicBinder) service).getPlayer();
-            notificationPlayerView = new RemoteViews(getApplicationContext().getPackageName(), R.layout.notification_layout);
-            playerNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
-                NotificationChannel channel = new NotificationChannel(CHANNEL_ID, CHANNEL_NAME, NotificationManager.IMPORTANCE_LOW);
-                playerNotificationManager.createNotificationChannel(channel);
-            }
-            playerNotification = new NotificationCompat.Builder(getApplicationContext(), CHANNEL_ID)
-//                .setStyle(new NotificationCompat.DecoratedCustomViewStyle())
-                    .setSmallIcon(R.mipmap.ic_launcher_round)
-                    .setPriority(Notification.PRIORITY_MAX)
-                    .setCustomBigContentView(notificationPlayerView)
-                    .setContentIntent(PendingIntent.getActivity(getApplicationContext(), 0, new Intent(), PendingIntent.FLAG_NO_CREATE))
-                    .setOngoing(true)
-                    .setDefaults(Notification.FLAG_ONGOING_EVENT)
-                    .build();
-            notificationPlayerView.setImageViewBitmap(R.id.notice_pic, BitmapFactory.decodeResource(getResources(), R.mipmap.default_music_pic));
-            IntentFilter notificationPlayerBroadcastFilter = new IntentFilter();
-            notificationPlayerBroadcastFilter.addAction(NotificationPlayerBroadcastReceiver.ACTION_PLAY_AND_STOP);
-            notificationPlayerBroadcastFilter.addAction(NotificationPlayerBroadcastReceiver.ACTION_NEXT);
-            notificationPlayerBroadcastFilter.addAction(NotificationPlayerBroadcastReceiver.ACTION_PREV);
-            NotificationPlayerBroadcastReceiver notificationPlayerBroadcastReceiver = new NotificationPlayerBroadcastReceiver();
-            registerReceiver(notificationPlayerBroadcastReceiver, notificationPlayerBroadcastFilter);
-
-            Intent intentPlayAndStop = new Intent(NotificationPlayerBroadcastReceiver.ACTION_PLAY_AND_STOP);
-
-            Intent intentPrev = new Intent(NotificationPlayerBroadcastReceiver.ACTION_NEXT);
-
-            Intent intentNext = new Intent(NotificationPlayerBroadcastReceiver.ACTION_PREV);
-
-            notificationPlayerView.setOnClickPendingIntent(R.id.notice_music_start_and_stop,
-                    PendingIntent.getBroadcast(getApplicationContext(), 0, intentPlayAndStop, PendingIntent.FLAG_UPDATE_CURRENT));
-
-            notificationPlayerView.setOnClickPendingIntent(R.id.notice_music_prev,
-                    PendingIntent.getBroadcast(getApplicationContext(), 0, intentPrev, PendingIntent.FLAG_UPDATE_CURRENT));
-
-            notificationPlayerView.setOnClickPendingIntent(R.id.notice_music_next,
-                    PendingIntent.getBroadcast(getApplicationContext(), 0, intentNext, PendingIntent.FLAG_UPDATE_CURRENT));
-
-            ((MusicPlayer.musicBinder) service).getServer().startForeground(NOTICFY_ID, playerNotification);
+            notificationPlayerView = ((MusicPlayer.musicBinder) service).getNotificationPlayerView();
+            playerNotificationManager = ((MusicPlayer.musicBinder) service).getPlayerNotificationManager();
+            playerNotification = ((MusicPlayer.musicBinder) service).getPlayerNotification();
             if (musicList.size() != 0)
                 setCurrentMusic(musicList.get(0), false, false);
             SharedPreferences pref = getSharedPreferences("data",MODE_PRIVATE);
@@ -597,36 +575,6 @@ public class GlobalApplication extends Application {
 
     }
 
-    public class NotificationPlayerBroadcastReceiver extends BroadcastReceiver {
-
-        public static final String ACTION_PLAY_AND_STOP = "pp";
-        public static final String ACTION_NEXT = "n";
-        public static final String ACTION_PREV = "p";
-
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            if (currentMusic != null){
-                String act = intent.getAction();
-                switch (act){
-                    case ACTION_PLAY_AND_STOP:
-                        if (isPlaying()){
-                            musicPause();
-                        }else {
-                            musicPlay();
-                        }
-                        break;
-                    case ACTION_NEXT:
-                        next();
-                        break;
-                    case ACTION_PREV:
-                        prev();
-                        break;
-                }
-            }else {
-                Toast.makeText(context, R.string.no_music_to_play, Toast.LENGTH_SHORT);
-            }
-        }
-    }
 
     //user
 

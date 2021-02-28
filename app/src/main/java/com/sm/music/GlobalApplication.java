@@ -652,6 +652,7 @@ public class GlobalApplication extends Application {
             updataThread.interrupt();
         }
         currentMusic = null;
+        last_can_play_music = null;
         current_music_pic = null;
         current_music_lrc = null;
         currentMusicIndexInMusicList = 0;

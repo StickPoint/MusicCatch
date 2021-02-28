@@ -6,9 +6,11 @@ import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
+import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
@@ -18,11 +20,6 @@ import android.os.Build;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
-import android.os.RemoteException;
-import android.support.v4.media.MediaBrowserCompat;
-import android.support.v4.media.MediaMetadataCompat;
-import android.support.v4.media.session.MediaControllerCompat;
-import android.support.v4.media.session.PlaybackStateCompat;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
@@ -45,7 +42,6 @@ import com.sm.music.MusicUtils.GetMusic;
 import com.sm.music.MusicUtils.RecentPlay;
 import com.sm.music.Override.UnclickableHorizontalScrollView;
 import com.sm.music.Server.MusicPlayer;
-import com.sm.music.Server.MusicPlayerBackup;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -60,11 +56,9 @@ import me.wcy.lrcview.LrcView;
 
 public class GlobalApplication extends Application {
 
-    private static final String LOG_TAG = "GlobalApplication:";
+    private static final String LOG_TAG = "GlobalApplication";
 
     private static final String UPDATE_INFO_URL = "https://download.micronnetwork.com/ddmusic/ddmusicUpdata.json";
-
-    private static final Boolean IS_USE_MEDIASESSION_FRAMEWORK = true;
 
     private static final int REQUEST_MUSIC_PIC = 159;
     private static final int REQUEST_MUSIC_PIC_DEFAULT = 160;
@@ -90,8 +84,8 @@ public class GlobalApplication extends Application {
     public static final int NOTICFY_ID = 639;
 
 
-    private Bitmap music_pic = null;
-    private String music_lrc = null;
+    private Bitmap current_music_pic = null;
+    private String current_music_lrc = null;
 
 
     private Context context = null;
@@ -107,7 +101,7 @@ public class GlobalApplication extends Application {
 
     private int currentMusicIndexInMusicList = 0;
     //index search music list
-    private List<Music> musicListBackup = new ArrayList<Music>();
+    private List<Music> musicList = new ArrayList<Music>();
     //min music player list
     private static Map<Integer, View> minMusicPlayerList = new HashMap<>();
     private static View musicPlayerPageView = null;
@@ -138,14 +132,6 @@ public class GlobalApplication extends Application {
 
     private static Notification playerNotification = null;
 
-    //MediaSession Framework
-
-    private MediaBrowserCompat musicPlayerBrowser = null;
-
-    private List<Music> musicList = new ArrayList<>();
-
-    private MediaControllerCompat mediaController = null;
-
     //Application
 
     @Override
@@ -154,58 +140,16 @@ public class GlobalApplication extends Application {
     }
 
     public void init(){
-        if (IS_USE_MEDIASESSION_FRAMEWORK){
-            conn = new GetMusic();
-            musicList = RecentPlay.getRecentPlayMusic(getApplicationContext());
-            musicPlayerBrowser = new MediaBrowserCompat(
-                    this,
-                    new ComponentName(this, MusicPlayer.class),
-                    new MediaBrowserCompat.ConnectionCallback(){
-                        @Override
-                        public void onConnected() {
-                            super.onConnected();
-                            if (musicPlayerBrowser.isConnected()) {
-                                Log.i(LOG_TAG,"musicPlayerBrowser connected successful");
-                                if (musicList.size() != 0){
-//                                    setCurrentMusic(musicListBackup.get(0), false, false);
-                                }
-                                SharedPreferences pref = getSharedPreferences("data",MODE_PRIVATE);
-//                                setPlayerLoopControl(pref.getInt("music_loop_method", MUSIC_LOOP_CONTROL_LOOP));
-                                try {
-                                    mediaController = new MediaControllerCompat(getApplicationContext(), musicPlayerBrowser.getSessionToken());
-                                    mediaController.registerCallback(new MediaControllerCompat.Callback() {
-                                        @Override
-                                        public void onPlaybackStateChanged(PlaybackStateCompat state) {
-                                            super.onPlaybackStateChanged(state);
-                                            updateplayer();
-                                        }
-                                        @Override
-                                        public void onMetadataChanged(MediaMetadataCompat metadata) {
-                                            super.onMetadataChanged(metadata);
-                                            initPlayerOnMusic();
-                                        }
-                                    });
-                                } catch (RemoteException e) {
-                                    e.printStackTrace();
-                                }
-                            }
-                        }
-                    },
-                    null);
-            Log.i(LOG_TAG,"musicPlayerBrowser connecting");
-            musicPlayerBrowser.connect();
-        }else {
-            conn = new GetMusic();
-            musicListBackup = RecentPlay.getRecentPlayMusic(getApplicationContext());
-            Intent musicIntent = new Intent(getApplicationContext(), MusicPlayerBackup.class);
-            GlobalApplication.MusicPlayerConnection musicPlayerConnection = new GlobalApplication.MusicPlayerConnection();
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                startForegroundService(musicIntent);
-            } else {
-                startService(musicIntent);
-            }
-            bindService(musicIntent, musicPlayerConnection, BIND_AUTO_CREATE);
+        conn = new GetMusic();
+        musicList = RecentPlay.getRecentPlayMusic(getApplicationContext());
+        Intent musicIntent = new Intent(getApplicationContext(), MusicPlayer.class);
+        GlobalApplication.MusicPlayerConnection musicPlayerConnection = new GlobalApplication.MusicPlayerConnection();
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            startForegroundService(musicIntent);
+        } else {
+            startService(musicIntent);
         }
+        bindService(musicIntent, musicPlayerConnection, BIND_AUTO_CREATE);
     }
 
     public void appEnd(){
@@ -216,39 +160,129 @@ public class GlobalApplication extends Application {
 
     private Boolean isPlaying(){
         return player.isPlaying();
-    }
+    }//
 
     private void musicPlay(){
-        if (IS_USE_MEDIASESSION_FRAMEWORK){
-            if (mediaController != null){
-                mediaController.getTransportControls().play();
-            }
-        }else {
-            updateplayer();
-            int currentDuration = player.getDuration() / 1000;
-            currentMusicDuration = ((currentDuration / 60) >= 10 ? String.valueOf(currentDuration / 60) : ("0" + (currentDuration / 60))) +
-                    ":" + ((currentDuration % 60)  >= 10 ? String.valueOf(currentDuration % 60) : ("0" + (currentDuration % 60)));
-            player.start();
-            updataThread = new UpdataThread();
-            updataThread.start();
+        updateplayer();
+        int currentDuration = player.getDuration() / 1000;
+        currentMusicDuration = ((currentDuration / 60) >= 10 ? String.valueOf(currentDuration / 60) : ("0" + (currentDuration / 60))) +
+                ":" + ((currentDuration % 60)  >= 10 ? String.valueOf(currentDuration % 60) : ("0" + (currentDuration % 60)));
+        player.start();
+        updataThread = new UpdataThread();
+        updataThread.start();
+
+        if (musicPlayerPageView != null) {
+            ImageView StartAndStop = musicPlayerPageView.findViewById(R.id.StartAndStop);
+            StartAndStop.setImageResource(R.drawable.ic_stop);
         }
-    }
+        if (notificationPlayerView != null && playerNotificationManager != null && playerNotification != null) {
+            notificationPlayerView.setImageViewResource(R.id.notice_music_start_and_stop, R.drawable.ic_stop);
+            playerNotificationManager.notify(NOTICFY_ID, playerNotification);
+        }
+
+        for (Map.Entry<Integer,View> view : minMusicPlayerList.entrySet()) {
+            ImageView min_music_control = view.getValue().findViewById(R.id.min_music_control);
+                min_music_control.setImageResource(R.drawable.ic_stop);
+        }
+    }//
 
     private void musicPause(){
-        if (IS_USE_MEDIASESSION_FRAMEWORK){
-            if (mediaController != null){
-                mediaController.getTransportControls().pause();
-            }
-        }else {
-            if (updataThread != null) {
-                updataThread.interrupt();
-                updataThread = null;
-            }
-            if (player.isPlaying())
-                player.pause();
-            updateplayer();
+        if (updataThread != null) {
+            updataThread.interrupt();
+            updataThread = null;
         }
-    }
+        if (player.isPlaying())
+            player.pause();
+        updateplayer();
+
+        if (musicPlayerPageView != null) {
+            ImageView StartAndStop = musicPlayerPageView.findViewById(R.id.StartAndStop);
+            StartAndStop.setImageResource(R.drawable.ic_play);
+        }
+        if (notificationPlayerView != null && playerNotificationManager != null && playerNotification != null) {
+            notificationPlayerView.setImageViewResource(R.id.notice_music_start_and_stop, R.drawable.ic_play);
+            playerNotificationManager.notify(NOTICFY_ID, playerNotification);
+        }
+        for (Map.Entry<Integer,View> view : minMusicPlayerList.entrySet()) {
+            ImageView min_music_control = view.getValue().findViewById(R.id.min_music_control);
+                min_music_control.setImageResource(R.drawable.ic_play);
+        }
+    }//
+
+    public void next(){
+        if (musicList != null){
+            int next = (currentMusicIndexInMusicList + 1) % musicList.size();
+            switch (music_loop_method){
+                case MUSIC_LOOP_CONTROL_REANDOM:
+                    setCurrentMusic(musicList.get((new Random().nextInt(musicList.size()))),false, true);
+                    break;
+                case MUSIC_LOOP_CONTROL_LOOP:
+                    setCurrentMusic(musicList.get(next),false, true);
+                    break;
+                case MUSIC_LOOP_CONTROL_SINGLE:
+                    setCurrentMusic(musicList.get(next),false, true);
+                    break;
+            }
+        }
+
+    }//
+
+    public void prev(){
+        if (musicList != null){
+            int next = (currentMusicIndexInMusicList + musicList.size() - 1) % musicList.size();
+            switch (music_loop_method){
+                case MUSIC_LOOP_CONTROL_REANDOM:
+                    setCurrentMusic(musicList.get((new Random().nextInt(musicList.size()))),false, true);
+                    break;
+                case MUSIC_LOOP_CONTROL_LOOP:
+                    setCurrentMusic(musicList.get(next),false, true);
+                    break;
+                case MUSIC_LOOP_CONTROL_SINGLE:
+                    setCurrentMusic(musicList.get(next),false, true);
+                    break;
+            }
+        }
+    }//
+
+    private void setPlayerLoopControl(int tag){
+        music_loop_method = tag;
+        switch (tag){
+            case MUSIC_LOOP_CONTROL_REANDOM:
+                player.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+                    @Override
+                    public void onCompletion(MediaPlayer mp) {
+                        mp.reset();
+                        setCurrentMusic(musicList.get((new Random().nextInt(musicList.size()))),false, true);
+                    }
+                });
+                break;
+            case MUSIC_LOOP_CONTROL_LOOP:
+                player.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+                    @Override
+                    public void onCompletion(MediaPlayer mp) {
+                        mp.reset();
+                        int next = 0;
+                        if (musicList.size() > 1) {
+                            next = (currentMusicIndexInMusicList + 1) % musicList.size();
+                        }
+                        if (!musicList.isEmpty()) {
+                            setCurrentMusic(musicList.get(next), false, true);
+                        }
+
+                    }
+                });
+                break;
+            case MUSIC_LOOP_CONTROL_SINGLE:
+                player.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+                    @Override
+                    public void onCompletion(MediaPlayer mp) {
+                        mp.seekTo(0);
+                        mp.start();
+                    }
+                });
+                break;
+        }
+    }//
 
     private void initPlayerOnMusic(){
         for (Map.Entry<Integer,View> i : minMusicPlayerList.entrySet()) {
@@ -265,9 +299,9 @@ public class GlobalApplication extends Application {
     private void initMinPlayerOnMusic(View view){
         if (currentMusic != null){
 
-            if (music_pic != null){
+            if (current_music_pic != null){
                 ImageView musicPic = view.findViewById(R.id.musicPic);
-                musicPic.setImageBitmap(music_pic);
+                musicPic.setImageBitmap(current_music_pic);
             }
 
             TextView current_music_name = view.findViewById(R.id.current_music_name);
@@ -339,36 +373,39 @@ public class GlobalApplication extends Application {
                     break;
             }
 
+            TextView postion = musicPlayerPageView.findViewById(R.id.postion);
+            int ic = player.getCurrentPosition() / 1000;
+            postion.setText((ic / 60 >= 10 ? String.valueOf(ic / 60) : "0" + ic / 60) + ":" +
+                    (ic % 60 >= 10 ? String.valueOf(ic % 60) : "0" + ic % 60));
 
             SeekBar music_seekBar = musicPlayerPageView.findViewById(R.id.music_seekBar);
-            music_seekBar.setMax(100);
-            music_seekBar.setProgress(0);
+            music_seekBar.setMax(player.getDuration());
+            music_seekBar.setProgress(player.getCurrentPosition());
 
             ImageView music_pic_view = player_content_view.get(0).findViewById(R.id.music_pic);
-            if (music_pic != null){
-                music_pic_view.setImageBitmap(music_pic);
+            if (current_music_pic != null){
+                music_pic_view.setImageBitmap(current_music_pic);
             }else {
                 music_pic_view.setImageResource(R.mipmap.default_music_pic);
             }
 
 
             LrcView music_lrc_view = player_content_view.get(1).findViewById(R.id.music_lrc);
-            if (music_lrc !=  null){
-                music_lrc_view.loadLrc(music_lrc);
+            if (current_music_lrc !=  null){
+                music_lrc_view.loadLrc(current_music_lrc);
             }
 
         }
     }
 
     private void initNotificationPlayerOnMusic(){
-        if (music_pic != null)
-            notificationPlayerView.setImageViewBitmap(R.id.notice_pic, music_pic);
+        if (current_music_pic != null)
+            notificationPlayerView.setImageViewBitmap(R.id.notice_pic, current_music_pic);
         else
             notificationPlayerView.setImageViewBitmap(R.id.notice_pic, BitmapFactory.decodeResource(getResources(), R.mipmap.default_music_pic));
         if (currentMusic != null){
             notificationPlayerView.setTextViewText(R.id.notice_music_name, currentMusic.getName());
         }
-//        notificationPlayerView.setOnClickPendingIntent(R.id.notice_music_start_and_stop, new Intent());
         playerNotificationManager.notify(NOTICFY_ID, playerNotification);
     }
 
@@ -387,12 +424,6 @@ public class GlobalApplication extends Application {
     private void updateMinMusicPlayer(View v){
         View view = v;
 
-        ImageView min_music_control = view.findViewById(R.id.min_music_control);
-        if (isPlaying()){
-            min_music_control.setImageResource(R.drawable.ic_stop);
-        }else {
-            min_music_control.setImageResource(R.drawable.ic_play);
-        }
 
         UnclickableHorizontalScrollView minPlayer_title = view.findViewById(R.id.minPlayer_title);
         int innerWidth = minPlayer_title.findViewById(R.id.minPlayer_title_container).getWidth();
@@ -414,17 +445,8 @@ public class GlobalApplication extends Application {
 
     private void updateMusicPlayer(){
         SeekBar music_seekBar = musicPlayerPageView.findViewById(R.id.music_seekBar);
-        if (player.getDuration() != 0){
-            music_seekBar.setMax(player.getDuration());
-            music_seekBar.setProgress(player.getCurrentPosition());
-        }
+        music_seekBar.setProgress(player.getCurrentPosition());
 
-        ImageView StartAndStop = musicPlayerPageView.findViewById(R.id.StartAndStop);
-        if (isPlaying()){
-            StartAndStop.setImageResource(R.drawable.ic_stop);
-        }else {
-            StartAndStop.setImageResource(R.drawable.ic_play);
-        }
 
         TextView postion = musicPlayerPageView.findViewById(R.id.postion);
         int ic = player.getCurrentPosition() / 1000;
@@ -436,88 +458,7 @@ public class GlobalApplication extends Application {
     }
 
     private void updateNotificationPlayerOnMusic(){
-        if (isPlaying()){
-            notificationPlayerView.setImageViewResource(R.id.notice_music_start_and_stop, R.drawable.ic_stop);
-        }else {
-            notificationPlayerView.setImageViewResource(R.id.notice_music_start_and_stop, R.drawable.ic_play);
-        }
         playerNotificationManager.notify(NOTICFY_ID, playerNotification);
-    }
-
-    private void setPlayerLoopControl(int tag){
-        music_loop_method = tag;
-        switch (tag){
-            case MUSIC_LOOP_CONTROL_REANDOM:
-                player.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
-                    @Override
-                    public void onCompletion(MediaPlayer mp) {
-                        mp.reset();
-                        setCurrentMusic(musicListBackup.get((new Random().nextInt(musicListBackup.size()))),false, true);
-                    }
-                });
-                break;
-            case MUSIC_LOOP_CONTROL_LOOP:
-                player.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
-                    @Override
-                    public void onCompletion(MediaPlayer mp) {
-                        mp.reset();
-                        int next = 0;
-                        if (musicListBackup.size() > 1){
-                            next = (currentMusicIndexInMusicList + 1) % musicListBackup.size();
-                        }
-                        if (!musicListBackup.isEmpty()){
-                            setCurrentMusic(musicListBackup.get(next),false, true);
-                        }
-
-                    }
-                });
-                break;
-            case MUSIC_LOOP_CONTROL_SINGLE:
-                player.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
-                    @Override
-                    public void onCompletion(MediaPlayer mp) {
-                        mp.seekTo(0);
-                        mp.start();
-                    }
-                });
-                break;
-        }
-    }
-
-    public void next(){
-        if (musicListBackup != null){
-            int next = (currentMusicIndexInMusicList + 1) % musicListBackup.size();
-            switch (music_loop_method){
-                case MUSIC_LOOP_CONTROL_REANDOM:
-                    setCurrentMusic(musicListBackup.get((new Random().nextInt(musicListBackup.size()))),false, true);
-                    break;
-                case MUSIC_LOOP_CONTROL_LOOP:
-                    setCurrentMusic(musicListBackup.get(next),false, true);
-                    break;
-                case MUSIC_LOOP_CONTROL_SINGLE:
-                    setCurrentMusic(musicListBackup.get(next),false, true);
-                    break;
-            }
-        }
-
-    }
-
-    public void prev(){
-        if (musicListBackup != null){
-            int next = (currentMusicIndexInMusicList + musicListBackup.size() - 1) % musicListBackup.size();
-            switch (music_loop_method){
-                case MUSIC_LOOP_CONTROL_REANDOM:
-                    setCurrentMusic(musicListBackup.get((new Random().nextInt(musicListBackup.size()))),false, true);
-                    break;
-                case MUSIC_LOOP_CONTROL_LOOP:
-                    setCurrentMusic(musicListBackup.get(next),false, true);
-                    break;
-                case MUSIC_LOOP_CONTROL_SINGLE:
-                    setCurrentMusic(musicListBackup.get(next),false, true);
-                    break;
-            }
-        }
-
     }
 
     //player util
@@ -538,7 +479,7 @@ public class GlobalApplication extends Application {
     private class MusicPlayerConnection implements ServiceConnection {
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
-            player = ((MusicPlayerBackup.musicBinder) service).getPlayer();
+            player = ((MusicPlayer.musicBinder) service).getPlayer();
             notificationPlayerView = new RemoteViews(getApplicationContext().getPackageName(), R.layout.notification_layout);
             playerNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
             if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
@@ -555,9 +496,31 @@ public class GlobalApplication extends Application {
                     .setDefaults(Notification.FLAG_ONGOING_EVENT)
                     .build();
             notificationPlayerView.setImageViewBitmap(R.id.notice_pic, BitmapFactory.decodeResource(getResources(), R.mipmap.default_music_pic));
-            ((MusicPlayerBackup.musicBinder) service).getServer().startForeground(NOTICFY_ID, playerNotification);
-            if (musicListBackup.size() != 0)
-                setCurrentMusic(musicListBackup.get(0), false, false);
+            IntentFilter notificationPlayerBroadcastFilter = new IntentFilter();
+            notificationPlayerBroadcastFilter.addAction(NotificationPlayerBroadcastReceiver.ACTION_PLAY_AND_STOP);
+            notificationPlayerBroadcastFilter.addAction(NotificationPlayerBroadcastReceiver.ACTION_NEXT);
+            notificationPlayerBroadcastFilter.addAction(NotificationPlayerBroadcastReceiver.ACTION_PREV);
+            NotificationPlayerBroadcastReceiver notificationPlayerBroadcastReceiver = new NotificationPlayerBroadcastReceiver();
+            registerReceiver(notificationPlayerBroadcastReceiver, notificationPlayerBroadcastFilter);
+
+            Intent intentPlayAndStop = new Intent(NotificationPlayerBroadcastReceiver.ACTION_PLAY_AND_STOP);
+
+            Intent intentPrev = new Intent(NotificationPlayerBroadcastReceiver.ACTION_NEXT);
+
+            Intent intentNext = new Intent(NotificationPlayerBroadcastReceiver.ACTION_PREV);
+
+            notificationPlayerView.setOnClickPendingIntent(R.id.notice_music_start_and_stop,
+                    PendingIntent.getBroadcast(getApplicationContext(), 0, intentPlayAndStop, PendingIntent.FLAG_UPDATE_CURRENT));
+
+            notificationPlayerView.setOnClickPendingIntent(R.id.notice_music_prev,
+                    PendingIntent.getBroadcast(getApplicationContext(), 0, intentPrev, PendingIntent.FLAG_UPDATE_CURRENT));
+
+            notificationPlayerView.setOnClickPendingIntent(R.id.notice_music_next,
+                    PendingIntent.getBroadcast(getApplicationContext(), 0, intentNext, PendingIntent.FLAG_UPDATE_CURRENT));
+
+            ((MusicPlayer.musicBinder) service).getServer().startForeground(NOTICFY_ID, playerNotification);
+            if (musicList.size() != 0)
+                setCurrentMusic(musicList.get(0), false, false);
             SharedPreferences pref = getSharedPreferences("data",MODE_PRIVATE);
             setPlayerLoopControl(pref.getInt("music_loop_method", MUSIC_LOOP_CONTROL_LOOP));
         }
@@ -603,15 +566,15 @@ public class GlobalApplication extends Application {
         public Object instantiateItem(@NonNull ViewGroup container, int position) {
             View v = player_content_view.get(position);
             if (position == 0){
-                if (music_pic != null){
+                if (current_music_pic != null){
                     ImageView music_pic_view = v.findViewById(R.id.music_pic);
-                    music_pic_view.setImageBitmap(music_pic);
+                    music_pic_view.setImageBitmap(current_music_pic);
                 }
             }else if (position == 1){
-                if (music_lrc != null){
+                if (current_music_lrc != null){
                     LrcView music_lrc_view = v.findViewById(R.id.music_lrc);
-                    Log.e("AdapterMusicLyric:", music_lrc);
-                    music_lrc_view.loadLrc(music_lrc);
+                    Log.e("AdapterMusicLyric:", current_music_lrc);
+                    music_lrc_view.loadLrc(current_music_lrc);
                     music_lrc_view.setDraggable(true, new LrcView.OnPlayClickListener() {
                         @Override
                         public boolean onPlayClick(LrcView view, long time) {
@@ -634,22 +597,53 @@ public class GlobalApplication extends Application {
 
     }
 
+    public class NotificationPlayerBroadcastReceiver extends BroadcastReceiver {
+
+        public static final String ACTION_PLAY_AND_STOP = "pp";
+        public static final String ACTION_NEXT = "n";
+        public static final String ACTION_PREV = "p";
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if (currentMusic != null){
+                String act = intent.getAction();
+                switch (act){
+                    case ACTION_PLAY_AND_STOP:
+                        if (isPlaying()){
+                            musicPause();
+                        }else {
+                            musicPlay();
+                        }
+                        break;
+                    case ACTION_NEXT:
+                        next();
+                        break;
+                    case ACTION_PREV:
+                        prev();
+                        break;
+                }
+            }else {
+                Toast.makeText(context, R.string.no_music_to_play, Toast.LENGTH_SHORT);
+            }
+        }
+    }
+
     //user
 
     public Music getCurrentMusic() {
         return currentMusic;
     }
 
-    public void setMusicListBackup(List<Music> musicListBackup) {
-        this.musicListBackup = musicListBackup;
+    public void setMusicList(List<Music> musicList) {
+        this.musicList = musicList;
     }
 
-    public List<Music> getMusicListBackup() {
-        return musicListBackup;
+    public List<Music> getMusicList() {
+        return musicList;
     }
 
     public Boolean isMusicListEmpty(){
-        return musicListBackup.isEmpty();
+        return musicList.isEmpty();
     }
 
     public void resetAllPlayer(){
@@ -658,10 +652,10 @@ public class GlobalApplication extends Application {
             updataThread.interrupt();
         }
         currentMusic = null;
-        music_pic = null;
-        music_lrc = null;
+        current_music_pic = null;
+        current_music_lrc = null;
         currentMusicIndexInMusicList = 0;
-        musicListBackup = null;
+        musicList = null;
         for (Map.Entry<Integer,View> i : minMusicPlayerList.entrySet()) {
             View view = i.getValue();
 
@@ -688,15 +682,15 @@ public class GlobalApplication extends Application {
 
 
             ImageView music_pic_view = player_content_view.get(0).findViewById(R.id.music_pic);
-            if (music_pic != null){
-                music_pic_view.setImageBitmap(music_pic);
+            if (current_music_pic != null){
+                music_pic_view.setImageBitmap(current_music_pic);
             }else {
                 music_pic_view.setImageResource(R.mipmap.default_music_pic);
             }
 
             LrcView music_lrc_view = player_content_view.get(1).findViewById(R.id.music_lrc);
-            if (music_lrc != null){
-                music_lrc_view.loadLrc(music_lrc);
+            if (current_music_lrc != null){
+                music_lrc_view.loadLrc(current_music_lrc);
             }else {
                 music_lrc_view.loadLrc("");
             }
@@ -719,13 +713,19 @@ public class GlobalApplication extends Application {
             TextView postion = musicPlayerPageView.findViewById(R.id.postion);
             postion.setText(R.string.zero_time);
         }
+        if (notificationPlayerView != null && playerNotificationManager != null){
+            notificationPlayerView.setImageViewBitmap(R.id.notice_pic, BitmapFactory.decodeResource(getResources(), R.mipmap.default_music_pic));
+            notificationPlayerView.setTextViewText(R.id.notice_music_name, getResources().getText(R.string.no_music_to_play));
+            notificationPlayerView.setImageViewResource(R.id.notice_music_start_and_stop, R.drawable.ic_play);
+            playerNotificationManager.notify(NOTICFY_ID, playerNotification);
+        }
     }
 
     public void setCurrentMusic(Music music){
         setCurrentMusic(music, true, true);
     }
 
-    public void setCurrentMusic(final Music music, final Boolean updataRecentList, final Boolean autoPlay){
+    public void setCurrentMusic(Music music, Boolean updataRecentList, Boolean autoPlay){
         setCurrentMusic(music, updataRecentList, autoPlay, 0);
     }
 
@@ -745,15 +745,15 @@ public class GlobalApplication extends Application {
                                 last_can_play_music = music;
 //                                last_can_play_music_url = (String) msg.obj;
                                 getMoreInformationOfMusic(currentMusic);
-                                player.seekTo(msec);
                                 initPlayerOnMusic();
                                 if (updataRecentList){
-                                    musicListBackup = RecentPlay.addRecentPlayMusic(getApplicationContext(),music);
+                                    musicList = RecentPlay.addRecentPlayMusic(getApplicationContext(),music);
                                 }
                                 currentMusicIndexInMusicList = RecentPlay.isPlayedRecently(getApplicationContext(), music.getId());
-                                if (autoPlay)
+                                if (autoPlay){
                                     musicPlay();
-                                else {
+                                    player.seekTo(msec);
+                                } else {
                                     int currentDuration = player.getDuration() / 1000;
                                     currentMusicDuration = ((currentDuration / 60) >= 10 ? String.valueOf(currentDuration / 60) : ("0" + (currentDuration / 60))) +
                                             ":" + ((currentDuration % 60)  >= 10 ? String.valueOf(currentDuration % 60) : ("0" + (currentDuration % 60)));
@@ -766,7 +766,7 @@ public class GlobalApplication extends Application {
                             player.setOnErrorListener((mp, what, extra) -> {
                                 Toast.makeText(getApplicationContext(), R.string.play_fail, Toast.LENGTH_SHORT).show();
                                 if (last_can_play_music != null){
-                                    setCurrentMusic(last_can_play_music, false, false, last_can_play_music_postion);
+                                    setCurrentMusic(last_can_play_music, false, true, last_can_play_music_postion);
                                 }
                                 if (onMusicChange != null){
                                     onMusicChange.OnFail();
@@ -796,7 +796,7 @@ public class GlobalApplication extends Application {
                         String id = music.getId();
                         String url = conn.getMusicPlayURL(id, music.getSource());
                         if (currentMusic == null || !id.equals(currentMusic.getId())){
-                            if (url != null){
+                            if (url != null && !url.equals("")){
                                 msg.what = REQUEST_MUSIC_URL;
                                 msg.arg1 = GetMusic.RESPOND_SUCCESS;
                                 msg.obj = url;
@@ -821,10 +821,10 @@ public class GlobalApplication extends Application {
                 super.handleMessage(msg);
                 if (msg.arg1 == GetMusic.RESPOND_SUCCESS ){
                     if (msg.what == REQUEST_MUSIC_PIC){
-                        music_pic = (Bitmap) msg.obj;
+                        current_music_pic = (Bitmap) msg.obj;
                         initPlayerOnMusic();
                     }else if (msg.what == REQUEST_MUSIC_LYRIC){
-                        music_lrc = (String) msg.obj;
+                        current_music_lrc = (String) msg.obj;
                         initPlayerOnMusic();
                     }
                 }else{
@@ -921,7 +921,6 @@ public class GlobalApplication extends Application {
             }
             @Override
             public void onStartTrackingTouch(SeekBar seekBar) {
-
             }
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
@@ -1020,7 +1019,5 @@ public class GlobalApplication extends Application {
     public void destroyMinMusicPlayer(int tag){
         minMusicPlayerList.remove(Integer.valueOf(tag));
     }
-
-
 
 }

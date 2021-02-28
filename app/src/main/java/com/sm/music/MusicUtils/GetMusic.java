@@ -575,7 +575,7 @@ public class GetMusic {
 //		System.out.println(getMusic.getMusicPlayPicUrl("1809286552","109951165605881639",0));
 //		System.out.println(getMusic.getMusicPlayURLByPages("我不对",0,1));
 //		String json = getMusic.getJSON("https://api.zhuolin.wang/api.php?types=search&count=20&source=tencent&pages=1&name=%E6%88%91%E4%B8%8D%E5%AF%B9");
-//		List<Music> musicList = getMusic.getMusicListBackup(json);
+//		List<Music> musicList = getMusic.getMusicList(json);
 //		System.out.println(musicList);
 //		//获得播放的requestMusicID的List
 //		List<String> requestMusicIDList = getMusic.requestMusicID(musicList);

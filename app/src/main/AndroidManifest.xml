@@ -33,15 +33,6 @@
             android:name=".Server.MusicPlayer"
             android:enabled="true"
             android:exported="true" >
-            <intent-filter>
-                <action android:name="android.media.browse.MediaBrowserService" />
-            </intent-filter>
-        </service>
-
-        <service
-            android:name=".Server.MusicPlayerBackup"
-            android:enabled="true"
-            android:exported="true" >
         </service>
 
         <activity android:name=".Activity.PlayerActivity" />

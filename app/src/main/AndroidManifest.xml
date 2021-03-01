@@ -2,11 +2,11 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.sm.music">
 
-    <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
-    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+    <uses-permission android:name="android.permission.INTERNET" android:required="true" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" android:required="true" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" android:required="true" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" android:required="true" />
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" android:required="false" />
 
     <application
         android:name=".GlobalApplication"

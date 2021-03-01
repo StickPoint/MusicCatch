@@ -2,7 +2,6 @@ package com.sm.music.Activity;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
 import android.Manifest;
@@ -11,6 +10,7 @@ import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.util.Log;
 import android.widget.Toast;
 
 import com.sm.music.GlobalApplication;
@@ -18,6 +18,8 @@ import com.sm.music.R;
 import com.sm.music.UIUtils.Util;
 
 public class WelcomeActivity extends AppCompatActivity {
+
+    private static final String LOG_TAG = "WelcomeActivityLog";
 
     private GlobalApplication globalApplication = null;
 
@@ -35,6 +37,7 @@ public class WelcomeActivity extends AppCompatActivity {
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
+                Log.i(LOG_TAG, "start check permissions");
                 askPermissions();
             }
         },500);
@@ -45,22 +48,31 @@ public class WelcomeActivity extends AppCompatActivity {
     public void askPermissions() {
         boolean isAllGranted = checkPermissionAllGranted(new String[] {
                 Manifest.permission.READ_EXTERNAL_STORAGE,
-                Manifest.permission.WRITE_EXTERNAL_STORAGE,
-                Manifest.permission.FOREGROUND_SERVICE
+                Manifest.permission.WRITE_EXTERNAL_STORAGE
 //                Manifest.permission.READ_PHONE_STATE
         });
         if (!isAllGranted) {
-            ActivityCompat.requestPermissions(this, new String[] {
+            Log.i(LOG_TAG, "start ask denied permissions");
+            requestPermissions(new String[] {
                 Manifest.permission.READ_EXTERNAL_STORAGE,
                 Manifest.permission.WRITE_EXTERNAL_STORAGE,
                 Manifest.permission.FOREGROUND_SERVICE
+
             }, WELCOME_ACTIVITY_PERMISSION_REQUEST_CODE);
+        }else {
+            Log.i(LOG_TAG, "all permissions granted");
+            Intent intent = new Intent(WelcomeActivity.this, MainActivity.class);
+            Log.i(LOG_TAG, "start MainActivity");
+            startActivity(intent);
+            overridePendingTransition(R.anim.welcome_alpha_in,R.anim.no_transfrom);
+            WelcomeActivity.this.finish();
         }
     }
 
     private boolean checkPermissionAllGranted(String[] permissions) {
         for (String permission : permissions) {
             if (ContextCompat.checkSelfPermission(this, permission) != PackageManager.PERMISSION_GRANTED) {
+                Log.i(LOG_TAG, "permission " + permission + " denied");
                 return false;
             }
         }
@@ -72,14 +84,17 @@ public class WelcomeActivity extends AppCompatActivity {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (requestCode == WELCOME_ACTIVITY_PERMISSION_REQUEST_CODE) {
             boolean isAllGranted = true;
-            for (int grant : grantResults) {
-                if (grant != PackageManager.PERMISSION_GRANTED) {
+            for (int i = 0; i < grantResults.length; i++) {
+                if (grantResults[i] != PackageManager.PERMISSION_GRANTED) {
+                    Log.i(LOG_TAG, permissions[i] + " permission are still denied");
                     isAllGranted = false;
                     break;
                 }
             }
             if (isAllGranted) {
+                Log.i(LOG_TAG, "all permissions granted");
                 Intent intent = new Intent(WelcomeActivity.this, MainActivity.class);
+                Log.i(LOG_TAG, "start MainActivity");
                 startActivity(intent);
                 overridePendingTransition(R.anim.welcome_alpha_in,R.anim.no_transfrom);
                 WelcomeActivity.this.finish();

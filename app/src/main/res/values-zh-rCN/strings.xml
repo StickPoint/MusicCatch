@@ -50,7 +50,7 @@
     <string name="remove_all">移除全部</string>
     <string name="back">Back</string>
     <string name="download_not_open">该功能暂未开放，不过目前并不影响下载功能，下载目录为/sdcard/StickPointDownload/文件夹下</string>
-    <string name="permissions_hint">打开读写权限以及前台运行权限，方可使用本软件</string>
+    <string name="permissions_hint">打开读写权限，方可使用本软件</string>
     <string name="play_fail">播放失败</string>
     <string name="download_cancel">下载取消</string>
     <string name="migu">咪咕音乐</string>

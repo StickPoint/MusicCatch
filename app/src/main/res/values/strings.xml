@@ -51,7 +51,7 @@
     <string name="download_not_open">This feature is not available, but it does not affect the Download function, the Download directory is /sdcard/StickPointDownload/ folder</string>
 
     <!-- TODO: Remove or change this placeholder text -->
-    <string name="permissions_hint">Open read and write permissions and foreground operation permissions, can use this software.</string>
+    <string name="permissions_hint">Open read and write permissions, can use this software.</string>
     <string name="play_fail">Play Failed</string>
 
     <!-- TODO: Remove or change this placeholder text -->

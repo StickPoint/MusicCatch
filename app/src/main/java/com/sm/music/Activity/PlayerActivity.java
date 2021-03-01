@@ -151,16 +151,16 @@ public class PlayerActivity extends AppCompatActivity {
         recentPlay.setOnRecentPlayDialogCloseListener(new OnRecentPlayDialogCloseListener() {
             @Override
             public void OnClose() {
+                Music c = globalApplication.getCurrentMusic();
+                if (sqlUtils.getFavMus(getApplicationContext(), c.getId() + c.getSource())){
+                    player_like.setChecked(true);
+                }else {
+                    player_like.setChecked(false);
+                }
 
                 globalApplication.setOnMusicChange(new OnMusicChange() {
                     @Override
                     public void OnComplete() {
-                        Music c = globalApplication.getCurrentMusic();
-                        if (sqlUtils.getFavMus(getApplicationContext(), c.getId() + c.getSource())){
-                            player_like.setChecked(true);
-                        }else {
-                            player_like.setChecked(false);
-                        }
                         Music currentMusic = globalApplication.getCurrentMusic();
                         if (sqlUtils.getFavMus(getApplicationContext(), currentMusic.getId() + currentMusic.getSource())){
                             player_like.setChecked(true);

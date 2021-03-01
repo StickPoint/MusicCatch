@@ -8,8 +8,8 @@
 
     <ImageView
         android:id="@+id/music_pic"
-        android:layout_width="250dp"
-        android:layout_height="250dp"
+        android:layout_width="350dp"
+        android:layout_height="350dp"
         android:background="@color/foreground"
         android:contentDescription="@string/no_picture"
         android:elevation="@dimen/shadow"

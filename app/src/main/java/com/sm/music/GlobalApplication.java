@@ -581,6 +581,7 @@ public class GlobalApplication extends Application {
     private class MusicPlayerPagerAdapter extends PagerAdapter{
 
         MusicPlayerPagerAdapter(Context context){
+            player_content_view.clear();
             player_content_view.add(View.inflate(context, R.layout.player_pic_content, null));
             player_content_view.add(View.inflate(context, R.layout.player_lrc_content, null));
         }

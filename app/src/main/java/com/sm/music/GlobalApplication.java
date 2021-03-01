@@ -11,6 +11,8 @@ import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.BlurMaskFilter;
+import android.graphics.ColorFilter;
 import android.media.MediaPlayer;
 import android.os.Build;
 import android.os.Handler;
@@ -27,10 +29,15 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.StyleRes;
 import androidx.core.app.NotificationCompat;
 import androidx.viewpager.widget.PagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
+import com.bumptech.glide.request.Request;
+import com.bumptech.glide.request.RequestOptions;
 import com.sm.music.Activity.PlayerActivity;
 import com.sm.music.Bean.Music;
 import com.sm.music.Listener.OnMusicChange;
@@ -48,7 +55,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
+import jp.wasabeef.glide.transformations.BlurTransformation;
 import me.wcy.lrcview.LrcView;
+
+import static com.bumptech.glide.request.RequestOptions.bitmapTransform;
 
 
 public class GlobalApplication extends Application {
@@ -184,7 +194,7 @@ public class GlobalApplication extends Application {
 
         if (musicPlayerPageView != null) {
             ImageView StartAndStop = musicPlayerPageView.findViewById(R.id.StartAndStop);
-            StartAndStop.setImageResource(R.drawable.ic_stop);
+            StartAndStop.setImageResource(R.drawable.ic_stop_dark);
         }
         if (playerNotificationManager != null) {
             initNotificationPlayerOnMusic();
@@ -207,7 +217,7 @@ public class GlobalApplication extends Application {
 
         if (musicPlayerPageView != null) {
             ImageView StartAndStop = musicPlayerPageView.findViewById(R.id.StartAndStop);
-            StartAndStop.setImageResource(R.drawable.ic_play);
+            StartAndStop.setImageResource(R.drawable.ic_play_dark);
         }
         if (playerNotificationManager != null) {
             initNotificationPlayerOnMusic();
@@ -358,9 +368,9 @@ public class GlobalApplication extends Application {
         if (musicPlayerPageView != null && currentMusic != null){
             ImageView StartAndStop = musicPlayerPageView.findViewById(R.id.StartAndStop);
             if (isPlaying()){
-                StartAndStop.setImageResource(R.drawable.ic_stop);
+                StartAndStop.setImageResource(R.drawable.ic_stop_dark);
             }else {
-                StartAndStop.setImageResource(R.drawable.ic_play);
+                StartAndStop.setImageResource(R.drawable.ic_play_dark);
             }
 
             TextView player_musicName = musicPlayerPageView.findViewById(R.id.player_musicName);
@@ -407,11 +417,17 @@ public class GlobalApplication extends Application {
             music_seekBar.setMax(player.getDuration());
             music_seekBar.setProgress(player.getCurrentPosition());
 
+            ImageView pic_bg = musicPlayerPageView.findViewById(R.id.pic_bg);
             ImageView music_pic_view = player_content_view.get(0).findViewById(R.id.music_pic);
             if (current_music_pic != null){
                 music_pic_view.setImageBitmap(current_music_pic);
+                Glide.with(musicPlayerPageView)
+                        .load(current_music_pic)
+                        .apply(RequestOptions.bitmapTransform(new BlurTransformation(25,2)))
+                        .into(pic_bg);
             }else {
                 music_pic_view.setImageResource(R.mipmap.default_music_pic);
+                pic_bg.setImageResource(R.mipmap.default_pic_bg);
             }
 
 
@@ -431,7 +447,7 @@ public class GlobalApplication extends Application {
         }else {
             b = BitmapFactory.decodeResource(getResources(), R.mipmap.default_music_pic);
         }
-        String singer = getResources().getString(R.string.singer);
+        String singer = "";
         if (currentMusic != null){
             for (int j = 0; j < currentMusic.getArtist().length; j++) {
                 if (j == 0) {
@@ -440,6 +456,8 @@ public class GlobalApplication extends Application {
                     singer += "/" + currentMusic.getArtist()[j];
                 }
             }
+        }else {
+            singer = getResources().getString(R.string.singer);
         }
         String name = getResources().getString(R.string.no_music_to_play);
         if (currentMusic != null){
@@ -700,10 +718,12 @@ public class GlobalApplication extends Application {
             TextView postion = musicPlayerPageView.findViewById(R.id.postion);
             postion.setText(R.string.zero_time);
         }
-        if (notificationPlayerView != null && playerNotificationManager != null){
-            playerNotificationBuilder.setLargeIcon(BitmapFactory.decodeResource(getResources(), R.mipmap.default_music_pic));
-            playerNotificationBuilder.setContentTitle(getResources().getString(R.string.no_music_to_play));
-            playerNotificationManager.notify(NOTICFY_ID, playerNotificationBuilder.build());
+        if (playerNotificationManager != null){
+            Bitmap b = BitmapFactory.decodeResource(getResources(), R.mipmap.default_music_pic);
+            String singer = getResources().getString(R.string.singer);
+            String name = getResources().getString(R.string.no_music_to_play);
+            playerNotificationManager.notify(NOTICFY_ID,
+                    MusicPlayer.getPlayerNotificationBuilder(getApplicationContext(),b,name,singer, false).build());
         }
     }
 

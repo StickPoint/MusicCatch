@@ -18,6 +18,9 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
+        <activity android:name=".Activity.IntentActivity"
+            android:parentActivityName=".Activity.MainActivity"
+            ></activity>
         <activity android:name=".Activity.WelcomeActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -32,14 +35,14 @@
         <service
             android:name=".Server.MusicPlayer"
             android:enabled="true"
-            android:exported="true" >
-        </service>
+            android:exported="true"></service>
 
         <activity android:name=".Activity.PlayerActivity" />
         <activity
             android:name=".Activity.MainActivity"
-            android:configChanges="uiMode">
-        </activity>
+            android:configChanges="uiMode"></activity>
+
+
     </application>
 
 </manifest>

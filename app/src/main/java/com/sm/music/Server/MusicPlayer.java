@@ -18,7 +18,10 @@ import android.widget.RemoteViews;
 import android.widget.Toast;
 
 import androidx.core.app.NotificationCompat;
+import androidx.core.app.TaskStackBuilder;
 
+import com.sm.music.Activity.IntentActivity;
+import com.sm.music.Activity.PlayerActivity;
 import com.sm.music.GlobalApplication;
 import com.sm.music.R;
 
@@ -54,12 +57,13 @@ public class MusicPlayer extends Service {
         globalApplication = (GlobalApplication) getApplication();
         player = new MediaPlayer();
 
+        NotificationPlayerBroadcastReceiver notificationPlayerBroadcastReceiver = new NotificationPlayerBroadcastReceiver();
 
         IntentFilter notificationPlayerBroadcastFilter = new IntentFilter();
         notificationPlayerBroadcastFilter.addAction(NotificationPlayerBroadcastReceiver.ACTION_PLAY_AND_STOP);
         notificationPlayerBroadcastFilter.addAction(NotificationPlayerBroadcastReceiver.ACTION_NEXT);
         notificationPlayerBroadcastFilter.addAction(NotificationPlayerBroadcastReceiver.ACTION_PREV);
-        NotificationPlayerBroadcastReceiver notificationPlayerBroadcastReceiver = new NotificationPlayerBroadcastReceiver();
+
         registerReceiver(notificationPlayerBroadcastReceiver, notificationPlayerBroadcastFilter);
 
 
@@ -88,26 +92,49 @@ public class MusicPlayer extends Service {
     }
 
     public static NotificationCompat.Builder getPlayerNotificationBuilder(Context context, Bitmap pic, String title, String text, Boolean isPlaying){
+//        Intent resultIntent = new Intent(context, IntentActivity.class);
+//        TaskStackBuilder stackBuilder = TaskStackBuilder.create(context);
+//        stackBuilder.addNextIntentWithParentStack(resultIntent);
+//        PendingIntent contentIntent = stackBuilder.getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT);
+//        Intent in = new Intent(context, context.getClass());
+//        in.setAction(Intent.ACTION_MAIN);
+//        in.addCategory(Intent.CATEGORY_LAUNCHER);
+//        PendingIntent contentIntent = PendingIntent.getActivity(context, 0, in,PendingIntent.FLAG_UPDATE_CURRENT);
+
+//        Intent resultIntent = new Intent(context, PlayerActivity.class);
+//        PendingIntent contentIntent = PendingIntent.getActivity(context,0, resultIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+
+        PendingIntent contentIntent = PendingIntent.getActivity(context,0, new Intent(), PendingIntent.FLAG_UPDATE_CURRENT);
+
+        NotificationCompat.Action action_prev = new NotificationCompat.Action(R.drawable.ic_min_prev, "next",
+                PendingIntent.getBroadcast(context, 0, new Intent(NotificationPlayerBroadcastReceiver.ACTION_PREV), PendingIntent.FLAG_UPDATE_CURRENT));
+        NotificationCompat.Action action_play_and_stop = new NotificationCompat.Action(isPlaying ? R.drawable.ic_min_stop : R.drawable.ic_min_play, "PlayAndStop",
+                PendingIntent.getBroadcast(context, 0, new Intent(MusicPlayer.NotificationPlayerBroadcastReceiver.ACTION_PLAY_AND_STOP), PendingIntent.FLAG_UPDATE_CURRENT));
+        NotificationCompat.Action action_next = new NotificationCompat.Action(R.drawable.ic_min_next, "next",
+                PendingIntent.getBroadcast(context, 0, new Intent(NotificationPlayerBroadcastReceiver.ACTION_NEXT), PendingIntent.FLAG_UPDATE_CURRENT));
+
+        androidx.media.app.NotificationCompat.MediaStyle mediaStyle = new androidx.media.app.NotificationCompat.MediaStyle()
+                .setShowActionsInCompactView(1);
+
         return new NotificationCompat.Builder(context, CHANNEL_ID)
-                .setStyle(new androidx.media.app.NotificationCompat.MediaStyle())
-                .setSmallIcon(R.mipmap.ic_launcher_foreground)
+                .setStyle(mediaStyle)
+                .setSmallIcon(R.drawable.ic_logo)
                 .setContentTitle(title)
                 .setContentText(text)
                 .setLargeIcon(pic)
-                .addAction(R.drawable.ic_min_prev, "prev",
-                        PendingIntent.getBroadcast(context, 0, new Intent(NotificationPlayerBroadcastReceiver.ACTION_PREV), PendingIntent.FLAG_UPDATE_CURRENT))
-                .addAction(isPlaying ? R.drawable.ic_min_stop : R.drawable.ic_min_play, "PlayAndStop",
-                        PendingIntent.getBroadcast(context, 0, new Intent(MusicPlayer.NotificationPlayerBroadcastReceiver.ACTION_PLAY_AND_STOP), PendingIntent.FLAG_UPDATE_CURRENT))
-                .addAction(R.drawable.ic_min_next, "next",
-                        PendingIntent.getBroadcast(context, 0, new Intent(NotificationPlayerBroadcastReceiver.ACTION_PREV), PendingIntent.FLAG_UPDATE_CURRENT))
+
+                .addAction(action_prev)
+                .addAction(action_play_and_stop)
+                .addAction(action_next)
                 .setPriority(Notification.PRIORITY_MAX)
-                .setDefaults(Notification.FLAG_ONGOING_EVENT)
+                .setDefaults(Notification.FLAG_FOREGROUND_SERVICE)
                 .setContentIntent(PendingIntent.getActivity(context, 0, new Intent(), PendingIntent.FLAG_NO_CREATE))
                 .setOngoing(true)
                 .setShowWhen(false)
                 .setCategory(NotificationCompat.CATEGORY_SERVICE)
                 .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
-                .setChannelId(CHANNEL_ID);
+                .setChannelId(CHANNEL_ID)
+                .setContentIntent(contentIntent);
     }
 
     public class musicBinder extends Binder {

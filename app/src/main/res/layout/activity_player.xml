@@ -9,6 +9,19 @@
     android:orientation="vertical"
     tools:context=".Activity.PlayerActivity">
 
+    <ImageView
+        android:id="@+id/pic_bg"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scaleType="centerCrop"
+        app:srcCompat="@mipmap/default_pic_bg" />
+
+    <ImageView
+        android:id="@+id/pic_bg_mask"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:srcCompat="@color/normal" />
+
     <LinearLayout
         android:id="@+id/player"
         android:layout_width="match_parent"
@@ -18,17 +31,16 @@
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/playerTop"
             android:layout_width="match_parent"
-            android:layout_height="60dp"
-            android:background="@color/colorPrimary">
+            android:layout_height="80dp"
+            android:background="@color/transparent">
 
             <ImageView
                 android:id="@+id/playerTop_close"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
-                android:layout_marginLeft="16dp"
+                android:layout_marginTop="16dp"
                 android:contentDescription="@string/down"
-                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 app:srcCompat="@drawable/ic_down" />
@@ -38,7 +50,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="64dp"
-                android:layout_marginTop="16dp"
+                android:layout_marginTop="24dp"
                 android:layout_marginEnd="60dp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -58,7 +70,7 @@
                         android:maxLines="1"
                         android:text="@string/musicName"
                         android:textColor="@color/textWhite"
-                        android:textSize="@dimen/normal" />
+                        android:textSize="@dimen/large" />
                 </LinearLayout>
             </com.sm.music.Override.UnclickableHorizontalScrollView>
 
@@ -111,7 +123,7 @@
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/player_control"
             android:layout_width="match_parent"
-            android:layout_height="180dp">
+            android:layout_height="170dp">
 
             <LinearLayout
                 android:layout_width="0dp"
@@ -131,7 +143,7 @@
                     android:background="?android:attr/selectableItemBackground"
                     android:button="@null"
                     android:clickable="true"
-                    android:drawableTop="@drawable/more_like_checked"
+                    android:drawableTop="@drawable/more_like_checked_dark"
                     android:padding="5dp"
                     android:visibility="visible" />
 
@@ -145,7 +157,7 @@
                     android:clickable="true"
                     android:padding="5dp"
                     android:visibility="visible"
-                    app:srcCompat="@drawable/ic_local" />
+                    app:srcCompat="@drawable/ic_local_dark" />
 
                 <ImageView
                     android:id="@+id/player_share"
@@ -157,7 +169,7 @@
                     android:clickable="true"
                     android:padding="5dp"
                     android:visibility="visible"
-                    app:srcCompat="@drawable/ic_share" />
+                    app:srcCompat="@drawable/ic_share_dark" />
 
                 <ImageView
                     android:id="@+id/player_copy"
@@ -169,7 +181,7 @@
                     android:clickable="true"
                     android:padding="5dp"
                     android:visibility="visible"
-                    app:srcCompat="@drawable/ic_copy" />
+                    app:srcCompat="@drawable/ic_copy_dark" />
             </LinearLayout>
 
             <LinearLayout
@@ -191,7 +203,7 @@
                     android:layout_marginRight="10dp"
                     android:layout_weight="1"
                     android:contentDescription="@string/previous"
-                    app:srcCompat="@drawable/ic_prev" />
+                    app:srcCompat="@drawable/ic_prev_dark" />
 
                 <ImageView
                     android:id="@+id/StartAndStop"
@@ -201,7 +213,7 @@
                     android:layout_marginEnd="15dp"
                     android:layout_weight="1"
                     android:contentDescription="@string/play"
-                    app:srcCompat="@drawable/ic_stop" />
+                    app:srcCompat="@drawable/ic_stop_dark" />
 
                 <ImageView
                     android:id="@+id/music_next"
@@ -211,7 +223,7 @@
                     android:layout_marginRight="10dp"
                     android:layout_weight="1"
                     android:contentDescription="@string/next"
-                    app:srcCompat="@drawable/ic_next" />
+                    app:srcCompat="@drawable/ic_next_dark" />
 
             </LinearLayout>
 
@@ -219,8 +231,10 @@
                 android:id="@+id/music_seekBar"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="24dp"
+                android:layout_marginBottom="16dp"
                 android:background="@color/transparent"
+                android:max="100"
+                android:progress="10"
                 android:progressDrawable="@drawable/player_page_seek_bar"
                 android:splitTrack="false"
                 android:thumb="@drawable/player_page_thumb"
@@ -233,9 +247,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
-                android:fontFamily="@font/fang_zheng_shu_song"
                 android:text="@string/zero_time"
-                android:textColor="@color/textHint"
+                android:textColor="@color/textWhite"
                 android:textSize="@dimen/small"
                 app:layout_constraintBaseline_toBaselineOf="@+id/duration"
                 app:layout_constraintStart_toStartOf="parent" />
@@ -245,9 +258,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="16dp"
-                android:fontFamily="@font/fang_zheng_shu_song"
                 android:text="@string/zero_time"
-                android:textColor="@color/textHint"
+                android:textColor="@color/textWhite"
                 android:textSize="@dimen/small"
                 app:layout_constraintBottom_toBottomOf="@+id/music_seekBar"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -262,7 +274,7 @@
                 app:layout_constraintBottom_toBottomOf="@+id/playerCon_container"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="@+id/playerCon_container"
-                app:srcCompat="@drawable/ic_list" />
+                app:srcCompat="@drawable/ic_list_dark" />
 
             <ImageView
                 android:id="@+id/music_loop_control"

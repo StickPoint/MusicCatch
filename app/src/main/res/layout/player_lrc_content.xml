@@ -13,17 +13,18 @@
         android:layout_marginEnd="10dp"
         android:fontFamily="@font/fang_zheng_shu_song"
         app:lrcAnimationDuration="500"
-        app:lrcCurrentTextColor="@color/colorPrimary"
+        app:lrcCurrentTextColor="@color/colorPrimaryDark"
         app:lrcDividerHeight="15dp"
         app:lrcLabel="@string/no_lyric"
-        app:lrcNormalTextColor="@color/textHint"
+        app:lrcNormalTextColor="@color/background"
         app:lrcNormalTextSize="@dimen/small"
         app:lrcPadding="40dp"
         app:lrcTextGravity="center"
         app:lrcTextSize="@dimen/large"
-        app:lrcTimeTextColor="@color/colorPrimary"
+        app:lrcTimeTextColor="@color/textWhite"
         app:lrcTimeTextSize="@dimen/small"
         app:lrcTimelineColor="@color/transparent"
         app:lrcTimelineHeight="@dimen/normal"
-        app:lrcTimelineTextColor="@color/colorPrimary"></me.wcy.lrcview.LrcView>
+        app:lrcPlayDrawable="@drawable/ic_seek_to"
+        app:lrcTimelineTextColor="@color/textWhite"></me.wcy.lrcview.LrcView>
 </FrameLayout>

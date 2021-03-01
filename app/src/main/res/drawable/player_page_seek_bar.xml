@@ -3,16 +3,16 @@
 
     <item android:id="@android:id/background">
         <shape android:shape="line">
-            <stroke android:width="4dp" android:color="@color/background"/>
-            <corners android:radius="2dp"/>
+            <stroke android:width="2dp" android:color="@color/normal"/>
+            <corners android:radius="1dp"/>
         </shape>
     </item>
 
     <item android:id="@android:id/progress">
         <clip>
             <shape android:shape="line">
-                <stroke android:width="4dp" android:color="@color/colorPrimary"/>
-                <corners android:radius="2dp"/>
+                <stroke android:width="2dp" android:color="@color/colorPrimaryDark"/>
+                <corners android:radius="1dp"/>
             </shape>
         </clip>
     </item>

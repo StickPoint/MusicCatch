@@ -22,8 +22,8 @@ android {
         applicationId "com.sm.music"
         minSdkVersion 24
         targetSdkVersion 29
-        versionCode 2
-        versionName "1.1.1"
+        versionCode 3
+        versionName "1.5.3"
         ndk.abiFilters 'armeabi-v7a', 'arm64-v8a', 'x86', 'x86_64'
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         signingConfig signingConfigs.release

@@ -37,25 +37,25 @@ public class WelcomeActivity extends AppCompatActivity {
             public void run() {
                 askPermissions();
             }
-        },1000);
+        },500);
 
     }
 
 
     public void askPermissions() {
-//        boolean isAllGranted = checkPermissionAllGranted(new String[] {
-//                Manifest.permission.READ_EXTERNAL_STORAGE,
-//                Manifest.permission.WRITE_EXTERNAL_STORAGE,
-//                Manifest.permission.FOREGROUND_SERVICE
+        boolean isAllGranted = checkPermissionAllGranted(new String[] {
+                Manifest.permission.READ_EXTERNAL_STORAGE,
+                Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                Manifest.permission.FOREGROUND_SERVICE
 //                Manifest.permission.READ_PHONE_STATE
-//        });
-//        if (!isAllGranted) {
+        });
+        if (!isAllGranted) {
             ActivityCompat.requestPermissions(this, new String[] {
                 Manifest.permission.READ_EXTERNAL_STORAGE,
                 Manifest.permission.WRITE_EXTERNAL_STORAGE,
                 Manifest.permission.FOREGROUND_SERVICE
             }, WELCOME_ACTIVITY_PERMISSION_REQUEST_CODE);
-//        }
+        }
     }
 
     private boolean checkPermissionAllGranted(String[] permissions) {

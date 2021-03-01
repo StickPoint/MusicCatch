@@ -107,24 +107,47 @@ public class Util {
 //    }
 
 
+//    public static  boolean checkDeviceHasNavigationBar(Activity activity){
+//        boolean menu = ViewConfiguration.get(activity).hasPermanentMenuKey();
+//        boolean back = KeyCharacterMap.deviceHasKey(KeyEvent.KEYCODE_BACK);
+//        if (menu || back) {
+//            ViewGroup vp = (ViewGroup) activity.getWindow().getDecorView();
+//            if (vp != null) {
+//                for (int i = 0; i < vp.getChildCount(); i++) {
+//                    vp.getChildAt(i).getContext().getPackageName();
+//                    if (vp.getChildAt(i).getId()!= NO_ID && NAVIGATION.equals(activity.getResources().getResourceEntryName(vp.getChildAt(i).getId()))) {
+//                        return true;
+//                    }
+//                }
+//            }
+//            return true;
+//        } else {
+//            ViewGroup vp = (ViewGroup) activity.getWindow().getDecorView();
+//            if (vp != null) {
+//                for (int i = 0; i < vp.getChildCount(); i++) {
+//                    vp.getChildAt(i).getContext().getPackageName();
+//                    if (vp.getChildAt(i).getId()!= NO_ID && NAVIGATION.equals(activity.getResources().getResourceEntryName(vp.getChildAt(i).getId()))) {
+//                        return true;
+//                    }
+//                }
+//            }
+//            return false;
+//        }
+//    }
+
     public static  boolean checkDeviceHasNavigationBar(Activity activity){
-        boolean menu = ViewConfiguration.get(activity).hasPermanentMenuKey();
-        boolean back = KeyCharacterMap.deviceHasKey(KeyEvent.KEYCODE_BACK);
-        if (menu || back) {
-            return true;
-        } else {
-            ViewGroup vp = (ViewGroup) activity.getWindow().getDecorView();
-            if (vp != null) {
-                for (int i = 0; i < vp.getChildCount(); i++) {
-                    vp.getChildAt(i).getContext().getPackageName();
-                    if (vp.getChildAt(i).getId()!= NO_ID && NAVIGATION.equals(activity.getResources().getResourceEntryName(vp.getChildAt(i).getId()))) {
-                        return true;
-                    }
+        ViewGroup vp = (ViewGroup) activity.getWindow().getDecorView();
+        if (vp != null) {
+            for (int i = 0; i < vp.getChildCount(); i++) {
+                vp.getChildAt(i).getContext().getPackageName();
+                if (vp.getChildAt(i).getId()!= NO_ID && NAVIGATION.equals(activity.getResources().getResourceEntryName(vp.getChildAt(i).getId()))) {
+                    return true;
                 }
             }
-            return false;
         }
+        return false;
     }
+
 
     static public boolean isLightColor(@ColorInt int color) {
         return ColorUtils.calculateLuminance(color) >= 0.5;

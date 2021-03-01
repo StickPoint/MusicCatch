@@ -29,7 +29,7 @@
     <string name="setting">设置</string>
     <string name="network_wrong">无法连接到服务器，请检查您的网络设置</string>
     <string name="to">-</string>
-    <string name="introduce">欢迎使用顶点音乐，全网音乐免费下载，立即开始 -> github</string>
+    <string name="introduce">欢迎使用顶点音乐，全网音乐免费下载，立即开始 -> https://stickpoint.github.io/ddmsuic.github.io/</string>
     <string name="copy_introduce">已将歌曲信息复制到剪切板</string>
     <string name="cancel">取消</string>
     <string name="no_search_input">请在搜索框中输入内容</string>

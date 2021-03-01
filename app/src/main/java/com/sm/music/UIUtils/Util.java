@@ -4,10 +4,12 @@ import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Point;
 import android.os.Build;
 import android.os.Handler;
 import android.os.Message;
 import android.util.DisplayMetrics;
+import android.view.Display;
 import android.view.KeyCharacterMap;
 import android.view.KeyEvent;
 import android.view.ViewConfiguration;
@@ -83,27 +85,45 @@ public class Util {
         return (int) (pxValue / scale + 0.5f);
     }
 
-//    static public boolean checkDeviceHasNavigationBar(Context context) {
-//        boolean hasMenuKey = ViewConfiguration.get(context).hasPermanentMenuKey();
-//        boolean hasBackKey = KeyCharacterMap.deviceHasKey(KeyEvent.KEYCODE_BACK);
-//        if (!hasMenuKey && !hasBackKey) {
-//            return true;
+//    static public boolean checkDeviceHasNavigationBar(Activity activity) {
+//        WindowManager windowManager = activity.getWindowManager();
+//        Display d = windowManager.getDefaultDisplay();
+//
+//        DisplayMetrics realDisplayMetrics = new DisplayMetrics();
+//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+//            d.getRealMetrics(realDisplayMetrics);
 //        }
-//        return false;
+//
+//        int realHeight = realDisplayMetrics.heightPixels;
+//        int realWidth = realDisplayMetrics.widthPixels;
+//
+//        DisplayMetrics displayMetrics = new DisplayMetrics();
+//        d.getMetrics(displayMetrics);
+//
+//        int displayHeight = displayMetrics.heightPixels;
+//        int displayWidth = displayMetrics.widthPixels;
+//
+//        return (realWidth - displayWidth) > 0 || (realHeight - displayHeight) > 0;
 //    }
 
 
     public static  boolean checkDeviceHasNavigationBar(Activity activity){
-        ViewGroup vp = (ViewGroup) activity.getWindow().getDecorView();
-        if (vp != null) {
-            for (int i = 0; i < vp.getChildCount(); i++) {
-                vp.getChildAt(i).getContext().getPackageName();
-                if (vp.getChildAt(i).getId()!= NO_ID && NAVIGATION.equals(activity.getResources().getResourceEntryName(vp.getChildAt(i).getId()))) {
-                    return true;
+        boolean menu = ViewConfiguration.get(activity).hasPermanentMenuKey();
+        boolean back = KeyCharacterMap.deviceHasKey(KeyEvent.KEYCODE_BACK);
+        if (menu || back) {
+            return true;
+        } else {
+            ViewGroup vp = (ViewGroup) activity.getWindow().getDecorView();
+            if (vp != null) {
+                for (int i = 0; i < vp.getChildCount(); i++) {
+                    vp.getChildAt(i).getContext().getPackageName();
+                    if (vp.getChildAt(i).getId()!= NO_ID && NAVIGATION.equals(activity.getResources().getResourceEntryName(vp.getChildAt(i).getId()))) {
+                        return true;
+                    }
                 }
             }
+            return false;
         }
-        return false;
     }
 
     static public boolean isLightColor(@ColorInt int color) {

@@ -21,3 +21,11 @@
 ## 联系我们
 
 &emsp;&emsp;stickpoint@163.com
+
+
+
+## 许可 & 其它
+
+此项目的许可证为 [GPLv3](https://github.com/StickPoint/MusicCatch/blob/master/LICENSE)
+
+请在 [Github](https://github.com/StickPoint/MusicCatch) 上星标此项目，发现相关问题请提交 [ISSUE](https://github.com/StickPoint/MusicCatch/issues/new)

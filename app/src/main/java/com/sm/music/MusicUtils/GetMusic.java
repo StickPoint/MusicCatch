@@ -1,6 +1,7 @@
 package com.sm.music.MusicUtils;
 
 import com.alibaba.fastjson.JSONObject;
+import com.sm.music.Bean.KuwoMus;
 import com.sm.music.Bean.Music;
 import com.sm.music.Bean.RecMusic;
 import org.apache.commons.lang3.StringEscapeUtils;
@@ -38,6 +39,12 @@ public class GetMusic {
 	public static final int MUSIC_SOURCE_KUGOU = 2;
 
 	public static final int MUSIC_SOURCE_MIGU = 3;
+
+	public static final String REQUEST_URL_SEARCH_KUWO="http://music.dwh99.cn/api/search/?name=";
+
+	public static final String REQUEST_URL_PLAY_KUWO = "http://music.dwh99.cn/api/mp3/?rid=";
+
+	public static final String REQUEST_URL_LYRIC_KUWO = "http://www.dwh99.cn:8080/api/lrc/?rid=";
 
 	public static final String REQUEST_URL_URL = "https://api.zhuolin.wang/api.php?types=url";
 
@@ -97,7 +104,11 @@ public class GetMusic {
 
 	private List<String> requestMusicURL_Lyric;
 
+	private List<String> kuWoMusPlayUrl;
+
 	private List<RecMusic> recMusicList;
+
+	private List<KuwoMus> kuWoMusicList;
 
 	private List<Music> recMusList;
 
@@ -562,6 +573,86 @@ public class GetMusic {
 		String json = getMusicPlayJson(musicLyric);
 		return StringEscapeUtils.unescapeJava(json);
 	}
+//-------------------------------酷我-----------音乐------------特殊---------------------------------------------------------------
+
+	//TODO 酷我音乐是可以下载周杰伦的音乐的借口哦，所以会特殊一点，所有付费的都可以下载
+	public List<Music> getKuWoMusicListByPage(String musicName,int source,int pageIndex) throws Exception {
+		String reqUrl = REQUEST_URL_SEARCH_KUWO + musicName + "&page=" + pageIndex;
+		//拿到最终的JSON
+		String json = tansToZh(getJSON(reqUrl));
+		JSONObject jsonObject = JSONObject.parseObject(json);
+		String playlist = jsonObject.getString("data");
+		kuWoMusicList = JSONObject.parseArray(playlist, KuwoMus.class);
+		List<Music> recMusicListByPages = new ArrayList<>();
+		for (int i = 30 * pageIndex; i < 30 * (1 + pageIndex); i++) {
+			Music music = new Music();
+			music.setId(kuWoMusicList.get(i).getRid());
+			music.setAlbum(kuWoMusicList.get(i).getAlbum());
+			music.setName(kuWoMusicList.get(i).getMusic());
+			music.setSource("kuwo");
+			music.setArtist(new String[]{kuWoMusicList.get(i).getPeople()});
+			music.setPic_id(kuWoMusicList.get(i).getRid());
+			music.setLyric_id(kuWoMusicList.get(i).getRid());
+			music.setUrl_id(kuWoMusicList.get(i).getRid());
+			recMusicListByPages.add(music);
+		}
+		return recMusicListByPages;
+	}
+
+	/**
+	 * 传入整页面的List<Music>  最后返回这一页的播放链接
+	 *     </>
+	 * @param KuWoMusicList
+	 * @return
+	 * @throws Exception
+	 */
+	public List<String> getKuWoMusPlayUrl(List<Music> KuWoMusicList) throws Exception {
+		kuWoMusPlayUrl = new ArrayList<>();
+		for (Music kuwoMus : KuWoMusicList) {
+			String json = getJSON(REQUEST_URL_PLAY_KUWO+kuwoMus.getUrl_id());
+			JSONObject jsonObject = JSONObject.parseObject(json);
+			String playUrl = jsonObject.getString("url");
+			kuWoMusPlayUrl.add(playUrl);
+		}
+		return kuWoMusPlayUrl;
+	}
+
+	/**
+	 * 返回单条酷我音乐的播放地址
+	 * @param kuWoMus
+	 * @return
+	 * @throws Exception
+	 */
+	public String getKuWoMusPlayUrl(Music kuWoMus) throws Exception {
+		String json = getJSON(REQUEST_URL_PLAY_KUWO+kuWoMus.getUrl_id());
+		JSONObject jsonObject = JSONObject.parseObject(json);
+		return jsonObject.getString("url");
+	}
+
+	/** 获得单条音乐的歌词
+	 * @param kuWoMus
+	 * @return
+	 * @throws Exception
+	 */
+	public String getKuWoLyricUrl(Music kuWoMus)throws Exception{
+		JSONObject jsonObject = JSONObject.parseObject(getJSON(REQUEST_URL_LYRIC_KUWO+kuWoMus.getUrl_id()));
+		return jsonObject.toString();
+	}
+	/**
+	 * 将Unicode编码转为中文
+	 * @param str
+	 * @return
+	 */
+	public static String tansToZh(String str) {
+		Pattern pattern = Pattern.compile("(\\\\u(\\p{XDigit}{4}))");
+		Matcher matcher = pattern.matcher(str);
+		char ch;
+		while (matcher.find()) {
+			ch = (char) Integer.parseInt(matcher.group(2), 16);
+			str = str.replace(matcher.group(1), ch+"" );
+		}
+		return str;
+	}
 
 	/**
 	 * 测试方法
@@ -570,7 +661,9 @@ public class GetMusic {
 	 */
 	public static void main(String[] args) throws Exception {
 		GetMusic getMusic =new GetMusic();
-		System.out.println(getMusic.getRecMusListByPages(String.valueOf(MUSIC_PLAY_LIST_1), 1));
+//		System.out.println(getMusic.getKuWoMusicListByPage("周杰伦", 0, 0));
+		System.out.println(getMusic.getKuWoMusPlayUrl(getMusic.getKuWoMusicListByPage("周杰伦", 0, 0)));
+//		System.out.println(getMusic.getRecMusListByPages(String.valueOf(MUSIC_PLAY_LIST_1), 1));
 //		System.out.println(getMusic.getMusicPlayListCover(MUSIC_PLAY_LIST_1));
 //		System.out.println(getMusic.getMusicPlayPicUrl("1809286552","109951165605881639",0));
 //		System.out.println(getMusic.getMusicPlayURLByPages("我不对",0,1));

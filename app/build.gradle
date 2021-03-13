@@ -9,12 +9,6 @@ android {
             keyPassword 'legendyc&fntp123456'
             keyAlias = 'ddmusic'
         }
-        debug {
-            storeFile file('D:\\ddmusic_app_key\\dd.jks')
-            storePassword 'legendyc&fntp123456'
-            keyPassword 'legendyc&fntp123456'
-            keyAlias = 'ddmusic'
-        }
     }
     compileSdkVersion 29
     buildToolsVersion "29.0.3"
@@ -56,6 +50,7 @@ dependencies {
     implementation 'androidx.appcompat:appcompat:1.2.0'
     implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
+    implementation files('src\\main\\lib\\open_sdk_3.5.2.152_r9e04b1c_lite.jar')
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'androidx.test.ext:junit:1.1.0'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.1.1'

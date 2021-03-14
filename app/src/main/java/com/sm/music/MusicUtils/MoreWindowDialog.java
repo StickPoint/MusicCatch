@@ -135,6 +135,7 @@ public class MoreWindowDialog extends DialogFragment {
             @Override
             public void onClick(View v) {
                 //TODO: to share music
+
             }
         });
         view.startAnimation(AnimationUtils.loadAnimation(requireActivity(), R.anim.show_more));

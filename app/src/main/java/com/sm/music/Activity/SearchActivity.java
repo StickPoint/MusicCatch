@@ -34,7 +34,7 @@ public class SearchActivity extends AppCompatActivity {
 
     private static final int ACTIVITY_TAG = 547;
 
-    final static private int TYPES[] = {GetMusic.MUSIC_SOURCE_KUGOU, GetMusic.MUSIC_SOURCE_NETEASE, GetMusic.MUSIC_SOURCE_TENCENT, GetMusic.MUSIC_SOURCE_MIGU};
+    final static private int TYPES[] = {GetMusic.MUSIC_SOURCE_KUGOU, GetMusic.MUSIC_SOURCE_NETEASE, GetMusic.MUSIC_SOURCE_KOOWO, GetMusic.MUSIC_SOURCE_MIGU};
 
 
     private GlobalApplication globalApplication = null;
@@ -223,7 +223,7 @@ public class SearchActivity extends AppCompatActivity {
                         case GetMusic.MUSIC_SOURCE_NETEASE:
                             search_wapper.setCurrentItem(1,true);
                             break;
-                        case GetMusic.MUSIC_SOURCE_TENCENT:
+                        case GetMusic.MUSIC_SOURCE_KOOWO:
                             search_wapper.setCurrentItem(2,true);
                             break;
                         case GetMusic.MUSIC_SOURCE_MIGU:
@@ -256,7 +256,7 @@ public class SearchActivity extends AppCompatActivity {
         }else if (currentId == netease.getId()){
             return GetMusic.MUSIC_SOURCE_NETEASE;
         }else if (currentId == tencent.getId()) {
-            return GetMusic.MUSIC_SOURCE_TENCENT;
+            return GetMusic.MUSIC_SOURCE_KOOWO;
         }else if(currentId == migu.getId()){
             return GetMusic.MUSIC_SOURCE_MIGU;
         }else {

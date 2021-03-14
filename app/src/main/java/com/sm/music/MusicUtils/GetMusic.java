@@ -40,6 +40,8 @@ public class GetMusic {
 
 	public static final int MUSIC_SOURCE_MIGU = 3;
 
+	public static final int MUSIC_SOURCE_KOOWO = 4;
+
 	public static final String REQUEST_URL_SEARCH_KUWO="http://music.dwh99.cn/api/search/?name=";
 
 	public static final String REQUEST_URL_PLAY_KUWO = "http://music.dwh99.cn/api/mp3/?rid=";

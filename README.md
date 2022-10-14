@@ -1,5 +1,5 @@
 # 顶点音乐 &amp; Stick Point Music
- [官方网站](https://stickpoint.github.io/ddmsuic.github.io/) | 简体中文 | [English]()
+ [官方网站](https://stickpoint.github.io/ddmsuic.github.io/) | 简体中文 | [English](https://github.com/StickPoint/MusicCatch/blob/master/README_EN.md)
 
 ![Stick Point Music](https://img.shields.io/badge/Stick%20Point%20Music-1.5.4-informational?style=flat-square) ![minSDK](https://img.shields.io/badge/minSDK-v24-informational?style=flat-square&logo=android) 
 

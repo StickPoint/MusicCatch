@@ -3,7 +3,7 @@
 
 ![Stick Point Music](https://img.shields.io/badge/Stick%20Point%20Music-1.5.4-informational?style=flat-square) ![minSDK](https://img.shields.io/badge/minSDK-v24-informational?style=flat-square&logo=android) 
 
-
+# 已停更，最新版请参见[DDMusic2.0](https://github.com/StickPoint/DDMusic2.0)
 
 
 ##  依赖
